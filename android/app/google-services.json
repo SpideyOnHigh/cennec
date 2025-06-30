@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "868589703598",
+    "project_id": "cennec---development",
+    "storage_bucket": "cennec---development.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868589703598:android:35a25cd4dade59f4aeb83f",
+        "android_client_info": {
+          "package_name": "com.example.cennec"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3OY3DpxfF0jVFJn7dFtqkwdNIWi0ZlLM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
