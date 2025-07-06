@@ -6,6 +6,7 @@ class APPStrings {
 
   //text String
   static const String textGetStarted = 'text_get_started';
+
   static const String textWelcomeBack = 'text_welcome';
   static const String textEmail = 'text_email';
   static const String textPassword = 'text_password';
@@ -127,4 +128,10 @@ class APPStrings {
   static const String textSend = 'text_send';
   static const String textSetAsDefaultPic = 'text_set_as_default';
   static const String textSetAsDefaultPicCnf = 'text_set_as_default_cnf';
+
+
+
+  static const String textExploreConnections = 'text_explore_connections';
+  static const String textWelcomeSubText = 'text_welcome_sub_text';
+
 }

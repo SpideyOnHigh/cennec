@@ -132,6 +132,13 @@
   "text_validate_feedback_1" : "Please select the type of feedback",
   "text_validate_feedback_2" : "Please enter your feedback before submitting.",
   "text_set_as_default" : "Set default profile picture",
-  "text_set_as_default_cnf" : "Are you sure you want to set this as default?"
+  "text_set_as_default_cnf" : "Are you sure you want to set this as default?",
+
+
+
+  "text_explore_connections": "Go ahead and explore new connections",
+  "text_welcome_sub_text": "Discover New Connections and Meaningful Relationships with our app"
+
+
 }
 

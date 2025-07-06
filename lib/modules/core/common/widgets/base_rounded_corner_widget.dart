@@ -16,7 +16,7 @@ class BaseRoundedBackgroundWidget extends StatelessWidget {
       {super.key,
       required this.child,
       this.borderRadius = 20,
-      this.backgroundColor = Colors.white,
+      this.backgroundColor = AppColors.colorRoundedBgContainer,
       this.padding = const EdgeInsets.all(20),
       this.margin = const EdgeInsets.only(top: 16),
       this.appBarText});
