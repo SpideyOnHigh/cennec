@@ -366,9 +366,9 @@ TextStyle getTextStyle(TextStyle mainTextStyle, double size, FontWeight fontWeig
 }
 
 /// A [getTextStyleFromFont] This Method Use to getTextStyleFromFont
-TextStyle getTextStyleFromFont(String fontFamily, double size, Color fontColor, FontWeight fontWeight,
+TextStyle getTextStyleFromFont(String? fontFamily, double? size, Color? fontColor, FontWeight? fontWeight,
     {TextDecoration? mainTextDecoration, List<Shadow>? shadow}) {
-  return TextStyle(shadows: shadow, fontFamily: fontFamily, fontSize: size, fontWeight: fontWeight, color: fontColor, decoration: mainTextDecoration);
+  return TextStyle(shadows: shadow, fontFamily: fontFamily?? AppFont.poppins, fontSize: size ?? 14, fontWeight: fontWeight ?? FontWeight.normal, color: fontColor ?? AppColors.colorOffWhite, decoration: mainTextDecoration);
 }
 
 /// A [getFileImageSize] is a method that calculates MB from bytes
