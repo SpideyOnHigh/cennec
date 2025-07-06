@@ -10,7 +10,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/api_service/preference_helper.dart';
+import '../../core/common/widgets/base_rounded_corner_widget.dart';
 import '../../core/common/widgets/base_text_field_error_indicator.dart';
+import '../../core/common/widgets/common_text_field.dart';
 
 class ScreenSignUp extends StatefulWidget {
   const ScreenSignUp({super.key});
@@ -93,41 +95,32 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
   }
 
   Widget emailField(BuildContext context) {
-    return BaseTextFormFieldRounded(
+    return CommonTextFormField(
+      label: getTranslate(APPStrings.textEmail),
+      hintText: getTranslate(APPStrings.textEmail),
       controller: emailController,
+      keyboardType: TextInputType.emailAddress,
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
-
-      onChange: () {
+      onChanged: (_) {
         if (emailError.value.isNotEmpty) {
           emailError.value = '';
         }
       },
-      hintText: getTranslate(APPStrings.textEmail),
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
     );
   }
 
   Widget invitationTextField(BuildContext context) {
-    return BaseTextFormFieldRounded(
-      controller: codeController,
+    return CommonTextFormField(
+      label: getTranslate(APPStrings.textInvitationCodePlaceholder),
       hintText: getTranslate(APPStrings.textInvitationCodePlaceholder),
+      controller: codeController,
+      isOptional: true,
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
-      onChange: () {
+      onChanged: (_) {
         if (codeError.value.isNotEmpty) {
           codeError.value = '';
         }
       },
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
     );
   }
 
@@ -290,17 +283,17 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
 
   Widget getBody(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: Dimens.margin10),
-          logo(),
-          const SizedBox(height: Dimens.margin30),
-          signUpText(context),
-          const SizedBox(height: 20),
-          letGetStartedText(context),
-          const SizedBox(height: 20),
+          // const SizedBox(height: Dimens.margin10),
+          // logo(),
+          // const SizedBox(height: Dimens.margin30),
+          // signUpText(context),
+          // const SizedBox(height: 20),
+          // letGetStartedText(context),
+          // const SizedBox(height: 20),
           emailField(context),
           Visibility(
             visible: emailError.value.isNotEmpty,
@@ -308,8 +301,6 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
               errorText: emailError.value,
             ),
           ),
-          const SizedBox(height: 20),
-          invitationCodeInfoText(context),
           const SizedBox(height: 20),
           invitationTextField(context),
           Visibility(
@@ -339,41 +330,44 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: MultiValueListenableBuilder(
-            valueListenables: [isLoading, codeError, emailError,errorAgreement],
-            builder: (context, values, child) {
-              return BlocListener<SignUpInvitationBloc, SignUpInvitationState>(
-                listener: (context, state) {
-                  isLoading.value = state is SignUpInvitationLoading;
-                  if (state is SignUpInvitationFailure) {
-                    if(state.errorMessage.generalError!.isNotEmpty)
-                      {
-                        ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                      }
-                    else {
-                      if (state.errorMessage.invitationCode != null) {
-                        codeError.value = state.errorMessage.invitationCode ?? '';
-                      }
-                      if(state.errorMessage.userExists != null)
-                        {
-                          emailError.value = state.errorMessage.userExists ?? '';
-                        }
+    return MultiValueListenableBuilder(
+        valueListenables: [isLoading, codeError, emailError,errorAgreement],
+        builder: (context, values, child) {
+          return BlocListener<SignUpInvitationBloc, SignUpInvitationState>(
+            listener: (context, state) {
+              isLoading.value = state is SignUpInvitationLoading;
+              if (state is SignUpInvitationFailure) {
+                if(state.errorMessage.generalError!.isNotEmpty)
+                  {
+                    ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                  }
+                else {
+                  if (state.errorMessage.invitationCode != null) {
+                    codeError.value = state.errorMessage.invitationCode ?? '';
+                  }
+                  if(state.errorMessage.userExists != null)
+                    {
+                      emailError.value = state.errorMessage.userExists ?? '';
                     }
-                  }
-                  if (state is SignUpInvitationResponse) {
-                    ToastController.showToast(context, state.modelSignUpInvCode.message ?? '', true);
-                    Navigator.pushReplacementNamed(context, AppRoutes.routesVerifyEmail,
-                        arguments: ModelSignUpDataTransfer(email: emailController.text, code: codeController.text));
-                  }
-                },
-                child: Scaffold(
-                  resizeToAvoidBottomInset: true,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  body: SingleChildScrollView(child: getBody(context)),
-                ),
-              );
-            }));
+                }
+              }
+              if (state is SignUpInvitationResponse) {
+                ToastController.showToast(context, state.modelSignUpInvCode.message ?? '', true);
+                Navigator.pushReplacementNamed(context, AppRoutes.routesVerifyEmail,
+                    arguments: ModelSignUpDataTransfer(email: emailController.text, code: codeController.text));
+              }
+            },
+            child: BaseRoundedBackgroundWidget(
+              appBarText: getTranslate(APPStrings.textSignUp),
+              margin: EdgeInsets.all(0),
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: Colors.transparent,
+                body: SingleChildScrollView(child: getBody(context)),
+              ),
+            ),
+          );
+        });
   }
 
   void validateFields() {

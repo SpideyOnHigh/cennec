@@ -23,4 +23,8 @@ class AppColors {
   static const colorInterestRandomColor3 = Color(0xFFc8ecb5);
   static const colorInterestRandomColor4 = Color(0xFFbcc2f2);
   static const colorInterestRandomColor5 = Color(0xFFe8b6ee);
+
+
+  // F0F1EE
+  static const colorRoundedBgContainer = Color(0xFFF0F1EE);
 }
