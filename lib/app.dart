@@ -178,6 +178,10 @@ class MyAppState extends State<MaterialAppWidget> {
         // headline2: AppFont.colorWhite,
         // headline3: AppFont.colorRed,
       ),
+      appBarTheme: const AppBarTheme(
+        iconTheme: IconThemeData(color: Colors.white), // black icons for light theme
+      ),
+
       scaffoldBackgroundColor: AppColors.colorOffWhite,
     );
   }
@@ -195,6 +199,10 @@ class MyAppState extends State<MaterialAppWidget> {
         // headline3: AppFont.colorGreen,
       ),
       scaffoldBackgroundColor: Colors.black,
+      appBarTheme: const AppBarTheme(
+        iconTheme: IconThemeData(color: Colors.black), // black icons for light theme
+      ),
+
     );
   }
 
@@ -208,12 +216,14 @@ class MyAppState extends State<MaterialAppWidget> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         statusBarColor: (Theme.of(context).brightness == Brightness.dark)
             ? Colors.transparent
-            : AppColors.colorWhite,
+            : Colors.transparent
         /* set Status bar color in Android devices. */
 
-        statusBarIconBrightness: Brightness.dark,
+        // statusBarIconBrightness: Brightness.dark,
         /* set Status bar icons color in Android devices.*/
-        statusBarBrightness: Brightness.dark));
+        // statusBarBrightness: Brightness.dark,
+    ),
+    );
   }
 
   ///[setTimer] This method use to set Timer

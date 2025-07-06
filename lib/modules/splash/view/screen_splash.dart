@@ -69,9 +69,8 @@ class _ScreenSplashState extends State<ScreenSplash> {
         fit: BoxFit.cover, // I thought this would fill up my Container but it doesn't
       ),
     );
-    return SafeArea(
-        child: Scaffold(
-      body: background,
-    ));
+    return Scaffold(
+          body: background,
+        );
   }
 }

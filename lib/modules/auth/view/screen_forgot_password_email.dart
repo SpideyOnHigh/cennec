@@ -1,5 +1,6 @@
 import 'package:cennec/modules/auth/bloc/forgot_password_email_bloc/forgot_password_email_bloc.dart';
 import 'package:cennec/modules/auth/model/model_sign_up_data_transfer.dart';
+import 'package:cennec/modules/core/common/widgets/base_rounded_corner_widget.dart';
 import 'package:cennec/modules/core/common/widgets/base_text_field_error_indicator.dart';
 import 'package:cennec/modules/core/common/widgets/button.dart';
 import 'package:cennec/modules/core/common/widgets/email_validation.dart';
@@ -164,34 +165,36 @@ class _ScreenForgotPasswordEmailState extends State<ScreenForgotPasswordEmail> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: MultiValueListenableBuilder(
-            valueListenables: [isLoading, errorEmail],
-            builder: (context, values, child) {
-              return BlocListener<ForgotPasswordEmailBloc, ForgotPasswordEmailState>(
-                listener: (context, state) {
-                  isLoading.value = state is ForgotPasswordEmailLoading;
-                  if (state is ForgotPasswordEmailFailure) {
-                    if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                    }
-                    if (state.errorMessage.email != null) {
-                      errorEmail.value = state.errorMessage.email ?? '';
-                    }
-                  }
-                  if (state is ForgotPasswordEmailResponse) {
-                    ToastController.showToast(context, state.modelOtpResetLink.message ?? '', true);
-                    Navigator.popAndPushNamed(context, AppRoutes.routesScreenForgotPasswordOtp,
-                        arguments: ModelSignUpDataTransfer(email: emailController.text, code: ''));
-                  }
-                },
-                child: Scaffold(
-                  resizeToAvoidBottomInset: true,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  body: SingleChildScrollView(child: getBody(context)),
-                ),
-              );
-            }));
+    return MultiValueListenableBuilder(
+        valueListenables: [isLoading, errorEmail],
+        builder: (context, values, child) {
+          return BlocListener<ForgotPasswordEmailBloc, ForgotPasswordEmailState>(
+            listener: (context, state) {
+              isLoading.value = state is ForgotPasswordEmailLoading;
+              if (state is ForgotPasswordEmailFailure) {
+                if (state.errorMessage.generalError!.isNotEmpty) {
+                  ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                }
+                if (state.errorMessage.email != null) {
+                  errorEmail.value = state.errorMessage.email ?? '';
+                }
+              }
+              if (state is ForgotPasswordEmailResponse) {
+                ToastController.showToast(context, state.modelOtpResetLink.message ?? '', true);
+                Navigator.popAndPushNamed(context, AppRoutes.routesScreenForgotPasswordOtp,
+                    arguments: ModelSignUpDataTransfer(email: emailController.text, code: ''));
+              }
+            },
+            child: BaseRoundedBackgroundWidget(
+              appBarText: "Forgot Password",
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: Colors.transparent,
+                body: SingleChildScrollView(child: getBody(context)),
+              ),
+            ),
+          );
+        });
   }
 
   void validateFields() {
