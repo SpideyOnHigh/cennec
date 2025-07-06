@@ -17,8 +17,8 @@ void main() async {
   FlavorConfig(
     variables: {
       "env": "staging",
-      "base": "https://cennec.staging9.com/",
-      // "base": "http://192.168.9.161:8000/",
+      // "base": "https://cennec.staging9.com/",
+      "base": "https://9f2e-2405-201-2011-b920-1596-3811-8666-527e.ngrok-free.app/",
     },
   );
   runApp(const MyApp());

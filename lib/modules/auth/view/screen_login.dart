@@ -31,8 +31,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   void initState() {
     if (kDebugMode) {
-      emailController.text = "shivam.dubey@9spl.com";
-      passwordController.text = "Test105*";
+      emailController.text = "happypatel@example.com";
+      passwordController.text = "Password123@";
     }
 
     super.initState();
