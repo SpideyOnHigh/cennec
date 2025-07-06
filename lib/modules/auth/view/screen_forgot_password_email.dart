@@ -65,7 +65,7 @@ class _ScreenForgotPasswordEmailState extends State<ScreenForgotPasswordEmail> {
 
   Widget enterEmailText(BuildContext context) {
     return Text(getTranslate(APPStrings.textEnterEmailInstructions),
-        // textAlign: TextAlign.center,
+        textAlign: TextAlign.center,
         style: getTextStyleFromFont(
           AppFont.poppins,
           Dimens.margin18,
@@ -134,18 +134,18 @@ class _ScreenForgotPasswordEmailState extends State<ScreenForgotPasswordEmail> {
   Widget getBody(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
-          height: Dimens.margin10,
-        ),
-        navigationWithLogo(),
+        // const SizedBox(
+        //   height: Dimens.margin10,
+        // ),
+        // navigationWithLogo(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: Dimens.margin30),
-              forgotPasswordText(context),
-              const SizedBox(height: 30),
+              // forgotPasswordText(context),
+              // const SizedBox(height: 30),
               enterEmailText(context),
               const SizedBox(height: 30),
               emailField(context),
@@ -186,7 +186,7 @@ class _ScreenForgotPasswordEmailState extends State<ScreenForgotPasswordEmail> {
               }
             },
             child: BaseRoundedBackgroundWidget(
-              appBarText: "Forgot Password",
+              appBarText: getTranslate(APPStrings.textForgotPwdWoQ),
               child: Scaffold(
                 resizeToAvoidBottomInset: true,
                 backgroundColor: Colors.transparent,
