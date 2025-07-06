@@ -27,7 +27,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
            NavigatorKey.navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.routesScreenAboutUs,arguments: false,(route) => false,);
         }
       else {
-        NavigatorKey.navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.routesLogin, (route) => false);
+        NavigatorKey.navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.routesIntro, (route) => false);
       }
     });
     super.initState();

@@ -1,6 +1,7 @@
 import 'package:cennec/modules/auth/model/model_sign_up_data_transfer.dart';
 import 'package:cennec/modules/auth/view/screen_VerifyEmail.dart';
 import 'package:cennec/modules/auth/view/screen_change_password.dart';
+import 'package:cennec/modules/auth/view/screen_intro_auth.dart';
 import 'package:cennec/modules/auth/view/screen_set_new_pwd_forgot_flow.dart';
 import 'package:cennec/modules/auth/view/screen_forgot_password_email.dart';
 import 'package:cennec/modules/auth/view/screen_forgot_password_otp.dart';
@@ -37,6 +38,9 @@ class RouteGenerator {
     switch (settings.name) {
       case AppRoutes.routesSplash:
         return MaterialPageRoute(builder: (_) => const ScreenSplash(), settings: const RouteSettings(name: AppRoutes.routesSplash));
+
+      case AppRoutes.routesIntro:
+        return MaterialPageRoute(builder: (_) => const ScreenWelcome(), settings: const RouteSettings(name: AppRoutes.routesIntro));
       case AppRoutes.routesLogin:
         return MaterialPageRoute(builder: (_) => const ScreenLogin(), settings: const RouteSettings(name: AppRoutes.routesLogin));
       case AppRoutes.routesSignUp:

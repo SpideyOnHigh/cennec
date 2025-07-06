@@ -1,6 +1,7 @@
 /// It's a class that contains static variables that are used to navigate between pages
 class AppRoutes {
   static const String routesSplash = '/splash';
+  static const String routesIntro = '/intro';
   static const String routesLogin = '/login';
   static const String routesSignUp = '/SignUp';
   static const String routesVerifyEmail = '/ScreenVerifyEmail';
