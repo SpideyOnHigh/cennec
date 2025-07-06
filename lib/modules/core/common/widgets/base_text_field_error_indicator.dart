@@ -13,23 +13,23 @@ class BaseTextFieldErrorIndicator extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(
-          Icons.info_outline_rounded,
-          color: Colors.red,
-        ),
-        const SizedBox(
-          width: Dimens.margin10,
-        ),
+        // const Icon(
+        //   Icons.info_outline_rounded,
+        //   color: Colors.red,
+        // ),
+        // const SizedBox(
+        //   width: Dimens.margin10,
+        // ),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: (errorText != null && errorText != '') ? Dimens.margin2 : Dimens.margin0,
+                height: (errorText != null && errorText != '') ? Dimens.margin4 : Dimens.margin0,
               ),
               Text(
                 errorText ?? '',
-                style: getTextStyleFromFont(AppFont.poppins, Dimens.margin16, Colors.red, FontWeight.w600),
+                style: getTextStyleFromFont(AppFont.poppins, Dimens.margin16, Colors.red, FontWeight.w500),
               ),
             ],
           ),

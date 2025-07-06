@@ -7,6 +7,7 @@ import 'package:cennec/modules/core/utils/app_config.dart';
 import 'package:cennec/modules/core/utils/app_urls.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import '../../core/common/widgets/base_rounded_corner_widget.dart';
 import '../../core/utils/common_import.dart';
 
 class ScreenVerifyEmail extends StatefulWidget {
@@ -18,8 +19,6 @@ class ScreenVerifyEmail extends StatefulWidget {
 }
 
 class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
-
-
   final formKey = GlobalKey<FormState>();
   StreamController<ErrorAnimationType>? errorController;
 
@@ -69,9 +68,13 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
     super.dispose();
   }
 
-  void getSignUpCode()  {
-    Map<String, dynamic> body = {AppConfig.paramEmail: widget.modelSignUpDataTransfer.email, AppConfig.paramInvCode: widget.modelSignUpDataTransfer.code};
-    BlocProvider.of<SignUpInvitationBloc>(context).add(VerifyInvitationCode(body: body, url: AppUrls.apiUserSignUpInvCode));
+  void getSignUpCode() {
+    Map<String, dynamic> body = {
+      AppConfig.paramEmail: widget.modelSignUpDataTransfer.email,
+      AppConfig.paramInvCode: widget.modelSignUpDataTransfer.code
+    };
+    BlocProvider.of<SignUpInvitationBloc>(context).add(
+        VerifyInvitationCode(body: body, url: AppUrls.apiUserSignUpInvCode));
   }
 
   Widget navigationWithLogo() {
@@ -85,7 +88,9 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
             padding: const EdgeInsets.all(Dimens.margin16),
             child: Image.asset(
               APPImages.icBack,
-              color: Theme.of(context).colorScheme.onSecondary, // Update with your logo path
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSecondary, // Update with your logo path
               height: Dimens.margin30,
               width: Dimens.margin30,
             ),
@@ -118,15 +123,17 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
 
   Widget letGetStartedText(BuildContext context) {
     return Text(
-        "${getTranslate(APPStrings.textTimeSensitiveCodeSent)} ${widget.modelSignUpDataTransfer.email}. ${getTranslate(APPStrings.textPleaseCheckInbox)}",
+        "${getTranslate(APPStrings.textCodeSentTotEmail)}",
         textAlign: TextAlign.center,
         style: getTextStyleFromFont(
           AppFont.poppins,
           Dimens.margin18,
           Theme.of(context).colorScheme.onPrimary,
-          FontWeight.w600,
+          FontWeight.w500,
         ));
   }
+
+
 
   Widget resendButton() {
     return Visibility(
@@ -152,7 +159,8 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
             width: Dimens.margin150,
             child: CommonButton(
               backgroundColor: Theme.of(context).colorScheme.primary,
-              borderRadius: const BorderRadius.all(Radius.circular(Dimens.margin10)),
+              borderRadius:
+                  const BorderRadius.all(Radius.circular(Dimens.margin10)),
               height: Dimens.margin40,
               padding: const EdgeInsets.symmetric(horizontal: Dimens.margin5),
               onTap: value > 0 && _timerNotifier.value == 0 ? _resendOtp : null,
@@ -160,6 +168,63 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
             ),
           );
         },
+      ),
+    );
+  }
+
+
+  Widget resendCodeText(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Center(
+        child: ValueListenableBuilder<int>(
+          valueListenable: _timerNotifier,
+          builder: (context, timerValue, _) {
+            final canResend = timerValue == 0;
+
+            return RichText(
+              text: TextSpan(
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin15,
+                  Theme.of(context).colorScheme.onPrimary,
+                  FontWeight.w500,
+                ),
+                children: [
+                  TextSpan(
+                    text: '${getTranslate(APPStrings.textDidntReceiveCode)}? ',
+                  ),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.baseline,
+                    baseline: TextBaseline.alphabetic,
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: _attemptNotifier,
+                      builder: (context, attemptsLeft, _) {
+                        final isClickable = canResend && attemptsLeft > 0;
+                        return GestureDetector(
+                          onTap: isClickable ? _resendOtp : null,
+                          child: Text(
+                            isClickable
+                                ? getTranslate(APPStrings.textResendCode)
+                                : '${getTranslate(APPStrings.textResendIn)} $timerValue s',
+                            style: getTextStyleFromFont(
+                              AppFont.poppins,
+                              Dimens.margin15,
+                              isClickable
+                                  ? Theme.of(context).indicatorColor
+                                  : Theme.of(context).disabledColor,
+                              FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -172,12 +237,16 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
           padding: const EdgeInsets.symmetric(horizontal: Dimens.margin10),
           child: PinCodeTextField(
             appContext: context,
-            textStyle: TextStyle(color: Theme.of(context).hintColor, fontFamily: AppFont.poppins, fontSize: Dimens.margin30),
+            textStyle: TextStyle(
+                color: Theme.of(context).hintColor,
+                fontFamily: AppFont.poppins,
+                fontSize: Dimens.margin30),
             showCursor: false,
             length: 4,
             blinkWhenObscuring: true,
             hintCharacter: '',
-            hintStyle: getTextStyleFromFont(AppFont.poppins, Dimens.margin24, Theme.of(context).hintColor, FontWeight.w700),
+            hintStyle: getTextStyleFromFont(AppFont.poppins, Dimens.margin24,
+                Theme.of(context).hintColor, FontWeight.w700),
             animationType: AnimationType.fade,
             pinTheme: PinTheme(
                 shape: PinCodeFieldShape.box,
@@ -247,7 +316,7 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
   Widget continueButton(BuildContext context) {
     return CommonButton(
       isLoading: isLoading.value,
-      text: getTranslate(APPStrings.textButtonContinue),
+      text: getTranslate(APPStrings.textVerify),
       backgroundColor: Theme.of(context).colorScheme.primary,
       onTap: () {
         validate();
@@ -263,24 +332,19 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
   Widget getBody(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
-          height: Dimens.margin10,
-        ),
-        navigationWithLogo(),
+
+        // navigationWithLogo(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: Dimens.margin30),
-              verifyEmailText(context),
-              const SizedBox(height: 30),
               letGetStartedText(context),
               const SizedBox(height: 30),
               pinCodeBox(),
               const SizedBox(height: 30),
-              resendButton(),
-              const SizedBox(height: 200),
+              resendCodeText(context),
+              const SizedBox(height: Dimens.margin25),
               continueButton(context),
             ],
           ),
@@ -291,45 +355,55 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: MultiValueListenableBuilder(
-            valueListenables: [isLoading, _timerNotifier, _attemptNotifier],
-            builder: (context, values, child) {
-              return MultiBlocListener(
-                listeners: [
-                  BlocListener<VerifySignUpOtpBloc, VerifySignUpOtpState>(
-                    listener: (context, state) {
-                      isLoading.value = state is VerifySignUpOtpLoading;
-                      if (state is VerifySignUpOtpFailure) {
-                        if (state.errorMessage.generalError!.isNotEmpty) {
-                          ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                        }
-                        if (state.errorMessage.wrongOtp != null) {
-                          ToastController.showToast(context, state.errorMessage.wrongOtp ?? '', false);
-                        }
-                      }
-                      if (state is VerifySignUpOtpResponse) {
-                        Navigator.popAndPushNamed(context, AppRoutes.routesSignUpUserPreference,
-                            arguments: ModelSignUpDataTransfer(email: widget.modelSignUpDataTransfer.email, code: widget.modelSignUpDataTransfer.code));
-                      }
-                    },
-                  ),
-                  BlocListener<SignUpInvitationBloc, SignUpInvitationState>(
-                    listener: (context, state) {
-                      isLoading.value = state is SignUpInvitationLoading;
-                      if (state is SignUpInvitationResponse) {
-                        ToastController.showToast(context, state.modelSignUpInvCode.message ?? '', true);
-                      }
-                    },
-                  )
-                ],
-                child: Scaffold(
-                  resizeToAvoidBottomInset: true,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  body: SingleChildScrollView(child: getBody(context)),
-                ),
-              );
-            }));
+    return MultiValueListenableBuilder(
+        valueListenables: [isLoading, _timerNotifier, _attemptNotifier],
+        builder: (context, values, child) {
+          return MultiBlocListener(
+            listeners: [
+              BlocListener<VerifySignUpOtpBloc, VerifySignUpOtpState>(
+                listener: (context, state) {
+                  isLoading.value = state is VerifySignUpOtpLoading;
+                  if (state is VerifySignUpOtpFailure) {
+                    if (state.errorMessage.generalError!.isNotEmpty) {
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
+                    }
+                    if (state.errorMessage.wrongOtp != null) {
+                      ToastController.showToast(context,
+                          state.errorMessage.wrongOtp ?? '', false);
+                    }
+                  }
+                  if (state is VerifySignUpOtpResponse) {
+                    Navigator.popAndPushNamed(
+                        context, AppRoutes.routesSignUpUserPreference,
+                        arguments: ModelSignUpDataTransfer(
+                            email: widget.modelSignUpDataTransfer.email,
+                            code: widget.modelSignUpDataTransfer.code));
+                  }
+                },
+              ),
+              BlocListener<SignUpInvitationBloc, SignUpInvitationState>(
+                listener: (context, state) {
+                  isLoading.value = state is SignUpInvitationLoading;
+                  if (state is SignUpInvitationResponse) {
+                    ToastController.showToast(context,
+                        state.modelSignUpInvCode.message ?? '', true);
+                  }
+                },
+              )
+            ],
+            child: BaseRoundedBackgroundWidget(
+              appBarText: getTranslate(APPStrings.textVerificationCode),
+              margin: const EdgeInsets.all(0),
+              padding: const EdgeInsets.only(top: 24),
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: Colors.transparent,
+                body: SingleChildScrollView(child: getBody(context)),
+              ),
+            ),
+          );
+        });
   }
 
   validate() {
@@ -341,7 +415,11 @@ class _ScreenVerifyEmailState extends State<ScreenVerifyEmail> {
   }
 
   void verifyOtp() async {
-    Map<String, dynamic> body = {AppConfig.paramEmail: widget.modelSignUpDataTransfer.email, AppConfig.paramOtp: smsOTP};
-    BlocProvider.of<VerifySignUpOtpBloc>(context).add(VerifySignUpOtp(body: body, url: AppUrls.apiValidateOtp));
+    Map<String, dynamic> body = {
+      AppConfig.paramEmail: widget.modelSignUpDataTransfer.email,
+      AppConfig.paramOtp: smsOTP
+    };
+    BlocProvider.of<VerifySignUpOtpBloc>(context)
+        .add(VerifySignUpOtp(body: body, url: AppUrls.apiValidateOtp));
   }
 }

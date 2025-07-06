@@ -125,85 +125,89 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
   }
 
   Widget agreeTermsAndCondition(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Checkbox(
-          checkColor: Colors.white,
-          activeColor: Theme.of(context).colorScheme.onSecondary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          value: agreedToTerms,
-          onChanged: (bool? value) {
-            setState(() {
-              agreedToTerms = value ?? false;
-              if(errorAgreement.value.isNotEmpty)
-                {
-                  errorAgreement.value = '';
-                }
-            });
-          },
-        ),
-        Expanded(
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                    text: '${getTranslate(APPStrings.textIAgreeToThe)} ',
-                    style: getTextStyleFromFont(
-                      AppFont.poppins,
-                      Dimens.margin15,
-                      Theme.of(context).colorScheme.onPrimary,
-                      FontWeight.w600,
-                    )),
-                TextSpan(
-                  text: getTranslate(APPStrings.textTermsAndConditions),
-                  style: getTextStyleFromFont(
-                    AppFont.poppins,
-                    Dimens.margin15,
-                    Theme.of(context).indicatorColor,
-                    FontWeight.w600,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                    Navigator.pushNamed(context, AppRoutes.routesScreenCms,arguments:AppConfig.paramTermCondition);
-                      // Add your terms and conditions action here
-                    },
-                ),
-                TextSpan(
-                    text: ' ${getTranslate(APPStrings.textAnd)} ',
-                    style: getTextStyleFromFont(
-                      AppFont.poppins,
-                      Dimens.margin18,
-                      Theme.of(context).colorScheme.onPrimary,
-                      FontWeight.w600,
-                    )),
-                TextSpan(
-                  text: getTranslate(APPStrings.textPrivacyPolicy),
-                  style: getTextStyleFromFont(
-                    AppFont.poppins,
-                    Dimens.margin15,
-                    Theme.of(context).indicatorColor,
-                    FontWeight.w600,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.pushNamed(context, AppRoutes.routesScreenCms,arguments:AppConfig.paramPrivacyPolicy);
-                    },
-                ),
-                TextSpan(
-                    text: ' ${getTranslate(APPStrings.textOfUse)}',
-                    style: getTextStyleFromFont(
-                      AppFont.poppins,
-                      Dimens.margin15,
-                      Theme.of(context).colorScheme.onPrimary,
-                      FontWeight.w600,
-                    )),
-              ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2.0), // Adjust as needed
+            child: Checkbox(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+              checkColor: Colors.white,
+              activeColor: Theme.of(context).colorScheme.onSecondary,
+              value: agreedToTerms,
+              onChanged: (bool? value) {
+                setState(() {
+                  agreedToTerms = value ?? false;
+                  if (errorAgreement.value.isNotEmpty) {
+                    errorAgreement.value = '';
+                  }
+                });
+              },
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 8),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin14,
+                  Theme.of(context).colorScheme.onPrimary,
+                  FontWeight.w500,
+                ),
+                children: [
+                  TextSpan(
+                    text: '${getTranslate(APPStrings.textIAgreeToThe)} ',
+                  ),
+                  TextSpan(
+                    text: getTranslate(APPStrings.textTermsAndConditions),
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      Dimens.margin14,
+                      AppColors.colorHyperLink, // Match image
+                      FontWeight.w500,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.routesScreenCms,
+                          arguments: AppConfig.paramTermCondition,
+                        );
+                      },
+                  ),
+                  TextSpan(
+                    text: ' and ',
+                  ),
+                  TextSpan(
+                    text: getTranslate(APPStrings.textPrivacyPolicy),
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      Dimens.margin14,
+                      AppColors.colorHyperLink, // Match image
+                      FontWeight.w500,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.routesScreenCms,
+                          arguments: AppConfig.paramPrivacyPolicy,
+                        );
+                      },
+                  ),
+                  TextSpan(
+                    text: ' ${getTranslate(APPStrings.textOfUse)}',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -309,8 +313,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
               errorText: codeError.value,
             ),
           ),
-          const SizedBox(height: Dimens.margin25),
-          signUpButton(context),
+
           const SizedBox(height: 20),
           agreeTermsAndCondition(context),
           Visibility(
@@ -319,6 +322,9 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
               errorText: errorAgreement.value,
             ),
           ),
+          const SizedBox(height: Dimens.margin25),
+          signUpButton(context),
+
           const SizedBox(height: 20),
           alreadyAccountText(context),
           const SizedBox(height: 10),
@@ -359,7 +365,8 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
             },
             child: BaseRoundedBackgroundWidget(
               appBarText: getTranslate(APPStrings.textSignUp),
-              margin: EdgeInsets.all(0),
+              margin: const EdgeInsets.all(0),
+              padding: const EdgeInsets.only(top: 24),
               child: Scaffold(
                 resizeToAvoidBottomInset: true,
                 backgroundColor: Colors.transparent,
@@ -398,6 +405,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
     }
 
     if (isValid) {
+
       getSignUpCode();
     }
   }

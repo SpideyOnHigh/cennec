@@ -25,63 +25,79 @@ class GenderDropdown extends StatefulWidget {
 class _GenderDropdownState extends State<GenderDropdown> {
   GenderModel? _selectedGender;
 
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (widget.hintText != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text(
+              widget.hintText!,
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                16,
+                Colors.black,
+                FontWeight.w400,
+              ),
+            ),
+          ),
         Container(
           height: widget.height ?? Dimens.margin50,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(widget.borderRadius ?? Dimens.margin30),
+            borderRadius: BorderRadius.circular(
+              widget.borderRadius ?? Dimens.margin12,
+            ),
             border: Border.all(
-              color: Theme.of(context).colorScheme.secondary,
-              width: Dimens.margin1,
+              color: theme.colorScheme.secondary,
+              width: 1.0,
             ),
           ),
           child: DropdownButtonHideUnderline(
-            child: ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton<GenderModel>(
-                dropdownColor: Colors.white,
-                borderRadius: BorderRadius.circular(Dimens.margin20),
-                isExpanded: true,
-                value: _selectedGender,
-                icon: const Icon(Icons.arrow_drop_down),
-                iconSize: 24,
-                elevation: 16,
+            child: DropdownButton<GenderModel>(
+              isExpanded: true,
+              dropdownColor: Colors.white,
+              borderRadius: BorderRadius.circular(Dimens.margin20),
+              value: _selectedGender,
+              icon: const Icon(Icons.arrow_drop_down),
+              iconSize: 24,
+              elevation: 16,
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                16,
+                Colors.black,
+                FontWeight.w500,
+              ),
+              hint: Text(
+                'Select Gender',
                 style: getTextStyleFromFont(
                   AppFont.poppins,
-                  Dimens.margin18,
-                  Theme.of(context).hintColor,
-                  FontWeight.w600,
+                  15,
+                  theme.hintColor,
+                  FontWeight.w400,
                 ),
-                hint: Text(
-                  widget.hintText ?? 'Select Gender',
-                  style: getTextStyleFromFont(
-                    AppFont.poppins,
-                    Dimens.margin18,
-                    Theme.of(context).hintColor,
-                    FontWeight.w600,
-                  ),
-                ),
-                onChanged: (GenderModel? newValue) {
-                  setState(() {
-                    _selectedGender = newValue;
-                  });
-                  if (widget.onChanged != null) {
-                    widget.onChanged!(newValue!);
-                  }
-                },
-                items: gendersList.map<DropdownMenuItem<GenderModel>>((GenderModel value) {
+              ),
+              onChanged: (GenderModel? newValue) {
+                setState(() {
+                  _selectedGender = newValue;
+                });
+                if (widget.onChanged != null) {
+                  widget.onChanged!(newValue!);
+                }
+              },
+              items: gendersList.map<DropdownMenuItem<GenderModel>>(
+                    (GenderModel value) {
                   return DropdownMenuItem<GenderModel>(
                     value: value,
                     child: Text(value.genderString ?? ''),
                   );
-                }).toList(),
-              ),
+                },
+              ).toList(),
             ),
           ),
         ),
@@ -98,8 +114,8 @@ class _GenderDropdownState extends State<GenderDropdown> {
 }
 
 class GenderModel {
-   String? genderString;
-   int? type;
+  String? genderString;
+  int? type;
 
-  GenderModel({ this.genderString,  this.type});
+  GenderModel({this.genderString, this.type});
 }

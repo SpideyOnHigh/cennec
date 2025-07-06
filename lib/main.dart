@@ -18,7 +18,7 @@ void main() async {
     variables: {
       "env": "staging",
       // "base": "https://cennec.staging9.com/",
-      "base": "https://9f2e-2405-201-2011-b920-1596-3811-8666-527e.ngrok-free.app/",
+      "base": "https://8716-2405-201-2011-b920-31-af0c-572f-88a9.ngrok-free.app/",
     },
   );
   runApp(const MyApp());

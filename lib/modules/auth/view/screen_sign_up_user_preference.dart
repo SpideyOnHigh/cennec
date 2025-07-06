@@ -8,6 +8,9 @@ import 'package:cennec/modules/core/common/widgets/toast_controller.dart';
 import 'package:cennec/modules/core/utils/app_config.dart';
 import 'package:cennec/modules/core/utils/app_urls.dart';
 import 'package:flutter/services.dart';
+import '../../core/common/widgets/base_rounded_corner_widget.dart';
+import '../../core/common/widgets/common_password_form_field.dart';
+import '../../core/common/widgets/common_text_field.dart';
 import '../../core/utils/common_import.dart';
 
 class ScreenSignUpUserPreference extends StatefulWidget {
@@ -55,67 +58,51 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
   }
 
   Widget displayNameField(BuildContext context) {
-    return BaseTextFormFieldRounded(
+    return CommonTextFormField(
       controller: userNameController,
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
-      onChange: () {
+      onChanged: (_) {
         if (errorUserName.value.isNotEmpty) {
           errorUserName.value = '';
         }
       },
-      hintText: getTranslate(APPStrings.textChooseDisplayName),
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
+      label: getTranslate(APPStrings.textDisplayName),
     );
   }
 
   Widget choosePasswordField(BuildContext context) {
-    return BasePasswordTextFormField(
-      hintText: getTranslate(APPStrings.textChoosePassword),
-      inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
+    return CommonPasswordTextFormField(
+      label: getTranslate(APPStrings.textChoosePassword),
       controller: choosePwdController,
-      isShowPassword: !showChoosePwd.value,
-      pressShowPassword: () {
+      isShowPassword: showChoosePwd.value,
+      onToggleVisibility: () {
         showChoosePwd.value = !showChoosePwd.value;
       },
-      onChange: () {
+      inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
+      errorText: errorChoosePwd.value,
+      onChanged: (val) {
         if (errorChoosePwd.value.isNotEmpty) {
           errorChoosePwd.value = '';
         }
       },
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
     );
   }
 
   Widget confirmPasswordField(BuildContext context) {
-    return BasePasswordTextFormField(
-      hintText: getTranslate(APPStrings.textConfirmPassword),
-      inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
+    return CommonPasswordTextFormField(
+      label: getTranslate(APPStrings.textConfirmPassword),
       controller: confirmPwdController,
-      isShowPassword: !showConfirmPwd.value,
-      pressShowPassword: () {
+      isShowPassword: showConfirmPwd.value,
+      onToggleVisibility: () {
         showConfirmPwd.value = !showConfirmPwd.value;
       },
-      onChange: () {
+      inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
+      errorText: errorConfirmPwd.value,
+      onChanged: (val) {
         if (errorConfirmPwd.value.isNotEmpty) {
           errorConfirmPwd.value = '';
         }
       },
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
     );
   }
 
@@ -124,7 +111,7 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
   Widget datePickerField(BuildContext context) {
     // todo change initial date time
     return BaseDatePicker(
-      hintText: dateText ?? getTranslate(APPStrings.textDateOfBirth),
+      label: getTranslate(APPStrings.textDateOfBirth),
       initialDateTime: pickedDateTime,
       onDateTimeChanged: (p0) {
         setState(() {
@@ -148,7 +135,7 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
   Widget genderPickerField(BuildContext context) {
     // todo change initial date time
     return GenderDropdown(
-      hintText: gender.genderString ?? getTranslate(APPStrings.textGender),
+      hintText:  getTranslate(APPStrings.textGender),
       onChanged: (p0) {
         setState(() {
           printWrapped("${p0.type}");
@@ -192,7 +179,7 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
   Widget signUpButton(BuildContext context) {
     return CommonButton(
       isLoading: isLoading.value,
-      text: getTranslate(APPStrings.textSignUp),
+      text: getTranslate(APPStrings.textNext),
       backgroundColor: Theme.of(context).colorScheme.primary,
       onTap: () {
         validate();
@@ -240,15 +227,11 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
 
   Widget getBody(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: Dimens.margin10),
-          logo(),
-          const SizedBox(height: Dimens.margin30),
-          signUpText(context),
-          const SizedBox(height: 40),
+
           displayNameField(context),
           Visibility(
             visible: errorUserName.value.isNotEmpty,
@@ -288,13 +271,8 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
               errorText: errorGender.value,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Dimens.margin25),
           signUpButton(context),
-          const SizedBox(height: 10),
-          alreadyAccountText(context),
-          const SizedBox(height: 10),
-          tapToSignIn(context),
-          const SizedBox(height: 10),
         ],
       ),
     );
@@ -338,7 +316,17 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
                           }
                           return true;
                         },
-                        child: SingleChildScrollView(child: getBody(context))),
+                      child: BaseRoundedBackgroundWidget(
+                        appBarText: getTranslate(APPStrings.textAccountSetUp),
+                        margin: const EdgeInsets.all(0),
+                        padding: const EdgeInsets.only(top: 24),
+                        child: Scaffold(
+                          resizeToAvoidBottomInset: true,
+                          backgroundColor: Colors.transparent,
+                          body: SingleChildScrollView(child: getBody(context)),
+                        ),
+                      ),
+                    ),
                 ),
               );
             }));
@@ -347,7 +335,7 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
   validate() {
     bool isValid = true;
     if (userNameController.text.trim().isEmpty) {
-      errorUserName.value = getTranslate(ValidationString.textValidateUserName);
+      errorUserName.value = getTranslate(ValidationString.textValidateDisplayName);
       isValid = false;
     }
     if (choosePwdController.text.isEmpty) {
