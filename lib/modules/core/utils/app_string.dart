@@ -16,6 +16,9 @@ class APPStrings {
   static const String textNoAccount = 'text_no_account';
   static const String textTapToSignUp = 'text_tap_to_sign_up';
   static const String textSignUp = 'text_sign_up';
+  static const String textAccountSetUp = 'text_account_set_up';
+  static const String textVerificationCode = 'text_verification_code';
+
   static const String textSignUpIntro = 'text_sign_up_intro';
   static const String textInvitationCodeInfo = 'text_invitation_code_info';
   static const String textInvitationCodePlaceholder = 'text_invitation_code_placeholder';
@@ -32,6 +35,7 @@ class APPStrings {
   static const String textVerify = 'text_verify';
   static const String textVerificationCodeEmail = 'text_verification_code';
   static const String textTimeSensitiveCodeSent = 'text_time_sensitive_code_sent';
+
   static const String textPleaseCheckInbox = 'text_please_check_inbox';
   static const String textPleaseCheckInboxForChangePwd = 'text_please_ch  eck_inbox_for_Forgot_pwd';
   static const String textButtonContinue = 'text_continue';
@@ -40,6 +44,7 @@ class APPStrings {
   static const String textForgotPwdWoQ = 'text_forgot_password_without?';
 
   static const String textChooseDisplayName = 'text_choose_display_name';
+  static const String textDisplayName = 'text_display_name';
   static const String textChoosePassword = 'text_choose_password';
   static const String textConfirmPassword = 'text_confirm_password';
   static const String textDateOfBirth = 'text_date_of_birth';
@@ -137,5 +142,17 @@ class APPStrings {
 
   static const String textExploreConnections = 'text_explore_connections';
   static const String textWelcomeSubText = 'text_welcome_sub_text';
+  static const String textCodeSentTotEmail = 'text_code_sent_to_email';
+
+  static const String textDidntReceiveCode = 'text_didnt_receive_code';
+  static const String textResendCode = 'text_resend_code';
+  static const String textResendIn = 'text_resend_in';
+  static const String textVerify = 'text_verify';
+  
+  static const String textSelectInterestsIntro = 'text_select_interests_intro';
+
+  static const String textArtistsAndCommunities = 'text_artists_and_communities';
+  
+
 
 }

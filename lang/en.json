@@ -17,10 +17,10 @@
   "text_have_account": "Already have an account?",
   "text_tap_to_sign_in": "Tap to Sign In!",
   "text_i_agree_to_the": "I agree to the",
-  "text_terms_and_conditions": "terms and conditions",
+  "text_terms_and_conditions": "Terms & Conditions",
   "text_and": "&",
-  "text_privacy_policy": "privacy policy",
-  "text_of_use": "of use",
+  "text_privacy_policy": "Privacy Policy",
+  "text_of_use": "of Use",
   "text_verify_email": "Verify Email",
   "text_verify": "Verify",
   "text_verification_code": "Verification Code",
@@ -140,8 +140,17 @@
 
 
   "text_explore_connections": "Go ahead and explore new connections",
-  "text_welcome_sub_text": "Discover New Connections and Meaningful Relationships with our app"
-
-
+  "text_welcome_sub_text": "Discover New Connections and Meaningful Relationships with our app",
+  "text_verification_code": "Verification Code",
+  "text_code_sent_to_email": "Enter the code sent to your email address.",
+  "text_didnt_receive_code": "Didn't receive a code",
+  "text_resend_code": "Resend code",
+  "text_resend_in": "Resend in",
+  "text_verify": "Verify",
+  "text_account_set_up": "Account Set Up",
+  "text_display_name": "Display Name",
+  "text_validate_displayname": "Display name cannot be empty.",
+  "text_select_interests_intro": "Select Interests,",
+  "text_artists_and_communities": "Artists, and Communities."
 }
 

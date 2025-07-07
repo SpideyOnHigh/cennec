@@ -97,7 +97,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
   Widget emailField(BuildContext context) {
     return CommonTextFormField(
       label: getTranslate(APPStrings.textEmail),
-      hintText: getTranslate(APPStrings.textEmail),
+      // hintText: getTranslate(APPStrings.textEmail),
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
@@ -112,7 +112,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
   Widget invitationTextField(BuildContext context) {
     return CommonTextFormField(
       label: getTranslate(APPStrings.textInvitationCodePlaceholder),
-      hintText: getTranslate(APPStrings.textInvitationCodePlaceholder),
+      // hintText: getTranslate(APPStrings.textInvitationCodePlaceholder),
       controller: codeController,
       isOptional: true,
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
@@ -125,85 +125,89 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
   }
 
   Widget agreeTermsAndCondition(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Checkbox(
-          checkColor: Colors.white,
-          activeColor: Theme.of(context).colorScheme.onSecondary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          value: agreedToTerms,
-          onChanged: (bool? value) {
-            setState(() {
-              agreedToTerms = value ?? false;
-              if(errorAgreement.value.isNotEmpty)
-                {
-                  errorAgreement.value = '';
-                }
-            });
-          },
-        ),
-        Expanded(
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                    text: '${getTranslate(APPStrings.textIAgreeToThe)} ',
-                    style: getTextStyleFromFont(
-                      AppFont.poppins,
-                      Dimens.margin15,
-                      Theme.of(context).colorScheme.onPrimary,
-                      FontWeight.w600,
-                    )),
-                TextSpan(
-                  text: getTranslate(APPStrings.textTermsAndConditions),
-                  style: getTextStyleFromFont(
-                    AppFont.poppins,
-                    Dimens.margin15,
-                    Theme.of(context).indicatorColor,
-                    FontWeight.w600,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                    Navigator.pushNamed(context, AppRoutes.routesScreenCms,arguments:AppConfig.paramTermCondition);
-                      // Add your terms and conditions action here
-                    },
-                ),
-                TextSpan(
-                    text: ' ${getTranslate(APPStrings.textAnd)} ',
-                    style: getTextStyleFromFont(
-                      AppFont.poppins,
-                      Dimens.margin18,
-                      Theme.of(context).colorScheme.onPrimary,
-                      FontWeight.w600,
-                    )),
-                TextSpan(
-                  text: getTranslate(APPStrings.textPrivacyPolicy),
-                  style: getTextStyleFromFont(
-                    AppFont.poppins,
-                    Dimens.margin15,
-                    Theme.of(context).indicatorColor,
-                    FontWeight.w600,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.pushNamed(context, AppRoutes.routesScreenCms,arguments:AppConfig.paramPrivacyPolicy);
-                    },
-                ),
-                TextSpan(
-                    text: ' ${getTranslate(APPStrings.textOfUse)}',
-                    style: getTextStyleFromFont(
-                      AppFont.poppins,
-                      Dimens.margin15,
-                      Theme.of(context).colorScheme.onPrimary,
-                      FontWeight.w600,
-                    )),
-              ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2.0), // Adjust as needed
+            child: Checkbox(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+              checkColor: Colors.white,
+              activeColor: Theme.of(context).colorScheme.onSecondary,
+              value: agreedToTerms,
+              onChanged: (bool? value) {
+                setState(() {
+                  agreedToTerms = value ?? false;
+                  if (errorAgreement.value.isNotEmpty) {
+                    errorAgreement.value = '';
+                  }
+                });
+              },
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 8),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin14,
+                  Theme.of(context).colorScheme.onPrimary,
+                  FontWeight.w500,
+                ),
+                children: [
+                  TextSpan(
+                    text: '${getTranslate(APPStrings.textIAgreeToThe)} ',
+                  ),
+                  TextSpan(
+                    text: getTranslate(APPStrings.textTermsAndConditions),
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      Dimens.margin14,
+                      AppColors.colorHyperLink, // Match image
+                      FontWeight.w500,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.routesScreenCms,
+                          arguments: AppConfig.paramTermCondition,
+                        );
+                      },
+                  ),
+                  TextSpan(
+                    text: ' and ',
+                  ),
+                  TextSpan(
+                    text: getTranslate(APPStrings.textPrivacyPolicy),
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      Dimens.margin14,
+                      AppColors.colorHyperLink, // Match image
+                      FontWeight.w500,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.routesScreenCms,
+                          arguments: AppConfig.paramPrivacyPolicy,
+                        );
+                      },
+                  ),
+                  TextSpan(
+                    text: ' ${getTranslate(APPStrings.textOfUse)}',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -237,7 +241,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
 
   Widget signUpButton(BuildContext context) {
     return CommonButton(
-      text: getTranslate(APPStrings.textSignUp),
+      text: getTranslate(APPStrings.textButtonContinue),
       isLoading: isLoading.value,
       backgroundColor: Theme.of(context).colorScheme.primary,
       onTap: () {
@@ -250,36 +254,65 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
 
   Widget alreadyAccountText(BuildContext context) {
     return Center(
-      child: Text(
-        getTranslate(APPStrings.textHaveAccount),
-        style: getTextStyleFromFont(
-          AppFont.poppins,
-          Dimens.margin18,
-          Theme.of(context).colorScheme.secondary,
-          FontWeight.w600,
-        ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          Text(
+            getTranslate(APPStrings.textHaveAccount), // "Already have an account?"
+            style: getTextStyleFromFont(
+              AppFont.poppins,
+              Dimens.margin14,
+              Theme.of(context).colorScheme.secondary,
+              FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 4),
+          TextButton(
+            onPressed: () {
+              _onLoginTap(context);
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(0, 0),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              getTranslate(APPStrings.textSignIn), // "Log In"
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin14,
+                Theme.of(context).colorScheme.onSecondary,
+                FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget tapToSignIn(BuildContext context) {
-    return Center(
-      child: TextButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: Text(
-          getTranslate(APPStrings.textTapToSignIn),
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin22,
-            Theme.of(context).colorScheme.onSecondary,
-            FontWeight.w700,
-          ),
-        ),
-      ),
-    );
+  void _onLoginTap(BuildContext context) {
+    Navigator.pop(context); // or Navigator.pushNamed(context, AppRoutes.login);
   }
+
+  // Widget tapToSignIn(BuildContext context) {
+  //   return Center(
+  //     child: TextButton(
+  //       onPressed: () {
+  //         Navigator.pop(context);
+  //       },
+  //       child: Text(
+  //         getTranslate(APPStrings.textTapToSignIn),
+  //         style: getTextStyleFromFont(
+  //           AppFont.poppins,
+  //           Dimens.margin22,
+  //           Theme.of(context).colorScheme.onSecondary,
+  //           FontWeight.w700,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget getBody(BuildContext context) {
     return Padding(
@@ -309,8 +342,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
               errorText: codeError.value,
             ),
           ),
-          const SizedBox(height: Dimens.margin25),
-          signUpButton(context),
+
           const SizedBox(height: 20),
           agreeTermsAndCondition(context),
           Visibility(
@@ -319,10 +351,11 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
               errorText: errorAgreement.value,
             ),
           ),
+          const SizedBox(height: Dimens.margin25),
+          signUpButton(context),
+
           const SizedBox(height: 20),
           alreadyAccountText(context),
-          const SizedBox(height: 10),
-          tapToSignIn(context),
         ],
       ),
     );
@@ -359,7 +392,8 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
             },
             child: BaseRoundedBackgroundWidget(
               appBarText: getTranslate(APPStrings.textSignUp),
-              margin: EdgeInsets.all(0),
+              margin: const EdgeInsets.all(0),
+              padding: const EdgeInsets.only(top: 24),
               child: Scaffold(
                 resizeToAvoidBottomInset: true,
                 backgroundColor: Colors.transparent,
@@ -398,6 +432,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
     }
 
     if (isValid) {
+
       getSignUpCode();
     }
   }

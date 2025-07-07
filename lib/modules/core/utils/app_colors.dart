@@ -28,4 +28,9 @@ class AppColors {
 
   // F0F1EE
   static const colorRoundedBgContainer = Color(0xFFF0F1EE);
+  // 354C94
+  static const colorHyperLink = Color(0xFF354C94);
+  //E0E5D9
+  static const colorSelectedInterestChip = Color(0xFFE0E5D9);
+  static const colorBlackTransparent = Color(0x1A000000);
 }

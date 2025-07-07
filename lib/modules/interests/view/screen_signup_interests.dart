@@ -125,50 +125,72 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
 
   Widget interestGridview() {
     return Wrap(
-      alignment: WrapAlignment.spaceAround,
-      spacing: Dimens.margin5,
-      children: [
-        ...List.generate(
-          filterList.value.length,
-          (index) => GestureDetector(
+      alignment: WrapAlignment.start,
+      spacing: Dimens.margin8,
+      runSpacing: Dimens.margin8,
+      children: List.generate(
+        filterList.value.length,
+            (index) {
+          final item = filterList.value[index];
+          final isSelected = item.isSelected ?? false;
+
+          return GestureDetector(
             onTap: () {
               setState(() {
-                filterList.value[index].isSelected = !filterList.value[index].isSelected!;
-                if (selectedInterests.contains(filterList.value[index].id ?? 0)) {
-                  selectedInterests.remove(filterList.value[index].id ?? 0);
+                item.isSelected = !isSelected;
+                if (selectedInterests.contains(item.id ?? 0)) {
+                  selectedInterests.remove(item.id ?? 0);
                 } else {
-                  selectedInterests.add(filterList.value[index].id ?? 0);
+                  selectedInterests.add(item.id ?? 0);
                 }
-                // interests[index].color = getRandomColor();
               });
             },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: Dimens.margin11),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 2.3,
-                  ),
-                  color:
-                      (filterList.value[index].isSelected ?? false) ? hexToColor(filterList.value[index].interestColor ?? '') : Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(15),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.colorSelectedInterestChip
+                    : AppColors.colorRoundedBgContainer,
+                border: Border.all(
+                  color: isSelected
+                      ? Colors.transparent
+                      : AppColors.colorBlackTransparent,
+                  width: 1,
                 ),
-                padding: const EdgeInsets.all(Dimens.margin8),
-                child: Text(
-                  filterList.value[index].interestName ?? '',
-                  style: getTextStyleFromFont(
-                    AppFont.poppins,
-                    Dimens.margin18,
-                    Theme.of(context).colorScheme.onSecondary,
-                    FontWeight.w600,
-                  ),
-                ),
+                borderRadius: BorderRadius.circular(22),
               ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      item.interestName ?? '',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: getTextStyleFromFont(
+                        AppFont.poppins,
+                        15,
+                        Colors.black,
+                        FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  if (isSelected) ...[
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.check,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ]
+                ],
+              ),
+
             ),
-          ),
-        )
-      ],
+          );
+        },
+      ),
     );
   }
 
@@ -212,20 +234,75 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
     );
   }
 
+
+  Widget interestAppBar(BuildContext context) {
+    return SafeArea(
+      bottom: false,
+      child: SizedBox(
+        height: Dimens.margin72, // Adjust as needed for spacing
+        child: Stack(
+          children: [
+            // Back arrow at far left
+            Align(
+              alignment: Alignment.centerLeft,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: const Icon(
+                  Icons.arrow_back,
+                  size: Dimens.margin20,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+
+            // Centered text
+            Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                   APPStrings.textSelectInterests,
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      Dimens.margin18,
+                      Colors.black,
+                      FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                   APPStrings.textArtistsAndCommunities,
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      Dimens.margin18,
+                      Colors.black,
+                      FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
   Widget getBody(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: Dimens.margin10),
-          logo(),
+          // const SizedBox(height: Dimens.margin10),
+          // logo(),
+          interestAppBar(context),
           const SizedBox(height: Dimens.margin20),
-          selectInterestsTitle(context),
-          chooseOneTexts(context),
-          const SizedBox(height: 20),
-          searchField(context),
-          const SizedBox(height: 10),
+          // selectInterestsTitle(context),
+          // chooseOneTexts(context),
+          // const SizedBox(height: 20),
+          // searchField(context),
           Expanded(
               child: Visibility(
             visible: filterList.value.isNotEmpty,
@@ -255,71 +332,71 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: MultiValueListenableBuilder(
-            valueListenables: [isLoading, modelInterestList, filterList, isUpdating],
-            builder: (context, values, child) {
-              return MultiBlocListener(
-                listeners: [
-                  BlocListener<GetInterestsListsBloc, GetInterestsListsState>(
-                    listener: (context, state) {
-                      isLoading.value = state is GetInterestsListsLoading;
-                      if (state is GetInterestsListsFailure) {
-                        if (state.errorMessage.generalError!.isNotEmpty) {
-                          ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                        }
-                      }
-                      if (state is GetInterestsListsResponse) {
-                        for (ModelInterests modelInterests in state.modelInterestsList.data ?? []) {
-                          modelInterestList.value.add(
-                              ModelInterests(id: modelInterests.id, interestName: modelInterests.interestName, interestColor: modelInterests.interestColor,isInterestAdded:modelInterests.isInterestAdded));
-                          filterList.value.add(
-                              ModelInterests(id: modelInterests.id, interestName: modelInterests.interestName, interestColor: modelInterests.interestColor,isInterestAdded:modelInterests.isInterestAdded));
-                        }
-                        // modelInterestList.value = state.modelInterestsList.data ?? [];
-                        // filterList.value = state.modelInterestsList.data ?? [];
-                      }
-                    },
-                  ),
-                  BlocListener<UpdateUserInterestsBloc, UpdateUserInterestsState>(
-                    listener: (context, state) {
-                      isUpdating.value = state is UpdateUserInterestsLoading;
-                      if (state is UpdateUserInterestsFailure) {
-                        if (state.errorMessage.generalError!.isNotEmpty) {
-                          ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                        }
-                        if (state.errorMessage.interestId != null) {
-                          ToastController.showToast(context, state.errorMessage.interestId ?? '', false);
-                        }
-                      }
-                      if (state is UpdateUserInterestsResponse) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          AppRoutes.routesScreenFindConnectionsSignUp,
-                          (route) => false,
-                        );
-                      }
-                    },
-                  ),
-                ],
-                child: Scaffold(
-                  resizeToAvoidBottomInset: true,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  body: IgnorePointer(
-                      ignoring: isLoading.value,
-                      child: Stack(
-                        children: [
-                          getBody(context),
-                          Visibility(
-                              visible: isLoading.value,
-                              child: const Center(
-                                child: CommonLoadingAnimation(),
-                              ))
-                        ],
-                      )),
-                ),
-              );
-            }));
+    return MultiValueListenableBuilder(
+        valueListenables: [isLoading, modelInterestList, filterList, isUpdating],
+        builder: (context, values, child) {
+          return MultiBlocListener(
+            listeners: [
+              BlocListener<GetInterestsListsBloc, GetInterestsListsState>(
+                listener: (context, state) {
+                  isLoading.value = state is GetInterestsListsLoading;
+                  if (state is GetInterestsListsFailure) {
+                    if (state.errorMessage.generalError!.isNotEmpty) {
+                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                    }
+                  }
+                  if (state is GetInterestsListsResponse) {
+                    for (ModelInterests modelInterests in state.modelInterestsList.data ?? []) {
+                      modelInterestList.value.add(
+                          ModelInterests(id: modelInterests.id, interestName: modelInterests.interestName, interestColor: modelInterests.interestColor,isInterestAdded:modelInterests.isInterestAdded));
+                      filterList.value.add(
+                          ModelInterests(id: modelInterests.id, interestName: modelInterests.interestName, interestColor: modelInterests.interestColor,isInterestAdded:modelInterests.isInterestAdded));
+                    }
+                    // modelInterestList.value = state.modelInterestsList.data ?? [];
+                    // filterList.value = state.modelInterestsList.data ?? [];
+                  }
+                },
+              ),
+              BlocListener<UpdateUserInterestsBloc, UpdateUserInterestsState>(
+                listener: (context, state) {
+                  isUpdating.value = state is UpdateUserInterestsLoading;
+                  if (state is UpdateUserInterestsFailure) {
+                    if (state.errorMessage.generalError!.isNotEmpty) {
+                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                    }
+                    if (state.errorMessage.interestId != null) {
+                      ToastController.showToast(context, state.errorMessage.interestId ?? '', false);
+                    }
+                  }
+                  if (state is UpdateUserInterestsResponse) {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.routesScreenFindConnectionsSignUp,
+                      (route) => false,
+                    );
+                  }
+                },
+              ),
+            ],
+            child: Scaffold(
+
+              resizeToAvoidBottomInset: true,
+              backgroundColor: AppColors.colorRoundedBgContainer,
+              body: IgnorePointer(
+                  ignoring: isLoading.value,
+                  child: Stack(
+                    children: [
+                      getBody(context),
+                      Visibility(
+                          visible: isLoading.value,
+                          child: const Center(
+                            child: CommonLoadingAnimation(),
+                          ))
+                    ],
+                  )),
+            ),
+          );
+        });
   }
 
   validate() {
