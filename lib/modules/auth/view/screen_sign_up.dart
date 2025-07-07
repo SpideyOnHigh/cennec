@@ -97,7 +97,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
   Widget emailField(BuildContext context) {
     return CommonTextFormField(
       label: getTranslate(APPStrings.textEmail),
-      hintText: getTranslate(APPStrings.textEmail),
+      // hintText: getTranslate(APPStrings.textEmail),
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
@@ -112,7 +112,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
   Widget invitationTextField(BuildContext context) {
     return CommonTextFormField(
       label: getTranslate(APPStrings.textInvitationCodePlaceholder),
-      hintText: getTranslate(APPStrings.textInvitationCodePlaceholder),
+      // hintText: getTranslate(APPStrings.textInvitationCodePlaceholder),
       controller: codeController,
       isOptional: true,
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
@@ -241,7 +241,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
 
   Widget signUpButton(BuildContext context) {
     return CommonButton(
-      text: getTranslate(APPStrings.textSignUp),
+      text: getTranslate(APPStrings.textButtonContinue),
       isLoading: isLoading.value,
       backgroundColor: Theme.of(context).colorScheme.primary,
       onTap: () {
@@ -254,36 +254,65 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
 
   Widget alreadyAccountText(BuildContext context) {
     return Center(
-      child: Text(
-        getTranslate(APPStrings.textHaveAccount),
-        style: getTextStyleFromFont(
-          AppFont.poppins,
-          Dimens.margin18,
-          Theme.of(context).colorScheme.secondary,
-          FontWeight.w600,
-        ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          Text(
+            getTranslate(APPStrings.textHaveAccount), // "Already have an account?"
+            style: getTextStyleFromFont(
+              AppFont.poppins,
+              Dimens.margin14,
+              Theme.of(context).colorScheme.secondary,
+              FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 4),
+          TextButton(
+            onPressed: () {
+              _onLoginTap(context);
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(0, 0),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              getTranslate(APPStrings.textSignIn), // "Log In"
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin14,
+                Theme.of(context).colorScheme.onSecondary,
+                FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget tapToSignIn(BuildContext context) {
-    return Center(
-      child: TextButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: Text(
-          getTranslate(APPStrings.textTapToSignIn),
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin22,
-            Theme.of(context).colorScheme.onSecondary,
-            FontWeight.w700,
-          ),
-        ),
-      ),
-    );
+  void _onLoginTap(BuildContext context) {
+    Navigator.pop(context); // or Navigator.pushNamed(context, AppRoutes.login);
   }
+
+  // Widget tapToSignIn(BuildContext context) {
+  //   return Center(
+  //     child: TextButton(
+  //       onPressed: () {
+  //         Navigator.pop(context);
+  //       },
+  //       child: Text(
+  //         getTranslate(APPStrings.textTapToSignIn),
+  //         style: getTextStyleFromFont(
+  //           AppFont.poppins,
+  //           Dimens.margin22,
+  //           Theme.of(context).colorScheme.onSecondary,
+  //           FontWeight.w700,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget getBody(BuildContext context) {
     return Padding(
@@ -327,8 +356,6 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
 
           const SizedBox(height: 20),
           alreadyAccountText(context),
-          const SizedBox(height: 10),
-          tapToSignIn(context),
         ],
       ),
     );

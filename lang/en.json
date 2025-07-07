@@ -146,6 +146,8 @@
   "text_verify": "Verify",
   "text_account_set_up": "Account Set Up",
   "text_display_name": "Display Name",
-  "text_validate_displayname": "Display name cannot be empty."
+  "text_validate_displayname": "Display name cannot be empty.",
+  "text_select_interests_intro": "Select Interests,",
+  "text_artists_and_communities": "Artists, and Communities."
 }
 

@@ -144,5 +144,11 @@ class APPStrings {
   static const String textResendCode = 'text_resend_code';
   static const String textResendIn = 'text_resend_in';
   static const String textVerify = 'text_verify';
+  
+  static const String textSelectInterestsIntro = 'text_select_interests_intro';
+
+  static const String textArtistsAndCommunities = 'text_artists_and_communities';
+  
+
 
 }
