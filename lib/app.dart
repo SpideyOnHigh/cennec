@@ -155,7 +155,7 @@ class MyAppState extends State<MaterialAppWidget> {
     return ThemeData.light().copyWith(
       primaryColor: Colors.white,
       useMaterial3: false,
-      hintColor: AppColors.colorDarkPurple,
+      hintColor: AppColors.colorBlack60,
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
         primary: AppColors.colorDarkBlue, // Random color

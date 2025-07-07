@@ -161,6 +161,7 @@ flutter:
         - asset: assets/fonts/Poppins-SemiBold.ttf
         - asset: assets/fonts/Poppins-Thin.ttf
         - asset: assets/fonts/Poppins-ThinItalic.ttf
+        - asset: assets/fonts/Poppins-Regular.ttf
           style: italic
 
     - family: Visby

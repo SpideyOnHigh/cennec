@@ -3,6 +3,7 @@ import 'package:cennec/modules/auth/model/model_sign_up_data_transfer.dart';
 import 'package:cennec/modules/core/common/widgets/base_rounded_corner_widget.dart';
 import 'package:cennec/modules/core/common/widgets/base_text_field_error_indicator.dart';
 import 'package:cennec/modules/core/common/widgets/button.dart';
+import 'package:cennec/modules/core/common/widgets/common_text_field.dart';
 import 'package:cennec/modules/core/common/widgets/email_validation.dart';
 import 'package:cennec/modules/core/common/widgets/toast_controller.dart';
 import 'package:cennec/modules/core/utils/app_config.dart';
@@ -69,26 +70,28 @@ class _ScreenForgotPasswordEmailState extends State<ScreenForgotPasswordEmail> {
         style: getTextStyleFromFont(
           AppFont.poppins,
           Dimens.margin18,
-          Theme.of(context).colorScheme.onPrimary,
-          FontWeight.w600,
+          AppColors.colorBlack,
+          FontWeight.w400,
         ));
   }
 
   Widget emailField(BuildContext context) {
-    return BaseTextFormFieldRounded(
-      hintText: getTranslate(APPStrings.textEmail),
+    return CommonTextFormField(
+      hintText: getTranslate(APPStrings.textHintEmail),
       controller: emailController,
-      onChange: () {
-        if (errorEmail.value.isNotEmpty) {
-          errorEmail.value = '';
-        }
-      },
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
+      borderRadius: Dimens.textSize8,
+      label: getTranslate(APPStrings.textEmail),
+      // onChange: () {
+      //   if (errorEmail.value.isNotEmpty) {
+      //     errorEmail.value = '';
+      //   }
+      // },
+      // hintStyle: getTextStyleFromFont(
+      //   AppFont.poppins,
+      //   Dimens.margin18,
+      //   Theme.of(context).hintColor,
+      //   FontWeight.w600,
+      // ),
     );
   }
 
@@ -122,7 +125,7 @@ class _ScreenForgotPasswordEmailState extends State<ScreenForgotPasswordEmail> {
 
   Widget nextButton(BuildContext context) {
     return CommonButton(
-      text: getTranslate(APPStrings.textButtonContinue),
+      text: getTranslate(APPStrings.textNext),
       backgroundColor: Theme.of(context).colorScheme.primary,
       isLoading: isLoading.value,
       onTap: () {
@@ -143,7 +146,6 @@ class _ScreenForgotPasswordEmailState extends State<ScreenForgotPasswordEmail> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: Dimens.margin30),
               // forgotPasswordText(context),
               // const SizedBox(height: 30),
               enterEmailText(context),
@@ -215,6 +217,8 @@ class _ScreenForgotPasswordEmailState extends State<ScreenForgotPasswordEmail> {
 
   void sendEmailVerification()  {
     Map<String, dynamic> body = {AppConfig.paramEmail: emailController.text.trim()};
-    BlocProvider.of<ForgotPasswordEmailBloc>(context).add(VerifyEmailForForgotPassword(body: body, url: AppUrls.apiSendResetLink));
+    Navigator.popAndPushNamed(context, AppRoutes.routesScreenForgotPasswordOtp,
+        arguments: ModelSignUpDataTransfer(email: emailController.text, code: ''));
+    // BlocProvider.of<ForgotPasswordEmailBloc>(context).add(VerifyEmailForForgotPassword(body: body, url: AppUrls.apiSendResetLink));
   }
 }

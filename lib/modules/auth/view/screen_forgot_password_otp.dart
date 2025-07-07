@@ -1,6 +1,7 @@
 import 'package:cennec/modules/auth/bloc/forgot_password_email_bloc/forgot_password_email_bloc.dart';
 import 'package:cennec/modules/auth/bloc/verify_sign_up_otp_bloc/verify_sign_up_otp_bloc.dart';
 import 'package:cennec/modules/auth/model/model_sign_up_data_transfer.dart';
+import 'package:cennec/modules/core/common/widgets/base_rounded_corner_widget.dart';
 import 'package:cennec/modules/core/common/widgets/button.dart';
 import 'package:cennec/modules/core/common/widgets/toast_controller.dart';
 import 'package:cennec/modules/core/utils/app_config.dart';
@@ -11,6 +12,7 @@ import '../../core/utils/common_import.dart';
 
 class ScreenForgotPasswordOtp extends StatefulWidget {
   final ModelSignUpDataTransfer modelSignUpDataTransfer;
+
   const ScreenForgotPasswordOtp({super.key, required this.modelSignUpDataTransfer});
 
   @override
@@ -28,6 +30,7 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
   final ValueNotifier<int> _timerNotifier = ValueNotifier<int>(30);
   final ValueNotifier<int> _attemptNotifier = ValueNotifier<int>(3);
   Timer? _timer;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -67,45 +70,39 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
     super.dispose();
   }
 
-  void sendEmailVerification()  {
+  void sendEmailVerification() {
     Map<String, dynamic> body = {AppConfig.paramEmail: widget.modelSignUpDataTransfer.email};
-    BlocProvider.of<ForgotPasswordEmailBloc>(context).add(VerifyEmailForForgotPassword(body: body, url: AppUrls.apiSendResetLink));
+    BlocProvider.of<ForgotPasswordEmailBloc>(context)
+        .add(VerifyEmailForForgotPassword(body: body, url: AppUrls.apiSendResetLink));
   }
 
   Widget resendButton() {
-    return Visibility(
-      visible: _timerNotifier.value == 0,
-      replacement: ValueListenableBuilder<int>(
-        valueListenable: _timerNotifier,
-        builder: (context, value, child) {
-          return Text(
-            'Resend OTP in $value seconds',
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              Dimens.margin18,
-              Theme.of(context).colorScheme.onPrimary,
-              FontWeight.w600,
-            ),
-          );
-        },
-      ),
-      child: ValueListenableBuilder<int>(
-        valueListenable: _attemptNotifier,
-        builder: (context, value, child) {
-          return SizedBox(
-            width: Dimens.margin150,
-            child: CommonButton(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              borderRadius: const BorderRadius.all(Radius.circular(Dimens.margin10)),
-              height: Dimens.margin40,
-              padding: const EdgeInsets.symmetric(horizontal: Dimens.margin5),
-              onTap: value > 0 && _timerNotifier.value == 0 ? _resendOtp : null,
-              text: 'Resend OTP',
-            ),
-          );
-        },
-      ),
-    );
+   return  GestureDetector(
+     onTap: _resendOtp, // Always enabled
+     child: RichText(
+       text: TextSpan(
+         style: getTextStyleFromFont(
+           AppFont.poppins,
+           Dimens.margin16,
+           Theme.of(context).colorScheme.onPrimary,
+           FontWeight.w400,
+         ),
+         children: [
+           const TextSpan(text: 'Didn’t receive a code? '),
+           TextSpan(
+             text: 'Resend code',
+             style: getTextStyleFromFont(
+               AppFont.poppins,
+               Dimens.margin16,
+               Theme.of(context).colorScheme.onPrimary,
+               FontWeight.w600,
+             ),
+           ),
+         ],
+       ),
+     ),
+   );
+
   }
 
   Widget navigationWithLogo() {
@@ -152,13 +149,13 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
 
   Widget sensitiveCodeText(BuildContext context) {
     return Text(
-        "${getTranslate(APPStrings.textTimeSensitiveCodeSent)} ${widget.modelSignUpDataTransfer.email}. ${getTranslate(APPStrings.textPleaseCheckInboxForChangePwd)}",
+        getTranslate(APPStrings.textTimeSensitiveCodeSent),
         textAlign: TextAlign.center,
         style: getTextStyleFromFont(
           AppFont.poppins,
           Dimens.margin18,
           Theme.of(context).colorScheme.onPrimary,
-          FontWeight.w600,
+          FontWeight.w400,
         ));
   }
 
@@ -167,21 +164,23 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
     return Form(
       key: formKey,
       child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Dimens.margin10),
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.margin30),
           child: PinCodeTextField(
             appContext: context,
-            textStyle: TextStyle(color: Theme.of(context).hintColor, fontFamily: AppFont.poppins, fontSize: Dimens.margin30),
+            textStyle: TextStyle(
+                color: Theme.of(context).hintColor, fontFamily: AppFont.poppins, fontSize: Dimens.margin30),
             showCursor: false,
             length: 4,
             blinkWhenObscuring: true,
             hintCharacter: '',
-            hintStyle: getTextStyleFromFont(AppFont.poppins, Dimens.margin24, Theme.of(context).hintColor, FontWeight.w700),
+            hintStyle: getTextStyleFromFont(
+                AppFont.poppins, Dimens.margin24, Theme.of(context).hintColor, FontWeight.w700),
             animationType: AnimationType.fade,
             pinTheme: PinTheme(
                 shape: PinCodeFieldShape.box,
-                borderRadius: BorderRadius.circular(Dimens.margin15),
-                fieldHeight: Dimens.margin60,
-                fieldWidth: Dimens.margin60,
+                borderRadius: BorderRadius.circular(5),
+                fieldHeight: Dimens.margin64,
+                fieldWidth: Dimens.margin56,
                 activeFillColor: Theme.of(context).primaryColor,
                 activeColor: Theme.of(context).primaryColor,
                 selectedFillColor: Theme.of(context).primaryColor,
@@ -245,12 +244,11 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
 
   Widget nextButton(BuildContext context) {
     return CommonButton(
-      text: getTranslate(APPStrings.textButtonContinue),
+      text: getTranslate(APPStrings.textVerify),
       backgroundColor: Theme.of(context).colorScheme.primary,
       isLoading: isLoading.value,
       onTap: () {
         validate();
-
         // Navigator.pushNamed(context, AppRoutes.routesScreenSetNewPassword);
       },
     );
@@ -259,17 +257,14 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
   Widget getBody(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
-          height: Dimens.margin10,
-        ),
-        navigationWithLogo(),
+        // navigationWithLogo(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: Dimens.margin30),
-              forgotPasswordText(context),
+              // const SizedBox(height: Dimens.margin30),
+              // forgotPasswordText(context),
               const SizedBox(height: 30),
               sensitiveCodeText(context),
               const SizedBox(height: 30),
@@ -290,8 +285,7 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
     return MultiValueListenableBuilder(
         valueListenables: [isLoading, _timerNotifier, _attemptNotifier],
         builder: (context, values, child) {
-          return SafeArea(
-              child: MultiBlocListener(
+          return MultiBlocListener(
             listeners: [
               BlocListener<VerifySignUpOtpBloc, VerifySignUpOtpState>(
                 listener: (context, state) {
@@ -307,7 +301,8 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
                   if (state is VerifySignUpOtpResponse) {
                     ToastController.showToast(context, state.modelVerifySignUpOtp.message ?? '', true);
                     Navigator.pushNamed(context, AppRoutes.routesScreenSetNewPassword,
-                        arguments: ModelSignUpDataTransfer(email: widget.modelSignUpDataTransfer.email, code: smsOTP));
+                        arguments: ModelSignUpDataTransfer(
+                            email: widget.modelSignUpDataTransfer.email, code: smsOTP));
                   }
                 },
               ),
@@ -320,12 +315,15 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
                 },
               )
             ],
-            child: Scaffold(
-              resizeToAvoidBottomInset: true,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              body: SingleChildScrollView(child: getBody(context)),
+            child: BaseRoundedBackgroundWidget(
+              appBarText: getTranslate(APPStrings.textVerificationCodeEmail),
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                body: SingleChildScrollView(child: getBody(context)),
+              ),
             ),
-          ));
+          );
         });
   }
 
@@ -338,7 +336,14 @@ class _ScreenForgotPasswordOtpState extends State<ScreenForgotPasswordOtp> {
   }
 
   void verifyOtp() async {
-    Map<String, dynamic> body = {AppConfig.paramEmail: widget.modelSignUpDataTransfer.email, AppConfig.paramOtp: smsOTP};
-    BlocProvider.of<VerifySignUpOtpBloc>(context).add(VerifySignUpOtp(body: body, url: AppUrls.apiValidateOtp));
+    Map<String, dynamic> body = {
+      AppConfig.paramEmail: widget.modelSignUpDataTransfer.email,
+      AppConfig.paramOtp: smsOTP
+    };
+    Navigator.pushNamed(context, AppRoutes.routesScreenSetNewPassword,
+    arguments: ModelSignUpDataTransfer(
+    email: widget.modelSignUpDataTransfer.email, code: smsOTP));
+  //   BlocProvider.of<VerifySignUpOtpBloc>(context)
+  //       .add(VerifySignUpOtp(body: body, url: AppUrls.apiValidateOtp));
   }
 }
