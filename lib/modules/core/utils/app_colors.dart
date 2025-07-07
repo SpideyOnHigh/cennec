@@ -32,4 +32,7 @@ class AppColors {
   //E0E5D9
   static const colorSelectedInterestChip = Color(0xFFE0E5D9);
   static const colorBlackTransparent = Color(0x1A000000);
+
+  // DC3E74
+  static const menuPinkColor = Color(0xFFDC3E74);
 }

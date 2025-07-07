@@ -1,9 +1,10 @@
-import 'package:cennec/modules/core/utils/common_import.dart';
-import 'package:cennec/modules/dashboard/view/dashboard_home.dart';
-import 'package:cennec/modules/dashboard/view/dashboard_messages.dart';
-import 'package:cennec/modules/dashboard/view/dashboard_profile.dart';
-import 'package:cennec/modules/dashboard/view/dashboard_recommendations.dart';
-import 'package:cennec/modules/dashboard/view/dashboard_search.dart';
+import 'dart:io';
+import '../../core/utils/common_import.dart';
+import 'dashboard_home.dart';
+import 'dashboard_messages.dart';
+import 'dashboard_profile.dart';
+import 'dashboard_recommendations.dart';
+import 'dashboard_search.dart';
 
 class ScreenDashboard extends StatefulWidget {
   const ScreenDashboard({super.key});
@@ -15,52 +16,7 @@ class ScreenDashboard extends StatefulWidget {
 class _ScreenDashboardState extends State<ScreenDashboard> {
   ValueNotifier<int> navIndex = ValueNotifier(0);
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Widget bottomBar() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: navIndex.value,
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      onTap: (value) {
-        navIndex.value = value;
-      },
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      items: [
-        BottomNavigationBarItem(
-          icon: Image.asset(APPImages.icBottomHome, color: Colors.grey, width: Dimens.margin25, height: Dimens.margin25),
-          label: "",
-          activeIcon: Image.asset(APPImages.icBottomHome, color: Colors.white, width: Dimens.margin25, height: Dimens.margin25),
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(APPImages.icBottomSearch, width: Dimens.margin25, height: Dimens.margin25),
-          label: "",
-          activeIcon: Image.asset(APPImages.icBottomSearch, color: Colors.white, width: Dimens.margin25, height: Dimens.margin25),
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(APPImages.icBottomCennec, width: Dimens.margin30, height: Dimens.margin30),
-          label: "",
-          activeIcon: Image.asset(APPImages.icCennecBottom, width: Dimens.margin35, height: Dimens.margin35),
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(APPImages.icBottomMsg, width: Dimens.margin25, height: Dimens.margin25),
-          label: "",
-          activeIcon: Image.asset(APPImages.icBottomMsg, color: Colors.white, width: Dimens.margin25, height: Dimens.margin25),
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(APPImages.icBottomProfile, width: Dimens.margin25, height: Dimens.margin25),
-          label: "",
-          activeIcon: Image.asset(APPImages.icBottomProfile, color: Colors.white, width: Dimens.margin25, height: Dimens.margin25),
-        ),
-      ],
-    );
-  }
-
-  List<Widget> currentScreen = [
+  final List<Widget> _screens = [
     const DashboardHome(),
     const DashboardSearch(),
     const DashboardRecommendations(),
@@ -68,32 +24,108 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
     const DashboardProfile(),
   ];
 
-  Widget getBody() {
-    return currentScreen[navIndex.value];
-    /*  return IndexedStack(
-      index: navIndex.value,
-      children: const [
-        DashboardHome(),
-        DashboardSearch(),
-        DashboardRecommendations(),
-        DashboardMessages(),
-        DashboardProfile(),
-      ],
-    );*/
+  void onItemTapped(int index) {
+    navIndex.value = index;
+  }
+
+  Widget buildIcon(int index, String assetPath) {
+    final bool isSelected = navIndex.value == index;
+    return IconButton(
+      onPressed: () => onItemTapped(index),
+      icon: Image.asset(
+        assetPath,
+        color: isSelected ? AppColors.menuPinkColor : Colors.grey,
+        width: Dimens.margin28,
+        height: Dimens.margin28,
+      ),
+    );
+  }
+
+  Widget buildFAB() {
+    final bool isCenterSelected = navIndex.value == 2;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: Dimens.margin72,
+      height: Dimens.margin72,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+        border: Border.all(
+          color: isCenterSelected ? AppColors.menuPinkColor : Colors.grey,
+          width: 5,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: FloatingActionButton(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        onPressed: () => onItemTapped(2),
+        child: Image.asset(
+          isCenterSelected
+              ? APPImages.icCennecBottom // active colorful icon
+              : APPImages.icBottomCennec, // default grey icon
+          width: Dimens.margin35,
+          height: Dimens.margin35,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiValueListenableBuilder(
-        valueListenables: [navIndex],
-        builder: (context, values, child) {
-          return Scaffold(
-            bottomNavigationBar: SizedBox(
-              height: Platform.isAndroid ? Dimens.margin70 : Dimens.margin95,
-              child: bottomBar(),
+      valueListenables: [navIndex],
+      builder: (context, values, _) {
+        return Scaffold(
+          extendBody: true,
+          body: _screens[navIndex.value],
+
+          floatingActionButton: buildFAB(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+          bottomNavigationBar: BottomAppBar(
+            shape: const CircularNotchedRectangle(),
+            notchMargin: Dimens.margin8,
+            elevation: 12,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SizedBox(
+                height: Platform.isAndroid ? Dimens.margin70 : Dimens.margin95,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Left side
+                    Row(
+                      children: [
+                        buildIcon(0, APPImages.iconHome),
+                        const SizedBox(width: Dimens.margin24),
+                        buildIcon(1, APPImages.iconCennections),
+                      ],
+                    ),
+
+                    // Right side
+                    Row(
+                      children: [
+                        buildIcon(3, APPImages.iconChat),
+                        const SizedBox(width: Dimens.margin24),
+                        buildIcon(4, APPImages.iconAccount),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
-            body: getBody(),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }
