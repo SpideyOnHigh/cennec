@@ -34,7 +34,8 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
 
   @override
   void initState() {
-    printWrapped("init called========================================================================");
+    printWrapped(
+        "init called========================================================================");
     getInterests();
     super.initState();
   }
@@ -94,7 +95,8 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
         AppFont.poppins,
         Dimens.margin18,
         Theme.of(context).hintColor.withOpacity(0.9),
-        FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ?? FontWeight.w500,
+        FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ??
+            FontWeight.w500,
       ),
     );
   }
@@ -104,14 +106,19 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
     setState(() {
       if (searchController.text.length > 1) {
         filterList.value.clear();
-        filterList.value.addAll(
-            modelInterestList.value.where((interest) => (interest.interestName ?? '').toLowerCase().contains(searchController.text.toLowerCase())).toList());
+        filterList.value.addAll(modelInterestList.value
+            .where((interest) => (interest.interestName ?? '')
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()))
+            .toList());
       }
       if (searchController.text.length < 2) {
         for (int i = 0; i < modelInterestList.value.length; i++) {
           for (int j = 0; j < filterList.value.length; j++) {
-            if (modelInterestList.value[i].id == filterList.value[j].id && filterList.value[j].isSelected == true) {
-              modelInterestList.value[i].isSelected = filterList.value[j].isSelected;
+            if (modelInterestList.value[i].id == filterList.value[j].id &&
+                filterList.value[j].isSelected == true) {
+              modelInterestList.value[i].isSelected =
+                  filterList.value[j].isSelected;
             }
           }
         }
@@ -130,7 +137,7 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
       runSpacing: Dimens.margin8,
       children: List.generate(
         filterList.value.length,
-            (index) {
+        (index) {
           final item = filterList.value[index];
           final isSelected = item.isSelected ?? false;
 
@@ -186,7 +193,6 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
                   ]
                 ],
               ),
-
             ),
           );
         },
@@ -234,7 +240,6 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
     );
   }
 
-
   Widget interestAppBar(BuildContext context) {
     return SafeArea(
       bottom: false,
@@ -262,7 +267,7 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                   APPStrings.textSelectInterests,
+                    getTranslate(APPStrings.textSelectInterests).toString(),
                     style: getTextStyleFromFont(
                       AppFont.poppins,
                       Dimens.margin18,
@@ -271,7 +276,8 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
                     ),
                   ),
                   Text(
-                   APPStrings.textArtistsAndCommunities,
+                    getTranslate(APPStrings.textArtistsAndCommunities)
+                        .toString(),
                     style: getTextStyleFromFont(
                       AppFont.poppins,
                       Dimens.margin18,
@@ -287,7 +293,6 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
       ),
     );
   }
-
 
   Widget getBody(BuildContext context) {
     return Padding(
@@ -313,7 +318,8 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
                 AppFont.poppins,
                 Dimens.margin18,
                 Theme.of(context).hintColor.withOpacity(0.9),
-                FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ?? FontWeight.w500,
+                FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ??
+                    FontWeight.w500,
               ),
             )),
             child: SingleChildScrollView(
@@ -333,7 +339,12 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
   @override
   Widget build(BuildContext context) {
     return MultiValueListenableBuilder(
-        valueListenables: [isLoading, modelInterestList, filterList, isUpdating],
+        valueListenables: [
+          isLoading,
+          modelInterestList,
+          filterList,
+          isUpdating
+        ],
         builder: (context, values, child) {
           return MultiBlocListener(
             listeners: [
@@ -342,15 +353,23 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
                   isLoading.value = state is GetInterestsListsLoading;
                   if (state is GetInterestsListsFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is GetInterestsListsResponse) {
-                    for (ModelInterests modelInterests in state.modelInterestsList.data ?? []) {
-                      modelInterestList.value.add(
-                          ModelInterests(id: modelInterests.id, interestName: modelInterests.interestName, interestColor: modelInterests.interestColor,isInterestAdded:modelInterests.isInterestAdded));
-                      filterList.value.add(
-                          ModelInterests(id: modelInterests.id, interestName: modelInterests.interestName, interestColor: modelInterests.interestColor,isInterestAdded:modelInterests.isInterestAdded));
+                    for (ModelInterests modelInterests
+                        in state.modelInterestsList.data ?? []) {
+                      modelInterestList.value.add(ModelInterests(
+                          id: modelInterests.id,
+                          interestName: modelInterests.interestName,
+                          interestColor: modelInterests.interestColor,
+                          isInterestAdded: modelInterests.isInterestAdded));
+                      filterList.value.add(ModelInterests(
+                          id: modelInterests.id,
+                          interestName: modelInterests.interestName,
+                          interestColor: modelInterests.interestColor,
+                          isInterestAdded: modelInterests.isInterestAdded));
                     }
                     // modelInterestList.value = state.modelInterestsList.data ?? [];
                     // filterList.value = state.modelInterestsList.data ?? [];
@@ -362,10 +381,12 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
                   isUpdating.value = state is UpdateUserInterestsLoading;
                   if (state is UpdateUserInterestsFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                     if (state.errorMessage.interestId != null) {
-                      ToastController.showToast(context, state.errorMessage.interestId ?? '', false);
+                      ToastController.showToast(
+                          context, state.errorMessage.interestId ?? '', false);
                     }
                   }
                   if (state is UpdateUserInterestsResponse) {
@@ -379,7 +400,6 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
               ),
             ],
             child: Scaffold(
-
               resizeToAvoidBottomInset: true,
               backgroundColor: AppColors.colorRoundedBgContainer,
               body: IgnorePointer(
@@ -401,18 +421,24 @@ class _ScreenSignupInterestsState extends State<ScreenSignupInterests> {
 
   validate() {
     if (selectedInterests.isEmpty) {
-      ToastController.showToast(context, getTranslate(ValidationString.textValidateOneInterests), false);
+      ToastController.showToast(context,
+          getTranslate(ValidationString.textValidateOneInterests), false);
     } else {
       updateInterests();
     }
   }
 
-  void getInterests()  {
-    BlocProvider.of<GetInterestsListsBloc>(context).add(GetInterestsLists(url: AppUrls.apiGetInterests));
+  void getInterests() {
+    BlocProvider.of<GetInterestsListsBloc>(context)
+        .add(GetInterestsLists(url: AppUrls.apiGetInterests));
   }
 
-  void updateInterests()  {
-    Map<String, dynamic> body = {AppConfig.paramUserId: getUser().userData?.id ?? 0, AppConfig.paramInterestsId: selectedInterests.toList()};
-    BlocProvider.of<UpdateUserInterestsBloc>(context).add(UpdateUserInterests(url: AppUrls.apiUpdateUserInterests, body: body));
+  void updateInterests() {
+    Map<String, dynamic> body = {
+      AppConfig.paramUserId: getUser().userData?.id ?? 0,
+      AppConfig.paramInterestsId: selectedInterests.toList()
+    };
+    BlocProvider.of<UpdateUserInterestsBloc>(context).add(
+        UpdateUserInterests(url: AppUrls.apiUpdateUserInterests, body: body));
   }
 }
