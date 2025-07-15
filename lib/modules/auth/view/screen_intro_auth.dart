@@ -82,6 +82,19 @@ class ScreenWelcome extends StatelessWidget {
                   },
                 ),
                 const Spacer(flex: 2),
+
+                CommonButton(
+                  text: getTranslate(APPStrings.textSignUp),
+                  isOutlined: true,
+                  borderColor: Colors.white,
+                  textColor: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  height: Dimens.margin60,
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.routeSearchNewConnection);
+                  },
+                ),
+                const Spacer(flex: 2),
               ],
             ),
           ),
