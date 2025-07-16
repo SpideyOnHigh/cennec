@@ -296,7 +296,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
   }
 
   loginEvent(String email, String password) async {
-    Map<String, dynamic> body = {AppConfig.paramEmail: email, AppConfig.paramPassword: password,AppConfig.paramToken:PreferenceHelper.getString(PreferenceHelper.fcmToken)};
+    // Map<String, dynamic> body = {AppConfig.paramEmail: email, AppConfig.paramPassword: password,AppConfig.paramToken:PreferenceHelper.getString(PreferenceHelper.fcmToken)};
+    Map<String, dynamic> body = {AppConfig.paramEmail: email, AppConfig.paramPassword: password,AppConfig.paramToken:"jasldnasndajknd"};
     BlocProvider.of<LoginBloc>(context).add(OnLogin(body: body, url: AppUrls.apiUserLogin));
   }
 }

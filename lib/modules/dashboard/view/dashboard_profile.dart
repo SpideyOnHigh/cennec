@@ -23,7 +23,7 @@ class _DashboardProfileState extends State<DashboardProfile> {
     return Row(
       children: [
         Text(
-          "My Profile",
+          "My Profiles",
           style: getTextStyleFromFont(
             AppFont.poppins,
             Dimens.margin25,
@@ -39,7 +39,9 @@ class _DashboardProfileState extends State<DashboardProfile> {
     return InkWell(
       // onTap: () => Navigator.pop(context),
       child: Container(
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(Dimens.margin50)),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.circular(Dimens.margin50)),
         height: Dimens.margin45,
         width: Dimens.margin45,
         child: Padding(
@@ -55,14 +57,14 @@ class _DashboardProfileState extends State<DashboardProfile> {
       text,
       style: getTextStyleFromFont(
         AppFont.poppins,
-        Dimens.margin20,
+        Dimens.margin18,
         Theme.of(context).colorScheme.onSecondary,
-        FontWeight.w600,
+        FontWeight.w500,
       ),
     );
   }
 
-  Widget getBody() {
+  Widget getBody2() {
     return Stack(
       children: [
         Visibility(
@@ -74,17 +76,16 @@ class _DashboardProfileState extends State<DashboardProfile> {
               height: MediaQuery.of(context).size.height / 1.7,
             ),
             child: Image.network(
-              loadingBuilder:
-                  (context, child, loadingProgress) {
+              loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) {
                   return child; // Image is fully loaded
                 }
                 return const Center(
-                  child:
-                  CommonLoadingAnimation(), // Show the loading animation
+                  child: CommonLoadingAnimation(), // Show the loading animation
                 );
               },
-              (getUser().userData ?? UserData()).defaultProfilePic ?? '', // Replace with your actual image path
+              (getUser().userData ?? UserData()).defaultProfilePic ?? '',
+              // Replace with your actual image path
               fit: BoxFit.cover,
               width: double.maxFinite,
               height: MediaQuery.of(context).size.height / 1.7,
@@ -99,7 +100,8 @@ class _DashboardProfileState extends State<DashboardProfile> {
           child: Container(
             height: Dimens.margin500,
             decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(Dimens.margin30), topRight: Radius.circular(Dimens.margin30)),
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(Dimens.margin30), topRight: Radius.circular(Dimens.margin30)),
                 color: Theme.of(context).scaffoldBackgroundColor),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -119,13 +121,13 @@ class _DashboardProfileState extends State<DashboardProfile> {
                       ListTile(
                         title: textWidget('Edit Profile'),
                         onTap: () {
-                          Navigator.pushNamed(context, AppRoutes.routesScreenEditProfile).then((value) {
-                            if(value == true)
-                              {
-                                setState(() {
-                                });
+                          Navigator.pushNamed(context, AppRoutes.routesScreenEditProfile).then(
+                            (value) {
+                              if (value == true) {
+                                setState(() {});
                               }
-                          },);
+                            },
+                          );
                         },
                         trailing: Padding(
                           padding: const EdgeInsets.all(14.0),
@@ -206,6 +208,121 @@ class _DashboardProfileState extends State<DashboardProfile> {
     );
   }
 
+  Widget getBody() {
+    final user = getUser().userData ?? UserData();
+    final profileImage = user.defaultProfilePic ?? '';
+    print("User : ${user.name}");
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.bottomLeft,
+          children: [
+            // Background profile image
+            Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              width: double.infinity,
+              child: profileImage.isNotEmpty
+                  ? Image.network(
+                      profileImage,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(child: CommonLoadingAnimation());
+                      },
+                    )
+                  : Image.asset(APPImages.icDummyProfile, fit: BoxFit.cover),
+            ),
+
+            // Name overlay
+            Positioned(
+              left: Dimens.margin20,
+              bottom: Dimens.margin20,
+              child: Text(
+                user.name ?? 'User Name',
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin22,
+                  Colors.black,
+                  FontWeight.w600,
+                ),
+              ),
+            )
+          ],
+        ),
+
+        // Settings Panel
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(Dimens.margin20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              // color: Colors.red,
+              // borderRadius: const BorderRadius.only(
+              //   topLeft: Radius.circular(Dimens.margin30),
+              //   topRight: Radius.circular(Dimens.margin30),
+              // ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+              // borderRadius: const BorderRadius.only(
+              //   topLeft: Radius.circular(Dimens.margin30),
+              //   to
+              child: ListView(
+                padding: EdgeInsets.symmetric(horizontal: Dimens.margin16,vertical: Dimens.margin5),
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  _buildTile("Profile Preview & Edit", APPImages.icBottomProfile, () {
+                    Navigator.pushNamed(context, AppRoutes.routesScreenEditProfile).then((value) {
+                      if (value == true) setState(() {});
+                    });
+                  }),
+                  _buildTile("Connection Preferences", APPImages.icConnectionPref, () {
+                    Navigator.pushNamed(context, AppRoutes.routesScreenPreferences);
+                  }),
+                  _buildTile("Settings", APPImages.icSetting, () {
+                    Navigator.pushNamed(context, AppRoutes.routesScreenSettings);
+                  }),
+                  _buildTile("About Cennec", null, () {
+                    Navigator.pushNamed(context, AppRoutes.routesScreenAboutUs, arguments: true);
+                  }),
+                  _buildTile("Community Guidelines", null, () {}),
+                  _buildTile("Feedback", null, () {
+                    Navigator.pushNamed(context, AppRoutes.routesScreenFeedback);
+                  }),
+                  _buildTile("Logout", null, () {
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (context) => CupertinoConfirmationDialog(
+                        title: "Logout",
+                        description: "Are you sure you want to logout?",
+                        cancelText: "No",
+                        confirmText: "Yes",
+                        onCancel: () => Navigator.pop(context),
+                        onConfirm: logoutEvent,
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Widget _divider() => const Divider(thickness: Dimens.margin1);
+
+  Widget _buildTile(String title, String? iconPath, VoidCallback onTap) {
+    return ListTile(
+      minTileHeight: Dimens.margin45,
+      contentPadding: EdgeInsets.symmetric(vertical: Dimens.margin2),
+      onTap: onTap,
+      title: textWidget(title),
+      trailing: const Icon(Icons.arrow_forward_ios_outlined, size: 16),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // FocusScope.of(context).unfocus();
@@ -215,27 +332,28 @@ class _DashboardProfileState extends State<DashboardProfile> {
         if (state is LogoutResponse) {
           ToastController.showToast(context, state.modelLogoutSuccess.message ?? '', true);
           PreferenceHelper.clear();
-          NavigatorKey.navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRoutes.routesLogin, (route) => false);
+          NavigatorKey.navigatorKey.currentState!
+              .pushNamedAndRemoveUntil(AppRoutes.routesLogin, (route) => false);
         }
-          if (state is LogoutFailure) {
-            if(state.errorMessage.generalError!.isNotEmpty)
-            {
-              ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-            }
+        if (state is LogoutFailure) {
+          if (state.errorMessage.generalError!.isNotEmpty) {
+            ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
           }
+        }
       },
-      child: IgnorePointer(
-        ignoring: isLoading.value,
-        child: Scaffold(
-          body: Stack(
-            children: [
-              getBody(),
-              Visibility(
-                visible: isLoading.value,
-                child: const CommonLoadingAnimation(
-                ),
-              )
-            ],
+      child: SafeArea(
+        child: IgnorePointer(
+          ignoring: isLoading.value,
+          child: Scaffold(
+            body: Stack(
+              children: [
+                getBody(),
+                Visibility(
+                  visible: isLoading.value,
+                  child: const CommonLoadingAnimation(),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -243,8 +361,7 @@ class _DashboardProfileState extends State<DashboardProfile> {
   }
 
   // logout event
-  void logoutEvent() async{
+  void logoutEvent() async {
     BlocProvider.of<LogoutBloc>(context).add(UserLogout(url: AppUrls.apiUserLogout));
   }
-
 }

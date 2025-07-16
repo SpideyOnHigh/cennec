@@ -17,6 +17,7 @@ class ValidationString {
   static const String textValidateDisplayName = 'text_validate_displayname';
   static const String textValidateCnfPwd = 'text_validate_cnf_Pwd';
   static const String textValidateChoosePwd = 'text_validate_choosePwd';
+  static const String textValidationNewPwd = 'text_validate_enter_new_pass';
   static const String textValidatePwdNotMatches = 'text_validate_pwd_not_match';
   static const String textValidateSelectDob= 'text_validate_choose_dob';
   static const String textValidateSelectGender= 'text_validate_select_gender';

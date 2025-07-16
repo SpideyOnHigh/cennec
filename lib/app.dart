@@ -159,7 +159,7 @@ class MyAppState extends State<MaterialAppWidget> {
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
         primary: AppColors.colorDarkBlue, // Random color
-        onPrimary: AppColors.colorBlack, // White
+        onPrimary: AppColors.colorDarkBlue, // White
         secondary: AppColors.colorGreyLight, // Random color
         onSecondary: AppColors.colorGreyLight1, // Black
         error: Color(0xFFF44336), // Random color

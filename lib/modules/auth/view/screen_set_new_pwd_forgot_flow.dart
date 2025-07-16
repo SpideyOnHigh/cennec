@@ -2,6 +2,7 @@ import 'package:cennec/modules/auth/bloc/change_or_set_new_password_bloc/change_
 import 'package:cennec/modules/auth/model/model_sign_up_data_transfer.dart';
 import 'package:cennec/modules/core/common/widgets/base_text_field_error_indicator.dart';
 import 'package:cennec/modules/core/common/widgets/button.dart';
+import 'package:cennec/modules/core/common/widgets/common_password_form_field.dart';
 import 'package:cennec/modules/core/common/widgets/common_text_field.dart';
 import 'package:cennec/modules/core/common/widgets/toast_controller.dart';
 import 'package:cennec/modules/core/utils/app_config.dart';
@@ -50,7 +51,7 @@ class _ScreenSetNewPasswordState extends State<ScreenSetNewPassword> {
   }
 
   void _validatePassword() {
-    final pwd = _choosePasswordController.text;
+    final pwd = _choosePasswordController.text.trim();
 
     passwordValidationNotifier.value = {
       'minLength': pwd.length >= 8,
@@ -103,20 +104,19 @@ class _ScreenSetNewPasswordState extends State<ScreenSetNewPassword> {
   }
 
   Widget choosePasswordField(BuildContext context) {
-    return CommonTextFormField(
+    return CommonPasswordTextFormField(
       label: getTranslate(APPStrings.textNewPwd),
       controller: _choosePasswordController,
-
-      // isShowPassword: !showChoosePwd.value,
-      // pressShowPassword: () {
-      //   showChoosePwd.value = !showChoosePwd.value;
-      // },
-      // onChange: () {
-      //   if (errorChoosePwd.value.isNotEmpty) {
-      //     errorChoosePwd.value = '';
-      //   }
-      // },
-      hintText: getTranslate(APPStrings.textNewPwd),
+      isShowPassword: !showChoosePwd.value,
+      onToggleVisibility: () {
+        showChoosePwd.value = !showChoosePwd.value;
+      },
+      onChanged: (val) {
+        if (errorChoosePwd.value.isNotEmpty) {
+          errorChoosePwd.value = '';
+        }
+      },
+      // hintText: getTranslate(APPStrings.textNewPwd),
       // hintStyle: getTextStyleFromFont(
       //   AppFont.poppins,
       //   Dimens.margin18,
@@ -127,24 +127,25 @@ class _ScreenSetNewPasswordState extends State<ScreenSetNewPassword> {
   }
 
   Widget confirmPasswordField(BuildContext context) {
-    return BasePasswordTextFormField(
+    return CommonPasswordTextFormField(
+      label: getTranslate(APPStrings.textConfirmPassword),
       controller: _confirmPasswordController,
-      hintText: getTranslate(APPStrings.textReEnterNewPwd),
+      // hintText: getTranslate(APPStrings.textReEnterNewPwd),
       isShowPassword: !showCnfPwd.value,
-      pressShowPassword: () {
+      onToggleVisibility: () {
         showCnfPwd.value = !showCnfPwd.value;
       },
-      onChange: () {
+      onChanged: (val) {
         if (errorCnfPwd.value.isNotEmpty) {
           errorCnfPwd.value = '';
         }
       },
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
+      // hintStyle: getTextStyleFromFont(
+      //   AppFont.poppins,
+      //   Dimens.margin18,
+      //   Theme.of(context).hintColor,
+      //   FontWeight.w600,
+      // ),
     );
   }
 
@@ -163,6 +164,12 @@ class _ScreenSetNewPasswordState extends State<ScreenSetNewPassword> {
     return ValueListenableBuilder<Map<String, bool>>(
       valueListenable: passwordValidationNotifier,
       builder: (context, validation, child) {
+        final hasTyped = _choosePasswordController.text.isNotEmpty;
+        final allValid = validation.values.every((v) => v == true);
+
+        if (!hasTyped || allValid) {
+          return const SizedBox.shrink(); // Don't show anything if empty or all valid
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -180,7 +187,7 @@ class _ScreenSetNewPasswordState extends State<ScreenSetNewPassword> {
     return Row(
       children: [
         Icon(
-          isValid ? Icons.check_circle : Icons.cancel,
+          isValid ? Icons.check : Icons.clear,
           color: isValid ? Colors.green : Colors.red,
           size: 20,
         ),
@@ -201,6 +208,7 @@ class _ScreenSetNewPasswordState extends State<ScreenSetNewPassword> {
   }
 
   Widget getBody(BuildContext context) {
+    print("Bewaqoof: ${errorChoosePwd.value}");
     return Column(
       children: [
         // const SizedBox(height: Dimens.margin10),
@@ -214,7 +222,7 @@ class _ScreenSetNewPasswordState extends State<ScreenSetNewPassword> {
               // changePasswordText(context),
               // const SizedBox(height: Dimens.margin40),
               choosePasswordField(context),
-              const SizedBox(height: Dimens.margin10),
+              // const SizedBox(height: Dimens.margin10),
               passwordValidationCriteria(),
               Visibility(
                 visible: errorChoosePwd.value.isNotEmpty,
@@ -276,18 +284,17 @@ class _ScreenSetNewPasswordState extends State<ScreenSetNewPassword> {
 
   validate() {
     bool isValid = true;
-
+    print("_choosePasswordController.text.isEmpty ${_choosePasswordController.text.isEmpty} " );
     if (_choosePasswordController.text.isEmpty) {
       isValid = false;
-      errorChoosePwd.value = getTranslate(ValidationString.textValidateChoosePwd);
-    }
-
-    Map<String, bool> currentValidation = passwordValidationNotifier.value;
-    bool isAllCriteriaMet = currentValidation.values.every((v) => v);
-
-    if (!isAllCriteriaMet) {
-      isValid = false;
-      errorChoosePwd.value = getTranslate('Password does not meet all the criteria.');
+      errorChoosePwd.value = "Please enter new password";
+    } else {
+      Map<String, bool> currentValidation = passwordValidationNotifier.value;
+      bool isAllCriteriaMet = currentValidation.values.every((v) => v);
+      if (!isAllCriteriaMet) {
+        isValid = false;
+        errorChoosePwd.value = "Password does not meet all the criteria.";
+      }
     }
 
     if (_confirmPasswordController.text.isEmpty) {

@@ -11,7 +11,7 @@ void main() async {
   FlavorConfig(
     variables: {
       "env": "dev",
-      "base": "https://d7a8-2405-201-2011-b920-fd27-1984-db53-3bc8.ngrok-free.app/",
+      "base": "https://cennecapp.yeseulju.tech/",
       "front_end_base": "https://abcdev.staging9.com/"
     },
   );

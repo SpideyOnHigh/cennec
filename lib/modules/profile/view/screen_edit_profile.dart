@@ -13,6 +13,8 @@ import 'package:cennec/modules/core/common/widgets/toast_controller.dart';
 import 'package:cennec/modules/core/utils/app_config.dart';
 import 'package:cennec/modules/core/utils/app_constant.dart';
 import 'package:cennec/modules/core/utils/app_urls.dart';
+import 'package:cennec/modules/core/utils/my_print.dart';
+import 'package:cennec/modules/interests/bloc/get_interests/get_interests_lists_bloc.dart';
 import 'package:cennec/modules/profile/bloc/get_user_profile_pref/get_user_profile_pref_bloc.dart';
 import 'package:cennec/modules/profile/bloc/get_user_que_ans/get_user_que_ans_bloc.dart';
 import 'package:cennec/modules/profile/bloc/post_profile_picture_bloc/post_profile_picture_bloc.dart';
@@ -21,6 +23,8 @@ import 'package:cennec/modules/profile/bloc/set_default_profile_pic/set_default_
 import 'package:cennec/modules/profile/bloc/update_user_profile/update_user_profile_bloc.dart';
 import 'package:cennec/modules/profile/model/model_question_answer.dart';
 import 'package:cennec/modules/profile/model/profile_picture_model.dart';
+import 'package:cennec/modules/profile/view/change_photo_screen.dart';
+import 'package:cennec/modules/profile/view/edit_bio.dart';
 import 'package:cennec/modules/profile/widgets/custom_progress_bar.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,6 +36,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/utils/common_import.dart';
+import '../../interests/model/model_interests.dart';
 import '../bloc/get_user_profile_pic/get_user_profile_pic_bloc.dart';
 
 class ScreenEditProfile extends StatefulWidget {
@@ -63,12 +68,16 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
   LoginDetail userDetail = getUser();
   String latitudeSelected = '';
   String longitudeSelected = '';
+  ValueNotifier<List<ModelInterests>> modelInterestList = ValueNotifier([]);
+
 
   @override
   void initState() {
     listImages = getUser().userData?.profileImages ?? [];
     getUserPref();
     getImages();
+    MyPrint.logOnConsole("userDetail: ${userDetail.toJson()}");
+    getUserInterest();
     // imageList.add(ProfilePictureModel(containsDatabaseImage: true, imageDatabaseUrl: "https://media.sproutsocial.com/uploads/2022/06/profile-picture.jpeg"));
     super.initState();
   }
@@ -851,10 +860,247 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
     );
   }
 
+
+  // ----------------------------------New Design-----------------------------------------------
+
+  Widget _topSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () => Navigator.pop(context),
+          ),
+          const Expanded(
+            child: Text(
+              "Preview Your Profile",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(width: 40), // Placeholder for alignment
+        ],
+      ),
+    );
+  }
+
+  Widget _pageOne() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            _profilePhotoCard(),
+            const SizedBox(height: 12),
+            _bioCard(),
+            const SizedBox(height: 12),
+            _interestCard(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _profilePhotoCard() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.colorCardBackgroundProfile,
+        borderRadius: BorderRadius.circular(Dimens.textSize15),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: Dimens.textSize15,).copyWith(top: Dimens.textSize15,),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    displayNameController.text,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                _editButton()
+              ],
+            ),
+          ),
+          Stack(
+            children: [
+              Container(
+                width: double.infinity,
+                height: 220,
+                margin: EdgeInsets.all(Dimens.textSize15),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: const DecorationImage(
+                    image: NetworkImage('https://randomuser.me/api/portraits/men/1.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 30,
+                top: 30,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePhotosScreen()));
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) =>  Navigator.push(context, MaterialPageRoute(builder: (context) => EditBioScreen()));
+                  },
+                  child: _editButton()
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _bioCard() {
+    return _cardWithEdit(
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              bioController.text,
+              style: const TextStyle(fontSize: 15),
+            ),
+          ),
+          InkWell(
+              onTap: () async {
+                final val = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditBioScreen()));
+                if(val == null) return;
+                bioController.text = val;
+                updateUserProfile();
+              },
+              child: _editButton())
+        ],
+      ),
+    );
+  }
+
+  Widget _interestCard() {
+    return _cardWithEdit(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Interests",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              _editButton(),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: modelInterestList.value.map((e) => _interestChip(e.interestName ?? "")).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget _pageTwo() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16.0),
+  //     child: _cardWithEdit(
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               const Text(
+  //                 "Answers / Prompts",
+  //                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //               ),
+  //               _editButton(),
+  //             ],
+  //           ),
+  //           const SizedBox(height: 8),
+  //           ...answers.map(
+  //                 (a) => Padding(
+  //               padding: const EdgeInsets.symmetric(vertical: 6.0),
+  //               child: Text(
+  //                 a,
+  //                 style: const TextStyle(fontSize: 15),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _cardWithEdit({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 6,
+            spreadRadius: 2,
+          )
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _editButton({Colors? color}) {
+    return Container(
+      child: const Icon(Icons.edit_outlined, size: 18,),
+    );
+  }
+
+  Widget _interestChip(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Text(
+        "#$label",
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  Widget getBody2(){
+    return  SafeArea(
+      child: Column(
+        children: [
+          _topSection(),
+          Expanded(
+            child: PageView(
+              children: [
+                _pageOne(),
+                // _pageTwo(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiValueListenableBuilder(
-        valueListenables: [pageIndex, isApiLoading, isLoadingAnimation, isLoadingButton, modelQuestionAnswers, imageList, imageToShow, isProfilePicUpdated],
+        valueListenables: [pageIndex, isApiLoading, isLoadingAnimation, isLoadingButton, modelQuestionAnswers, imageList, imageToShow, isProfilePicUpdated, modelInterestList],
         builder: (context, values, child) {
           return MultiBlocListener(
             listeners: [
@@ -999,11 +1245,33 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                   }
                 },
               ),
+              BlocListener<GetInterestsListsBloc, GetInterestsListsState>(
+                listener: (context, state) {
+                  isApiLoading.value = state is GetInterestsListsLoading;
+                  if (state is GetInterestsListsFailure) {
+                    if (state.errorMessage.generalError!.isNotEmpty) {
+                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                    }
+                  }
+                  if (state is GetInterestsListsResponse) {
+                    modelInterestList.value.clear();
+                    for (ModelInterests modelInterests in state.modelInterestsList.data ?? []) {
+                      modelInterestList.value.add(ModelInterests(
+                          id: modelInterests.id,
+                          interestName: modelInterests.interestName,
+                          interestColor: modelInterests.interestColor,
+                          isInterestAdded: modelInterests.isInterestAdded));
+                    }
+                    // modelInterestList.value = state.modelInterestsList.data ?? [];
+                    // filterList.value = state.modelInterestsList.data ?? [];
+                  }
+                },
+              ),
             ],
             child: Scaffold(
                 resizeToAvoidBottomInset: true,
                 // backgroundColor: Colors.white,
-                body: IgnorePointer(ignoring: isApiLoading.value, child: getBody())),
+                body: IgnorePointer(ignoring: isApiLoading.value, child: getBody2())),
           );
         });
   }
@@ -1377,6 +1645,9 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
   /// This is for getting user data for tab one
   void getUserPref() {
     BlocProvider.of<GetUserProfilePrefBloc>(context).add(GetUserProfilePref(url: AppUrls.apiGetProfilePrefs(getUser().userData?.id ?? 0)));
+  }
+  void getUserInterest() {
+    BlocProvider.of<GetInterestsListsBloc>(context).add(GetInterestsLists(url: AppUrls.apiGetMyInterests(getUser().userData?.id ?? 0)));
   }
 
   void updateUserProfile() {

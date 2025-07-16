@@ -24,6 +24,7 @@ class AppColors {
   static const colorInterestRandomColor3 = Color(0xFFc8ecb5);
   static const colorInterestRandomColor4 = Color(0xFFbcc2f2);
   static const colorInterestRandomColor5 = Color(0xFFe8b6ee);
+  static const colorCardBackgroundProfile = Color(0xFFDBE0D4);
 
 
   // F0F1EE
