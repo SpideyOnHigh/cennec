@@ -26,4 +26,12 @@ class AppRoutes {
   static const String routesScreenFavourite = '/ScreenFavourite';
   static const String routesScreenChats = '/ScreenChats';
   static const String routesScreenCms = '/ScreenCms';
+
+
+  static const String routeSearchNewConnection = '/ScreenSearchNewConnection';
+  static const String routeSearchNewConnectionDetails = '/ScreenSearchNewConnectionDetails';
+  static const String routeScreenSimilarAndInterest = '/ScreenSimilarAndInterest';
+
+
+
 }
