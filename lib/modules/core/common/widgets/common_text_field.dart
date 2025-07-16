@@ -23,6 +23,7 @@ class CommonTextFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final EdgeInsets? contentPadding;
   final Function(String)? onChanged;
+  final String? Function(String?)? validator;
   final Function(String)? onSubmitted;
 
   const CommonTextFormField({
@@ -46,6 +47,7 @@ class CommonTextFormField extends StatelessWidget {
     this.contentPadding,
     this.onChanged,
     this.onSubmitted,
+    this.validator,
   });
 
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
@@ -66,7 +68,7 @@ class CommonTextFormField extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 text: label,
-                style: getTextStyleFromFont(AppFont.poppins, 16, Colors.black, FontWeight.w400),
+                style: getTextStyleFromFont(AppFont.poppins, 12, Colors.black, FontWeight.w400),
                 children: isOptional
                     ? [
                   TextSpan(
@@ -78,7 +80,7 @@ class CommonTextFormField extends StatelessWidget {
               ),
             ),
           ),
-        TextField(
+        TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           textInputAction: textInputAction,
@@ -89,7 +91,8 @@ class CommonTextFormField extends StatelessWidget {
           enabled: enabled,
           focusNode: focusNode,
           onChanged: onChanged,
-          onSubmitted: (_) => onSubmitted?.call(_),
+          validator: validator,
+          onFieldSubmitted: (_) => onSubmitted?.call(_),
           onEditingComplete: () {
             if (nextFocusNode != null) {
               FocusScope.of(context).requestFocus(nextFocusNode);
@@ -99,10 +102,11 @@ class CommonTextFormField extends StatelessWidget {
           },
           style: getTextStyleFromFont(AppFont.poppins, 16, Colors.black, FontWeight.w500),
           decoration: InputDecoration(
+
             hintText: hintText,
             hintStyle: getTextStyleFromFont(AppFont.poppins, 15, theme.hintColor, FontWeight.w400),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppColors.colorCardBackgroundProfile,
             counterText: '',
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,

@@ -1,4 +1,5 @@
 import 'package:cennec/modules/core/api_service/error_model.dart';
+import 'package:cennec/modules/core/utils/parsing_helper.dart';
 
 class ModelUserEditProfilePrefs {
   bool? success;
@@ -76,8 +77,8 @@ class Data {
     isSmoke = json['is_smoke'];
     isDrink = json['is_drink'];
     location = json['location'];
-    locationLatitude = json['location_latitude'];
-    locationLongitude = json['location_longitude'];
+    locationLatitude = ParsingHelper.parseStringMethod(json['location_latitude']);
+    locationLongitude = ParsingHelper.parseStringMethod(json['location_longitude']);
   }
 
   Map<String, dynamic> toJson() {
