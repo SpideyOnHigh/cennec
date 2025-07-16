@@ -28,6 +28,9 @@ import 'package:cennec/modules/preferences/view/screen_preferences.dart';
 import 'package:cennec/modules/profile/view/screen_edit_profile.dart';
 import 'package:cennec/modules/settings/view/screen_settings.dart';
 import 'package:cennec/modules/splash/view/screen_splash.dart';
+import '../../search_posts/view/screen_find_connection.dart';
+import '../../search_posts/view/screen_find_connections_details.dart';
+import '../../search_posts/view/screen_similar_and_interest.dart';
 import 'common_import.dart';
 
 /// > RouteGenerator is a class that generates routes for the application
@@ -121,6 +124,16 @@ class RouteGenerator {
                   slug: args as String,
                 ),
             settings: const RouteSettings(name: AppRoutes.routesScreenCms));
+      case AppRoutes.routeSearchNewConnection:
+        return MaterialPageRoute(builder: (_) => const ScreenFindConnection(), settings: const RouteSettings(name: AppRoutes.routeSearchNewConnection));
+
+
+      case AppRoutes.routeSearchNewConnectionDetails:
+        return MaterialPageRoute(builder: (_) => const ScreenConnectionDetails(), settings: const RouteSettings(name: AppRoutes.routeSearchNewConnectionDetails));
+      case AppRoutes.routeScreenSimilarAndInterest:
+        return MaterialPageRoute(builder: (_) => const ScreenSimilarAndInterest(), settings: const RouteSettings(name: AppRoutes.routeScreenSimilarAndInterest));
+
+
       default:
         return MaterialPageRoute(builder: (_) => const ScreenSplash(), settings: const RouteSettings(name: AppRoutes.routesSplash));
     }

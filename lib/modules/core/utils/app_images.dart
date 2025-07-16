@@ -25,4 +25,12 @@ class APPImages {
   static const icSetting = '${imageBaseURL}ic_setting.png';
   static const icPopUp = '${imageBaseURL}ic_popup.png';
   static const icCrossTsp = '${imageBaseURL}ic_cross_transparent.png';
+
+
+  static const iconHome = '${imageBaseURL}icon_home.png';
+  static const iconAccount = '${imageBaseURL}icon_account.png';
+  static const iconChat = '${imageBaseURL}icon_chat.png';
+  static const iconCennections = '${imageBaseURL}icon_cennections.png';
+
+
 }
