@@ -31,10 +31,16 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
   Widget buildIcon(int index, String assetPath) {
     final bool isSelected = navIndex.value == index;
     return IconButton(
+      visualDensity: VisualDensity.standard,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      focusColor: Colors.transparent,
       onPressed: () => onItemTapped(index),
       icon: Image.asset(
         assetPath,
         color: isSelected ? AppColors.menuPinkColor : Colors.grey,
+        colorBlendMode: BlendMode.srcIn,
         width: Dimens.margin28,
         height: Dimens.margin28,
       ),

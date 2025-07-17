@@ -1,6 +1,7 @@
 import 'package:cennec/modules/cms_pages/bloc/get_cms_page_bloc.dart';
 import 'package:cennec/modules/core/api_service/preference_helper.dart';
 import 'package:cennec/modules/core/common/widgets/button.dart';
+import 'package:cennec/modules/core/common/widgets/common_appbar.dart';
 import 'package:cennec/modules/core/common/widgets/dialog/common_loading_animation.dart';
 import 'package:cennec/modules/core/common/widgets/toast_controller.dart';
 import 'package:cennec/modules/core/utils/app_config.dart';
@@ -28,112 +29,325 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   ValueNotifier<String> content = ValueNotifier('');
 
-  Widget logo() {
-    return Stack(
-      children: [
-        Visibility(
-          visible: widget.isFromProfile,
-          child: InkWell(
+  Widget customAppBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Battery and signal indicators (left side)
+          Row(
+            children: [
+              Text(
+                "10:19",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin14,
+                  Colors.black,
+                  FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          // Right side indicators
+          Row(
+            children: [
+              Icon(Icons.signal_cellular_4_bar, size: 16, color: Colors.black),
+              const SizedBox(width: 4),
+              Icon(Icons.wifi, size: 16, color: Colors.black),
+              const SizedBox(width: 4),
+              Container(
+                width: 20,
+                height: 10,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 1),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: Container(
+                  margin: const EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: Colors.yellow,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget headerSection() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          InkWell(
             onTap: () {
               Navigator.pop(context);
             },
-            child: Padding(
-              padding: const EdgeInsets.all(Dimens.margin16),
-              child: Image.asset(
-                APPImages.icBack,
-                color: Theme.of(context).colorScheme.onSecondary, // Update with your logo path
-                height: Dimens.margin30,
-                width: Dimens.margin30,
-              ),
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+              size: 24,
             ),
           ),
+          const SizedBox(width: 16),
+          Text(
+            "About Us",
+            style: getTextStyleFromFont(
+              AppFont.poppins,
+              Dimens.margin18,
+              Colors.black,
+              FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget logoSection() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Column(
+          children: [
+            // Logo with circular background
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Image.asset(
+                  APPImages.icLogoWithName,
+                  height: 50,
+                  width: 50,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // App name
+            Text(
+              "cennec",
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin24,
+                Colors.black,
+                FontWeight.w700,
+              ),
+            ),
+            // Version
+            Text(
+              "Beta Version 1.0.0.0",
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin14,
+                Colors.grey,
+                FontWeight.w400,
+              ),
+            ),
+          ],
         ),
-        Center(
-          child: Image.asset(
-            APPImages.icLogoWithName, // Update with your logo path
-            height: 100,
+      ),
+    );
+  }
+
+  Widget contentSection() {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Default content if no CMS content is loaded
+              if (content.value.isEmpty) ...[
+                _buildDefaultContent(),
+              ] else ...[
+                Html(
+                  data: content.value,
+                  style: {
+                    "body": Style(
+                      fontSize: FontSize(14),
+                      color: Colors.black87,
+                      lineHeight: const LineHeight(1.5),
+                      fontFamily: AppFont.poppins,
+                    ),
+                    "p": Style(
+                      margin: Margins.only(bottom: 12),
+                    ),
+                  },
+                ),
+              ],
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDefaultContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Cennec is a space for clinicians, safe and authentic connection and communication.",
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin14,
+            Colors.black87,
+            FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "Our goal is to use this space as a powerful tool for connection and communication. We appreciate your commitment to maintain integrity and respectfully. This will help both the help and support flow for communicating as well as features on the platform.",
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin14,
+            Colors.black87,
+            FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "Since we are just getting started, we do not have all the features we desire to help just but with the help and support of the community, we can keep this platform safe, inclusive and authentic space.",
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin14,
+            Colors.black87,
+            FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "We are interested in building a community at this platform safe, inclusive and authentic space. We are not interested in any space features which users have been reported as blocked. These users who are consistently (3+) reported or blocked will be removed from the platform.",
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin14,
+            Colors.black87,
+            FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "Since we are just getting started, we do not have all the features we desire to help but with the help and support of the community, we can keep this platform safe, inclusive and authentic space.",
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin14,
+            Colors.black87,
+            FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "We are not interested in any content or conversations that spammy or inappropriate. We will kick out such users. There are also users who are consistently (3+) reported or blocked will be removed from the platform.",
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin14,
+            Colors.black87,
+            FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "For any concerns, suggestions, questions, feedback, and queries with Cennec email us at",
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin14,
+            Colors.black87,
+            FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 20),
       ],
     );
   }
 
-  Widget aboutUsText(BuildContext context) {
-    return Text(
-      getTranslate(APPStrings.textAboutUs).toString(),
-      // textAlign: TextAlign.center,
-      style: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin40,
-        AppColors.colorDarkBlue,
-        FontWeight.w700,
-      ),
-    );
-  }
-
-/*  Widget nextButton(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      height: Dimens.margin50,
-      child: ElevatedButton(
-        onPressed: () {
-           Navigator.pushNamed(context, AppRoutes.routesScreenCommunityGuidelines);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(
-          getTranslate(APPStrings.textNextCG),
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin18,
-            Theme.of(context).primaryColor,
-            FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  } */
-
-  Widget nextButton(BuildContext context) {
-    return CommonButton(
-      text: getTranslate(APPStrings.textNextCG),
-      onTap: () {
-        postUserReaded();
-      },
-    );
-  }
-
-  Widget aboutUs() {
-    return SingleChildScrollView(
-      child: Html(data: content.value),
-    );
-  }
-
-  Widget getBody(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+  Widget bottomSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: Dimens.margin10),
-          logo(),
-          const SizedBox(height: Dimens.margin30),
-          Center(child: aboutUsText(context)),
+          // Terms & Conditions
+          InkWell(
+            onTap: () {
+              // Navigate to Terms & Conditions
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Terms & Conditions",
+                  style: getTextStyleFromFont(
+                    AppFont.poppins,
+                    Dimens.margin16,
+                    Colors.black,
+                    FontWeight.w500,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.grey,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Privacy Policy
+          InkWell(
+            onTap: () {
+              // Navigate to Privacy Policy
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Privacy Policy",
+                  style: getTextStyleFromFont(
+                    AppFont.poppins,
+                    Dimens.margin16,
+                    Colors.black,
+                    FontWeight.w500,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.grey,
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 20),
-          Expanded(
-              child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Container(
-                    child: aboutUs(),
-                  ))),
-          const SizedBox(height: Dimens.margin25),
-          Visibility(visible: widget.isFromProfile == false, child: nextButton(context)),
-          Visibility(visible: widget.isFromProfile == false, child: const SizedBox(height: 20)),
+          // Next button (only show if not from profile)
+          Visibility(
+            visible: widget.isFromProfile == false,
+            child: SizedBox(
+              width: double.infinity,
+              child: CommonButton(
+                text: getTranslate(APPStrings.textNextCG),
+                onTap: () {
+                  postUserReaded();
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -141,53 +355,68 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: MultiValueListenableBuilder(
-            valueListenables: [isLoading, content],
-            builder: (context, values, child) {
-              return MultiBlocListener(
-                listeners: [
-                  BlocListener<GetCmsPageBloc, GetCmsPageState>(
-                    listener: (context, state) {
-                      isLoading.value = state is GetCmsPageLoading;
-                      if (state is GetCmsPageFailure) {
-                        if (state.errorMessage.generalError!.isNotEmpty) {
-                          ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                        }
-                      }
-                      if (state is GetCmsPageResponse) {
-                        content.value = state.modelCms ?? '';
-                      }
-                    },
+    return MultiValueListenableBuilder(
+      valueListenables: [isLoading, content],
+      builder: (context, values, child) {
+        return MultiBlocListener(
+          listeners: [
+            BlocListener<GetCmsPageBloc, GetCmsPageState>(
+              listener: (context, state) {
+                isLoading.value = state is GetCmsPageLoading;
+                if (state is GetCmsPageFailure) {
+                  if (state.errorMessage.generalError!.isNotEmpty) {
+                    ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                  }
+                }
+                if (state is GetCmsPageResponse) {
+                  content.value = state.modelCms ?? '';
+                }
+              },
+            ),
+            BlocListener<UserReadedAboutUsBloc, UserReadedAboutUsState>(
+              listener: (context, state) {
+                isLoading.value = state is UserReadedAboutUsLoading;
+                if (state is UserReadedAboutUsFailure) {
+                  if (state.errorMessage.generalError!.isNotEmpty) {
+                    ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                  }
+                }
+                if (state is UserReadedAboutUsResponse) {
+                  PreferenceHelper.setBool(PreferenceHelper.hasReadAboutUs, true);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.routesScreenCommunityGuidelines,
+                        (route) => false,
+                  );
+                }
+              },
+            ),
+          ],
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: CommonAppBar(title: "About Us",),
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      // customAppBar(),
+                      logoSection(),
+                      contentSection(),
+                      bottomSection(),
+                    ],
                   ),
-                  BlocListener<UserReadedAboutUsBloc, UserReadedAboutUsState>(
-                    listener: (context, state) {
-                      isLoading.value = state is UserReadedAboutUsLoading;
-                      if (state is UserReadedAboutUsFailure) {
-                        if (state.errorMessage.generalError!.isNotEmpty) {
-                          ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                        }
-                      }
-                      if(state is UserReadedAboutUsResponse)
-                        {
-                          PreferenceHelper.setBool(PreferenceHelper.hasReadAboutUs, true);
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            AppRoutes.routesScreenCommunityGuidelines,
-                                (route) => false,
-                          );
-                        }
-                    },
+                  Visibility(
+                    visible: isLoading.value,
+                    child: const Center(child: CommonLoadingAnimation()),
                   ),
                 ],
-                child: Scaffold(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  body: Stack(
-                    children: [getBody(context), Visibility(visible: isLoading.value, child: const Center(child: CommonLoadingAnimation()))],
-                  ),
-                ),
-              );
-            }));
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void getPage() {

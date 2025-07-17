@@ -26,68 +26,79 @@ class _ScreenSettingsState extends State<ScreenSettings> {
 
   ValueNotifier<bool> isLoading = ValueNotifier(false);
 
-  Widget settingsText(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          getTranslate(APPStrings.textSettings),
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin32,
-            Theme.of(context).hintColor,
-            FontWeight.w700,
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   void initState() {
     getUserSettings();
     super.initState();
   }
 
-  Widget navigationWithLogo() {
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Container(
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(Dimens.margin50)),
-        height: Dimens.margin45,
-        width: Dimens.margin45,
-        child: Padding(
-          padding: const EdgeInsets.all(14.0),
-          child: Image.asset(APPImages.icBack),
+  Widget _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.grey[100],
+      elevation: 0,
+      leading: InkWell(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
         ),
       ),
-    );
-  }
-
-  Widget textWidget(String text) {
-    return Text(
-      text,
-      style: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin20,
-        Theme.of(context).colorScheme.onSecondary,
-        FontWeight.w600,
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        getTranslate(title),
+      title: Text(
+        getTranslate(APPStrings.textSettings),
         style: getTextStyleFromFont(
           AppFont.poppins,
-          Dimens.margin22,
-          Theme.of(context).hintColor,
-          FontWeight.w700,
+          Dimens.margin20,
+          Colors.black,
+          FontWeight.w600,
         ),
+      ),
+      centerTitle: true,
+    );
+  }
+
+  Widget _buildSettingsCard({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              getTranslate(title),
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin18,
+                Colors.grey[600]!,
+                FontWeight.w600,
+              ),
+            ),
+          ),
+          ...children,
+        ],
       ),
     );
   }
@@ -96,161 +107,185 @@ class _ScreenSettingsState extends State<ScreenSettings> {
     required String title,
     required bool value,
     required ValueChanged<bool> onChanged,
+    bool isLast = false,
   }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(
-        getTranslate(title),
-        style: getTextStyleFromFont(
-          AppFont.poppins,
-          Dimens.margin20,
-          Theme.of(context).colorScheme.onSecondary,
-          FontWeight.w600,
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: !isLast
+            ? Border(
+          bottom: BorderSide(
+            color: Colors.grey[200]!,
+            width: 1,
+          ),
+        )
+            : null,
       ),
-      trailing: CupertinoSwitch(
-        value: value,
-        onChanged: onChanged,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            getTranslate(title),
+            style: getTextStyleFromFont(
+              AppFont.poppins,
+              Dimens.margin16,
+              Colors.black,
+              FontWeight.w500,
+            ),
+          ),
+          CupertinoSwitch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: Theme.of(context).primaryColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionTile({
+    required String title,
+    required VoidCallback onTap,
+    Color? textColor,
+    bool showArrow = true,
+    bool isLast = false,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          border: !isLast
+              ? Border(
+            bottom: BorderSide(
+              color: Colors.grey[200]!,
+              width: 1,
+            ),
+          )
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              getTranslate(title),
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin16,
+                textColor ?? Colors.black,
+                FontWeight.w500,
+              ),
+            ),
+            if (showArrow)
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.grey[400],
+              ),
+          ],
+        ),
       ),
     );
   }
 
   Widget getBody() {
-    return Stack(
+    return Column(
       children: [
-        Visibility(
-            visible: (getUser().userData ?? UserData()).defaultProfilePic != null,
-            replacement: Image.asset(
-              APPImages.icDummyProfile, // Replace with your actual image path
-              fit: BoxFit.cover,
-              width: double.maxFinite,
-              height: MediaQuery.of(context).size.height / 1.7,
-            ),
-            child: Image.network(
-              (getUser().userData ?? UserData()).defaultProfilePic ?? '', // Replace with your actual image path
-              fit: BoxFit.cover,
-              width: double.maxFinite,
-              height: MediaQuery.of(context).size.height / 1.7,
-            )),
-        Positioned(left: 20, top: 80, child: navigationWithLogo()),
-        // Content
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            height: Dimens.margin500,
-            decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(Dimens.margin30), topRight: Radius.circular(Dimens.margin30)),
-                color: Theme.of(context).primaryColor),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: settingsText(context),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        // Notifications Section
-                        _buildSectionTitle(APPStrings.textNotifications),
-                        _buildSwitchTile(
-                          title: APPStrings.textWhenSentMessage,
-                          value: _notificationsEnabled,
-                          onChanged: (value) {
-                            setState(() {
-                              _notificationsEnabled = value;
-                              editUserSettings();
-                            });
-                          },
-                        ),
-                        const Divider(
-                          thickness: Dimens.margin2,
-                        ),
-                        // Privacy Section
-                        _buildSectionTitle(APPStrings.textPrivacy),
-                        _buildSwitchTile(
-                          title: APPStrings.textShowLocation,
-                          value: _showLocation,
-                          onChanged: (value) {
-                            setState(() {
-                              _showLocation = value;
-                              editUserSettings();
-                            });
-                          },
-                        ),
-                        _buildSwitchTile(
-                          title: APPStrings.textShowAge,
-                          value: _showAge,
-                          onChanged: (value) {
-                            setState(() {
-                              _showAge = value;
-                              editUserSettings();
-                            });
-                          },
-                        ),
-                        const Divider(
-                          thickness: Dimens.margin2,
-                        ),
-                        // Security Section
-                        _buildSectionTitle(APPStrings.textSecurity),
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            getTranslate(
-                              APPStrings.textChangePassword,
-                            ),
-                            style: getTextStyleFromFont(
-                              AppFont.poppins,
-                              Dimens.margin20,
-                              Theme.of(context).colorScheme.onSecondary,
-                              FontWeight.w600,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.routesScreenChangePassword);
-                          },
-                        ),
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(getTranslate(APPStrings.textDeleteProfile),
-                              style: getTextStyleFromFont(
-                                AppFont.poppins,
-                                Dimens.margin20,
-                                Colors.red,
-                                FontWeight.w600,
-                              )),
-                          onTap: () {
-                            showCupertinoDialog(
-                              context: context,
-                              builder: (context) => CupertinoConfirmationDialog(
-                                title: getTranslate(APPStrings.textDeleteAccount),
-                                description: getTranslate(APPStrings.textDeleteAccountConfirmation),
-                                cancelText: getTranslate(APPStrings.textCancel),
-                                confirmText: getTranslate(APPStrings.textOk),
-                                onCancel: () {
-                                  Navigator.pop(context);
-                                },
-                                onConfirm: () {
-                                  printWrapped("pressed key");
-                                  deleteProfileEvent();
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+        _buildAppBar(),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                // Notifications Section
+                _buildSettingsCard(
+                  title: APPStrings.textNotifications,
+                  children: [
+                    _buildSwitchTile(
+                      title: APPStrings.textWhenSentMessage,
+                      value: _notificationsEnabled,
+                      onChanged: (value) {
+                        setState(() {
+                          _notificationsEnabled = value;
+                          editUserSettings();
+                        });
+                      },
+                      isLast: true,
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+
+                // Privacy Section
+                _buildSettingsCard(
+                  title: APPStrings.textPrivacy,
+                  children: [
+                    _buildSwitchTile(
+                      title: APPStrings.textShowLocation,
+                      value: _showLocation,
+                      onChanged: (value) {
+                        setState(() {
+                          _showLocation = value;
+                          editUserSettings();
+                        });
+                      },
+                    ),
+                    _buildSwitchTile(
+                      title: APPStrings.textShowAge,
+                      value: _showAge,
+                      onChanged: (value) {
+                        setState(() {
+                          _showAge = value;
+                          editUserSettings();
+                        });
+                      },
+                      isLast: true,
+                    ),
+                  ],
+                ),
+
+                // Security Section
+                _buildSettingsCard(
+                  title: APPStrings.textSecurity,
+                  children: [
+                    _buildActionTile(
+                      title: APPStrings.textChangePassword,
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.routesScreenChangePassword);
+                      },
+                    ),
+                    _buildActionTile(
+                      title: APPStrings.textDeleteProfile,
+                      textColor: Colors.red,
+                      showArrow: false,
+                      isLast: true,
+                      onTap: () {
+                        showCupertinoDialog(
+                          context: context,
+                          builder: (context) => CupertinoConfirmationDialog(
+                            title: getTranslate(APPStrings.textDeleteAccount),
+                            description: getTranslate(APPStrings.textDeleteAccountConfirmation),
+                            cancelText: getTranslate(APPStrings.textCancel),
+                            confirmText: getTranslate(APPStrings.textOk),
+                            onCancel: () {
+                              Navigator.pop(context);
+                            },
+                            onConfirm: () {
+                              printWrapped("pressed key");
+                              deleteProfileEvent();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 32),
+              ],
             ),
           ),
         ),
-        // Bottom Navigation Bar
       ],
     );
   }
@@ -265,11 +300,11 @@ class _ScreenSettingsState extends State<ScreenSettings> {
               BlocListener<DeleteProfileBloc, DeleteProfileState>(
                 listener: (context, state) {
                   isLoading.value = state is DeleteProfileLoading;
-                    if (state is DeleteProfileFailure) {
-                      if(state.errorMessage.generalError!.isNotEmpty)
-                      {
-                        ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                      }
+                  if (state is DeleteProfileFailure) {
+                    if(state.errorMessage.generalError!.isNotEmpty)
+                    {
+                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                    }
                   }
                   if (state is DeleteProfileResponse) {
                     PreferenceHelper.clear();
@@ -281,10 +316,10 @@ class _ScreenSettingsState extends State<ScreenSettings> {
               BlocListener<GetUserSettingBloc, GetUserSettingState>(
                 listener: (context, state) {
                   isLoading.value = state is GetUserSettingLoading;
-                    if (state is GetUserSettingFailure) {
-                      if(state.errorMessage.generalError!.isNotEmpty)
-                      {
-                        ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                  if (state is GetUserSettingFailure) {
+                    if(state.errorMessage.generalError!.isNotEmpty)
+                    {
+                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is GetUserSettingResponse) {
@@ -297,11 +332,11 @@ class _ScreenSettingsState extends State<ScreenSettings> {
               BlocListener<EditUserSettingsBloc, EditUserSettingsState>(
                 listener: (context, state) {
                   isLoading.value = state is EditUserSettingsLoading;
-                    if (state is EditUserSettingsFailure) {
-                      if(state.errorMessage.generalError!.isNotEmpty)
-                      {
-                        ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                      }
+                  if (state is EditUserSettingsFailure) {
+                    if(state.errorMessage.generalError!.isNotEmpty)
+                    {
+                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                    }
                   }
                   if (state is EditUserSettingsResponse) {
                     ToastController.showToast(context, state.modelEditSettingsResponse.message ?? '', true);
@@ -313,7 +348,7 @@ class _ScreenSettingsState extends State<ScreenSettings> {
               ),
             ],
             child: Scaffold(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              backgroundColor: Colors.grey[100],
               body: Stack(
                 children: [
                   IgnorePointer(ignoring: isLoading.value, child: getBody()),
@@ -336,7 +371,6 @@ class _ScreenSettingsState extends State<ScreenSettings> {
   }
 
   void getUserSettings()  {
-    // Map<String, dynamic> body = {AppConfig.paramUserId: getUser().userData?.id};
     BlocProvider.of<GetUserSettingBloc>(context).add(GetUserSettings(url: AppUrls.apiGetUserSettings(getUser().userData?.id ?? 0)));
   }
 
@@ -345,7 +379,6 @@ class _ScreenSettingsState extends State<ScreenSettings> {
       "is_notification_on": _notificationsEnabled,
       "is_display_location": _showLocation,
       "is_display_age": _showAge};
-    // Map<String, dynamic> body = {AppConfig.paramUserId: getUser().userData?.id};
     BlocProvider.of<EditUserSettingsBloc>(context).add(EditUserSettings(url: AppUrls.apiEditUserSettings, body: body));
   }
 }

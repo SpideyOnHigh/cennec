@@ -25,6 +25,7 @@ import 'package:cennec/modules/profile/model/model_question_answer.dart';
 import 'package:cennec/modules/profile/model/profile_picture_model.dart';
 import 'package:cennec/modules/profile/view/change_photo_screen.dart';
 import 'package:cennec/modules/profile/view/edit_bio.dart';
+import 'package:cennec/modules/profile/view/basic_info_screen.dart';
 import 'package:cennec/modules/profile/widgets/custom_progress_bar.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -799,7 +800,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
     ]);
   }
 
-  Widget getBody() {
+  Widget getBody2() {
     return Stack(
       children: [
         // Visibility(
@@ -921,7 +922,11 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
-                _editButton()
+                InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => BasicInfoScreen()));
+                    },
+                    child: _editButton())
               ],
             ),
           ),
@@ -944,7 +949,9 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                 top: 30,
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePhotosScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePhotosScreen(
+
+                    )));
                     // Navigator.push(context, MaterialPageRoute(builder: (context) =>  Navigator.push(context, MaterialPageRoute(builder: (context) => EditBioScreen()));
                   },
                   child: _editButton()
@@ -1045,7 +1052,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(Dimens.textSize15),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.15),
@@ -1069,7 +1076,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(Dimens.textSize15),
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: Text(
@@ -1079,7 +1086,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
     );
   }
 
-  Widget getBody2(){
+  Widget getBody(){
     return  SafeArea(
       child: Column(
         children: [
@@ -1226,7 +1233,6 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                       }
                     }
                     PreferenceHelper.setString(PreferenceHelper.userData, json.encode(userDetail));
-
                     getImages();
                   }
                 },
@@ -1271,7 +1277,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
             child: Scaffold(
                 resizeToAvoidBottomInset: true,
                 // backgroundColor: Colors.white,
-                body: IgnorePointer(ignoring: isApiLoading.value, child: getBody2())),
+                body: IgnorePointer(ignoring: isApiLoading.value, child: getBody())),
           );
         });
   }
