@@ -1,3 +1,4 @@
+import 'package:cennec/modules/search_posts/view/user_profile_bottomsheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cennec/modules/core/utils/app_font.dart';
 import 'package:cennec/modules/core/utils/app_colors.dart';
@@ -41,7 +42,7 @@ class SimilarPostsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTopRow(),
+          _buildTopRow(context),
           const SizedBox(height: 16),
           const Divider(),
           const SizedBox(height: 12),
@@ -55,27 +56,41 @@ class SimilarPostsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTopRow() {
+  Widget _buildTopRow(context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: AppColors.colorGrey,
-          backgroundImage: (userImage != null && userImage!.isNotEmpty)
-              ? NetworkImage(userImage!)
-              : null,
-          child: (userImage == null || userImage!.isEmpty)
-              ? Text(
-            userName.isNotEmpty ? userName[0].toUpperCase() : "?",
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              16,
-              AppColors.colorWhite,
-              FontWeight.bold,
-            ),
-          )
-              : null,
+        GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              backgroundColor: AppColors.colorWhite,
+              builder: (_) => const UserProfileBottomSheet(),
+            );
+          },
+
+          child: CircleAvatar(
+            radius: 24,
+            backgroundColor: AppColors.colorGrey,
+            backgroundImage: (userImage != null && userImage!.isNotEmpty)
+                ? NetworkImage(userImage!)
+                : null,
+            child: (userImage == null || userImage!.isEmpty)
+                ? Text(
+              userName.isNotEmpty ? userName[0].toUpperCase() : "?",
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                16,
+                AppColors.colorWhite,
+                FontWeight.bold,
+              ),
+            )
+                : null,
+          ),
         ),
         const SizedBox(width: 10),
         Expanded(
