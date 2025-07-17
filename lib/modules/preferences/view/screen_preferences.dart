@@ -1,9 +1,11 @@
 import 'package:cennec/modules/auth/model/model_login.dart';
+import 'package:cennec/modules/core/common/widgets/common_appbar.dart';
 import 'package:cennec/modules/core/common/widgets/dialog/common_loading_animation.dart';
 import 'package:cennec/modules/core/common/widgets/gender_dropdown.dart';
 import 'package:cennec/modules/core/utils/app_constant.dart';
 import 'package:cennec/modules/core/utils/app_urls.dart';
 import 'package:cennec/modules/core/utils/common_import.dart';
+import 'package:cennec/modules/core/utils/parsing_helper.dart';
 import 'package:cennec/modules/preferences/bloc/get_user_preference/get_user_preference_bloc.dart';
 import 'package:cennec/modules/preferences/bloc/post_user_preference/post_user_preference_bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,43 +33,33 @@ class _ScreenPreferencesState extends State<ScreenPreferences> {
   }
 
   Widget navigationWithLogo() {
-    return InkWell(
-      onTap: () => Navigator.pop(context),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SizedBox(
-          width: double.maxFinite,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              InkWell(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(Dimens.margin50)),
-                  height: Dimens.margin45,
-                  width: Dimens.margin45,
-                  child: Padding(
-                    padding: const EdgeInsets.all(14.0),
-                    child: Image.asset(APPImages.icBack),
-                  ),
-                ),
-              ),
-            ],
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: InkWell(
+        onTap: () => Navigator.pop(context),
+        child: Container(
+          margin: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),
-    );
-  }
-
-  Widget textWidget(String text) {
-    return Text(
-      text,
-      style: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin20,
-        Theme.of(context).colorScheme.onSecondary,
-        FontWeight.w600,
+      title: Text(
+        "Connection Preferences",
+        style: getTextStyleFromFont(
+          AppFont.poppins,
+          Dimens.margin18,
+          Theme.of(context).colorScheme.onSurface,
+          FontWeight.w600,
+        ),
       ),
+      centerTitle: true,
     );
   }
 
@@ -75,542 +67,551 @@ class _ScreenPreferencesState extends State<ScreenPreferences> {
   ValueNotifier<bool> isApiLoading = ValueNotifier(false);
   ValueNotifier<bool> buttonLoading = ValueNotifier(false);
 
-  final bool _notificationsEnabled = true;
-
-  Widget _buildSectionTitle(String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        getTranslate(title),
-        // title,
-        style: getTextStyleFromFont(
-          AppFont.poppins,
-          Dimens.margin22,
-          Theme.of(context).hintColor,
-          FontWeight.w700,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSwitchTile({
-    required String title,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(
-        getTranslate(title),
-        // title,
-        style: getTextStyleFromFont(
-          AppFont.poppins,
-          Dimens.margin20,
-          Theme.of(context).colorScheme.onSecondary,
-          FontWeight.w600,
-        ),
-      ),
-      trailing: CupertinoSwitch(
-        value: value,
-        onChanged: onChanged,
-      ),
-    );
-  }
-
-  // ============== widgets regarding location ===================
+  // Location variables
   TextEditingController locationController = TextEditingController();
   final double _minDistance = 0.0;
   double _maxDistance = 50.0;
   double _valuesDistance = 50;
   bool showUserAsPerLocation = false;
 
-  Widget locationTitleText(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          getTranslate(APPStrings.textLocation),
-          // "Location",
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin24,
-            Theme.of(context).hintColor,
-            FontWeight.w700,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget locationChangeRow() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(
-            // getTranslate(APPStrings.),
-            locationController.text,
-            overflow: TextOverflow.ellipsis,
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              Dimens.margin20,
-              Theme.of(context).colorScheme.onPrimary,
-              FontWeight.w700,
-            ),
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            showLocationDialog();
-          },
-          child: Text(
-            getTranslate(APPStrings.textChangeLocation),
-            // "Change Location",
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              Dimens.margin20,
-              Theme.of(context).hintColor,
-              FontWeight.w700,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget locationMenuContainer() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: locationTitleText(context),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: Dimens.margin10),
-          child: locationChangeRow(),
-        ),
-      ],
-    );
-  }
-
-  Widget maxDistanceMenuContainer() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildSectionTitle(APPStrings.textMaxDistance),
-            Text(
-              // getTranslate(APPStrings.),
-              "${_valuesDistance.toStringAsFixed(0)} miles",
-              overflow: TextOverflow.ellipsis,
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                Dimens.margin20,
-                Theme.of(context).hintColor,
-                FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          min: _minDistance,
-          max: _maxDistance,
-          value: _valuesDistance,
-          onChanged: (value) {
-            setState(() {
-              _valuesDistance = value;
-            });
-          },
-        ),
-        _buildSwitchTile(
-          title: APPStrings.textUserInRange,
-          value: showUserAsPerLocation,
-          onChanged: (value) {
-            setState(() {
-              showUserAsPerLocation = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  // ================ widgets regarding age ====================
+  // Age variables
   double _minAge = 18.0;
   double _maxAge = 100.0;
   int userAge = 0;
-  SfRangeValues _valuesAge = const SfRangeValues(18, 100);
+  SfRangeValues _valuesAge = const SfRangeValues(18.0, 100.0);
   bool showUserAsPerAge = false;
 
-  Widget ageChangeRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          // getTranslate(APPStrings.),
-          // "Age $userAge",
-          "Age",
-          overflow: TextOverflow.ellipsis,
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin20,
-            Theme.of(context).hintColor,
-            FontWeight.w700,
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            _showDatePicker(context);
-          },
-          child: Text(
-            getTranslate(APPStrings.textChangeAge),
-            // "Change age",
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              Dimens.margin20,
-              Theme.of(context).hintColor,
-              FontWeight.w700,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget ageRangeRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          getTranslate(APPStrings.textAgeRange),
-          // "Age Range",
-          overflow: TextOverflow.ellipsis,
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin20,
-            Theme.of(context).hintColor,
-            FontWeight.w700,
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            _showDatePicker(context);
-          },
-          child: Text(
-            // getTranslate(APPStrings.),
-            "${_valuesAge.start.toStringAsFixed(0)}-${_valuesAge.end.toStringAsFixed(0)}",
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              Dimens.margin20,
-              Theme.of(context).hintColor,
-              FontWeight.w700,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget ageMenuContainer() {
-    return Column(
-      children: [
-        // ageChangeRow(),
-        // const SizedBox(
-        //   height: Dimens.margin10,
-        // ),
-        ageRangeRow(),
-        SfRangeSlider(
-          min: _minAge,
-          max: _maxAge,
-          values: _valuesAge,
-          onChanged: (SfRangeValues value) {
-            setState(() {
-              _valuesAge = value;
-            });
-          },
-        ),
-        _buildSwitchTile(
-          title: APPStrings.textUserInRange,
-          value: showUserAsPerAge,
-          onChanged: (value) {
-            setState(() {
-              showUserAsPerAge = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  // ================== widgets regarding interests ===================
+  // Interest variables
   final double _minInterests = 0.0;
   double _maxInterests = 10.0;
   double _valuesInterests = 10;
   bool showUserAsPerInterests = false;
 
-  Widget minimumMutualInterestsRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          getTranslate(APPStrings.textMinMutualInts),
-          // "Minimum mutual interests",
-          overflow: TextOverflow.ellipsis,
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin20,
-            Theme.of(context).colorScheme.onPrimary,
-            FontWeight.w700,
-          ),
-        ),
-        Text(
-          // getTranslate(APPStrings.),
-          _valuesInterests.toStringAsFixed(0),
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin20,
-            Theme.of(context).hintColor,
-            FontWeight.w700,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget mutualInterestMenuContainer() {
-    return Column(
-      children: [
-        _buildSectionTitle(APPStrings.textInterests),
-        const SizedBox(
-          height: Dimens.margin5,
-        ),
-        minimumMutualInterestsRow(),
-        const SizedBox(
-          height: Dimens.margin10,
-        ),
-        Slider(
-          min: _minInterests,
-          max: _maxInterests,
-          value: _valuesInterests,
-          onChanged: (value) {
-            setState(() {
-              _valuesInterests = value;
-            });
-          },
-        ),
-        _buildSwitchTile(
-          title: APPStrings.textUserInRange,
-          value: showUserAsPerInterests,
-          onChanged: (value) {
-            setState(() {
-              showUserAsPerInterests = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  // ===================== widgets regarding gender ======================
+  // Gender variables
   GenderModel selectedGender = GenderModel();
-  Widget genderRow() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle(APPStrings.textGender),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Radio(
-              value: gendersList[0].type ?? '',
-              activeColor: Theme.of(context).colorScheme.onPrimary,
-              groupValue: selectedGender.type,
-              onChanged: (value) => setState(() => selectedGender.type = value as int?),
-            ),
-            Text(
-              gendersList[0].genderString ?? '',
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                Dimens.margin15,
-                Theme.of(context).colorScheme.onPrimary,
-                FontWeight.w600,
-              ),
-            ),
-            Radio(
-              value: gendersList[1].type ?? '',
-              activeColor: Theme.of(context).colorScheme.onPrimary,
-              groupValue: selectedGender.type,
-              onChanged: (value) => setState(() => selectedGender.type = value as int?),
-            ),
-            Text(
-              gendersList[1].genderString ?? '',
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                Dimens.margin15,
-                Theme.of(context).colorScheme.onPrimary,
-                FontWeight.w600,
-              ),
-            ),
-            Radio(
-              activeColor: Theme.of(context).colorScheme.onPrimary,
-              value: gendersList[2].type ?? '',
-              groupValue: selectedGender.type,
-              onChanged: (value) => setState(() => selectedGender.type = value as int?),
-            ),
-            Text(
-              gendersList[2].genderString ?? '',
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                Dimens.margin15,
-                Theme.of(context).colorScheme.onPrimary,
-                FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 
-  // ======================== widgets regarding privacy and visibility ===================
+  // Privacy variables
   bool showInSearchResults = false;
   bool showInRecommendations = false;
 
-  Widget showMeMenuContainer() {
-    return Column(
-      children: [
-        _buildSectionTitle(APPStrings.textShowMe),
-        _buildSwitchTile(
-          title: APPStrings.textInSearchResult,
-          value: showInSearchResults,
-          onChanged: (value) {
-            setState(() {
-              showInSearchResults = value;
-            });
-          },
+  Widget _buildPreferenceCard({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Text(
+        title,
+        style: getTextStyleFromFont(
+          AppFont.poppins,
+          Dimens.margin18,
+          Theme.of(context).colorScheme.onSurface,
+          FontWeight.w600,
         ),
-        _buildSwitchTile(
-          title: APPStrings.textInRecConnection,
-          value: showInRecommendations,
-          onChanged: (value) {
-            setState(() {
-              showInRecommendations = value;
-            });
-          },
+      ),
+    );
+  }
+
+  Widget _buildCustomSwitch({
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Container(
+        width: 44,
+        height: 24,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: value ? Theme.of(context).primaryColor : Colors.grey[300],
         ),
-      ],
+        child: AnimatedAlign(
+          duration: const Duration(milliseconds: 200),
+          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            width: 20,
+            height: 20,
+            margin: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationSection() {
+    return _buildPreferenceCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle("Location"),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  locationController.text.isEmpty ? "Select Location" : locationController.text,
+                  style: getTextStyleFromFont(
+                    AppFont.poppins,
+                    Dimens.margin16,
+                    Theme.of(context).colorScheme.onSurface,
+                    FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              TextButton(
+                onPressed: showLocationDialog,
+                child: Text(
+                  "Change",
+                  style: getTextStyleFromFont(
+                    AppFont.poppins,
+                    Dimens.margin16,
+                    Theme.of(context).primaryColor,
+                    FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Maximum Distance",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w500,
+                ),
+              ),
+              Text(
+                "${_valuesDistance.toStringAsFixed(0)} Miles",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: AppColors.colorDarkBlue,
+              inactiveTrackColor: Colors.grey[300],
+              thumbColor: AppColors.colorDarkBlue,
+              trackHeight: 4,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+            ),
+            child: Slider(
+              min: _minDistance,
+              max: _maxDistance,
+              value: _valuesDistance,
+              onChanged: (value) {
+                setState(() {
+                  _valuesDistance = value;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Only show users in this range",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w500,
+                ),
+              ),
+              _buildCustomSwitch(
+                value: showUserAsPerLocation,
+                onChanged: (value) {
+                  setState(() {
+                    showUserAsPerLocation = value;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAgeSection() {
+    return _buildPreferenceCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle("Age"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Age Range",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w500,
+                ),
+              ),
+              Text(
+                "${_valuesAge.start.toStringAsFixed(0)}-${_valuesAge.end.toStringAsFixed(0)}",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: AppColors.colorDarkBlue,
+              inactiveTrackColor: AppColors.colorCardBackgroundProfile,
+              thumbColor: AppColors.colorDarkBlue,
+              trackHeight: 4,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+              rangeThumbShape: const RoundRangeSliderThumbShape(enabledThumbRadius: 8),
+            ),
+            child: RangeSlider(
+              min: _minAge,
+              max: _maxAge,
+              values: RangeValues(ParsingHelper.parseDoubleMethod(_valuesAge.start), ParsingHelper.parseDoubleMethod(_valuesAge.end)),
+              onChanged: (RangeValues values) {
+                setState(() {
+                  _valuesAge = SfRangeValues(values.start, values.end);
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Only show users in this range",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w500,
+                ),
+              ),
+              _buildCustomSwitch(
+                value: showUserAsPerAge,
+                onChanged: (value) {
+                  setState(() {
+                    showUserAsPerAge = value;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInterestsSection() {
+    return _buildPreferenceCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle("Interests"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Minimum Mutual Interests",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w500,
+                ),
+              ),
+              Text(
+                _valuesInterests.toStringAsFixed(0),
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: AppColors.colorDarkBlue,
+              inactiveTrackColor: Colors.grey[300],
+              thumbColor: AppColors.colorDarkBlue,
+              trackHeight: 4,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+            ),
+            child: Slider(
+              min: _minInterests,
+              max: _maxInterests,
+              value: _valuesInterests,
+              onChanged: (value) {
+                setState(() {
+                  _valuesInterests = value;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Only show users in this range",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w500,
+                ),
+              ),
+              _buildCustomSwitch(
+                value: showUserAsPerInterests,
+                onChanged: (value) {
+                  setState(() {
+                    showUserAsPerInterests = value;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGenderSection() {
+    return _buildPreferenceCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle("Gender"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Radio(
+                      value: gendersList[0].type ?? '',
+                      activeColor: Theme.of(context).primaryColor,
+                      groupValue: selectedGender.type,
+                      onChanged: (value) => setState(() => selectedGender.type = value as int?),
+                    ),
+                    Text(
+                      gendersList[0].genderString ?? '',
+                      style: getTextStyleFromFont(
+                        AppFont.poppins,
+                        Dimens.margin16,
+                        Theme.of(context).colorScheme.onSurface,
+                        FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Radio(
+                      value: gendersList[1].type ?? '',
+                      activeColor: Theme.of(context).primaryColor,
+                      groupValue: selectedGender.type,
+                      onChanged: (value) => setState(() => selectedGender.type = value as int?),
+                    ),
+                    Text(
+                      gendersList[1].genderString ?? '',
+                      style: getTextStyleFromFont(
+                        AppFont.poppins,
+                        Dimens.margin16,
+                        Theme.of(context).colorScheme.onSurface,
+                        FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Radio(
+                      activeColor: Theme.of(context).primaryColor,
+                      value: gendersList[2].type ?? '',
+                      groupValue: selectedGender.type,
+                      onChanged: (value) => setState(() => selectedGender.type = value as int?),
+                    ),
+                    Text(
+                      gendersList[2].genderString ?? '',
+                      style: getTextStyleFromFont(
+                        AppFont.poppins,
+                        Dimens.margin16,
+                        Theme.of(context).colorScheme.onSurface,
+                        FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPrivacySection() {
+    return _buildPreferenceCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle("Show Me"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "In Search Results",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w500,
+                ),
+              ),
+              _buildCustomSwitch(
+                value: showInSearchResults,
+                onChanged: (value) {
+                  setState(() {
+                    showInSearchResults = value;
+                  });
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "In Recommendations",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin16,
+                  Theme.of(context).colorScheme.onSurface,
+                  FontWeight.w500,
+                ),
+              ),
+              _buildCustomSwitch(
+                value: showInRecommendations,
+                onChanged: (value) {
+                  setState(() {
+                    showInRecommendations = value;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   Widget getBody() {
-    return Stack(
+    return Column(
       children: [
-        Visibility(
-            visible: (getUser().userData ?? UserData()).defaultProfilePic != null,
-            replacement: Image.asset(
-              APPImages.icDummyProfile, // Replace with your actual image path
-              fit: BoxFit.cover,
-              width: double.maxFinite,
-              height: MediaQuery.of(context).size.height / 1.7,
-            ),
-            child: Image.network(
-              (getUser().userData ?? UserData()).defaultProfilePic ?? '', // Replace with your actual image path
-              fit: BoxFit.cover,
-              width: double.maxFinite,
-              height: MediaQuery.of(context).size.height / 1.7,
-            )),
-        SafeArea(child: navigationWithLogo()),
-        Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                getTranslate(APPStrings.textPreferences),
-                style: getTextStyleFromFont(
-                  shadow: <Shadow>[
-                    const Shadow(
-                      // offset: Offset(5.0, 5.0),
-                      blurRadius: Dimens.margin25,
-                      color: Color.fromARGB(255, 0, 0, 0),
+        // navigationWithLogo(),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                _buildLocationSection(),
+                _buildAgeSection(),
+                _buildInterestsSection(),
+                _buildGenderSection(),
+                _buildPrivacySection(),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: buttonLoading.value ? null : postPreferences,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ],
-                  AppFont.poppins,
-                  Dimens.margin30,
-                  Theme.of(context).primaryColor,
-                  FontWeight.w600,
+                    child: buttonLoading.value
+                        ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                        : Text(
+                      "Apply Filters",
+                      style: getTextStyleFromFont(
+                        AppFont.poppins,
+                        Dimens.margin16,
+                        Colors.white,
+                        FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
-          Container(
-            height: Dimens.margin500,
-            decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(Dimens.margin30), topRight: Radius.circular(Dimens.margin30)),
-                color: Theme.of(context).primaryColor),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  locationMenuContainer(),
-                  const SizedBox(
-                    height: Dimens.margin10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        maxDistanceMenuContainer(),
-                        const Divider(
-                          thickness: Dimens.margin2,
-                        ),
-                        const SizedBox(
-                          height: Dimens.margin15,
-                        ),
-                        ageMenuContainer(),
-                        const Divider(
-                          thickness: Dimens.margin2,
-                        ),
-                        const SizedBox(
-                          height: Dimens.margin10,
-                        ),
-                        mutualInterestMenuContainer(),
-                        const Divider(
-                          thickness: Dimens.margin2,
-                        ),
-                        const SizedBox(
-                          height: Dimens.margin10,
-                        ),
-                        genderRow(),
-                        const Divider(
-                          thickness: Dimens.margin2,
-                        ),
-                        const SizedBox(
-                          height: Dimens.margin10,
-                        ),
-                        showMeMenuContainer(),
-                        const SizedBox(
-                          height: Dimens.margin10,
-                        ),
-                        CommonButton(
-                          isLoading: buttonLoading.value,
-                          text: getTranslate(APPStrings.textApplyFilter),
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          onTap: () {
-                            postPreferences();
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ]),
-        // Bottom Navigation Bar
+        ),
       ],
     );
   }
@@ -672,6 +673,7 @@ class _ScreenPreferencesState extends State<ScreenPreferences> {
               ),
             ],
             child: Scaffold(
+              appBar: CommonAppBar(title: "Connection Prefrence",),
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               body: Stack(
                 children: [

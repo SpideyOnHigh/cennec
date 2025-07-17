@@ -1,5 +1,6 @@
 import 'dart:io';
 import '../../core/utils/common_import.dart';
+import '../../search_posts/view/screen_find_connection.dart';
 import 'dashboard_home.dart';
 import 'dashboard_messages.dart';
 import 'dashboard_profile.dart';
@@ -19,7 +20,7 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
   final List<Widget> _screens = [
     const DashboardHome(),
     const DashboardSearch(),
-    const DashboardRecommendations(),
+    const ScreenFindConnection(),
     const DashboardMessages(),
     const DashboardProfile(),
   ];
@@ -90,6 +91,7 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
       valueListenables: [navIndex],
       builder: (context, values, _) {
         return Scaffold(
+          resizeToAvoidBottomInset: false,
           extendBody: true,
           body: _screens[navIndex.value],
 

@@ -4,6 +4,7 @@ import 'package:cennec/modules/connections/model/model_recommendations.dart';
 import 'package:cennec/modules/core/api_service/preference_helper.dart';
 import 'package:cennec/modules/core/common/widgets/base_date_picker.dart';
 import 'package:cennec/modules/core/common/widgets/button.dart';
+import 'package:cennec/modules/core/common/widgets/common_appbar.dart';
 import 'package:cennec/modules/core/common/widgets/dialog/common_loading_animation.dart';
 import 'package:cennec/modules/core/common/widgets/dialog/cupertino_confirmation_dialog.dart';
 import 'package:cennec/modules/core/common/widgets/drink_dropdown.dart';
@@ -1090,7 +1091,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
     return  SafeArea(
       child: Column(
         children: [
-          _topSection(),
+          // _topSection(),
           Expanded(
             child: PageView(
               children: [
@@ -1275,6 +1276,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
               ),
             ],
             child: Scaffold(
+              appBar: CommonAppBar(title:  "Preview Your Profile",),
                 resizeToAvoidBottomInset: true,
                 // backgroundColor: Colors.white,
                 body: IgnorePointer(ignoring: isApiLoading.value, child: getBody())),

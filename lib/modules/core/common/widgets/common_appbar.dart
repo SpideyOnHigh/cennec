@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../api_service/common_service.dart';
+import '../../utils/app_dimens.dart';
+import '../../utils/app_font.dart';
+
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBack;
@@ -25,10 +29,15 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Text(
                 title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  Dimens.margin20,
+                  Theme.of(context).colorScheme.onSecondary,
+                  FontWeight.w400,
+                ),
               ),
             ),
-            const SizedBox(width: 40), // To balance alignment
+            // const SizedBox(width: 40), // To balance alignment
           ],
         ),
       ),
