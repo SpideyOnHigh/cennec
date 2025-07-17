@@ -29,84 +29,7 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   ValueNotifier<String> content = ValueNotifier('');
 
-  Widget customAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Battery and signal indicators (left side)
-          Row(
-            children: [
-              Text(
-                "10:19",
-                style: getTextStyleFromFont(
-                  AppFont.poppins,
-                  Dimens.margin14,
-                  Colors.black,
-                  FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          // Right side indicators
-          Row(
-            children: [
-              Icon(Icons.signal_cellular_4_bar, size: 16, color: Colors.black),
-              const SizedBox(width: 4),
-              Icon(Icons.wifi, size: 16, color: Colors.black),
-              const SizedBox(width: 4),
-              Container(
-                width: 20,
-                height: 10,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 1),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                child: Container(
-                  margin: const EdgeInsets.all(1),
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    borderRadius: BorderRadius.circular(1),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget headerSection() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Text(
-            "About Us",
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              Dimens.margin18,
-              Colors.black,
-              FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget logoSection() {
     return Container(
@@ -118,35 +41,14 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
             Container(
               width: 80,
               height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+
               child: Center(
                 child: Image.asset(
                   APPImages.icLogoWithName,
-                  height: 50,
-                  width: 50,
+                  fit: BoxFit.cover,
+                  // height: 50,
+                  // width: 50,
                 ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            // App name
-            Text(
-              "cennec",
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                Dimens.margin24,
-                Colors.black,
-                FontWeight.w700,
               ),
             ),
             // Version
@@ -393,7 +295,7 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
             ),
           ],
           child: Scaffold(
-            backgroundColor: Colors.white,
+            // backgroundColor: AppColors.s,
             appBar: CommonAppBar(title: "About Us",),
             body: SafeArea(
               child: Stack(
