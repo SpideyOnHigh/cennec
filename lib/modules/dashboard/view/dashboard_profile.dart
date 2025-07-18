@@ -59,7 +59,7 @@ class _DashboardProfileState extends State<DashboardProfile> {
         AppFont.poppins,
         Dimens.margin18,
         Theme.of(context).colorScheme.onSecondary,
-        FontWeight.w500,
+        FontWeight.w600,
       ),
     );
   }
@@ -285,7 +285,9 @@ class _DashboardProfileState extends State<DashboardProfile> {
                   _buildTile("About Cennec", null, () {
                     Navigator.pushNamed(context, AppRoutes.routesScreenAboutUs, arguments: true);
                   }),
-                  _buildTile("Community Guidelines", null, () {}),
+                  _buildTile("Community Guidelines", null, () {
+                    Navigator.pushNamed(context, AppRoutes.routesScreenCommunityGuidelines, arguments: true);
+                  }),
                   _buildTile("Feedback", null, () {
                     Navigator.pushNamed(context, AppRoutes.routesScreenFeedback);
                   }),

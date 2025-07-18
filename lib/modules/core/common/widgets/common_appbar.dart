@@ -18,6 +18,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
+        height: preferredSize.height,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
         child: Row(
           children: [
@@ -33,7 +34,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                   AppFont.poppins,
                   Dimens.margin20,
                   Theme.of(context).colorScheme.onSecondary,
-                  FontWeight.w400,
+                  FontWeight.w500,
                 ),
               ),
             ),

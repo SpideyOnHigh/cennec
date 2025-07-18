@@ -136,7 +136,7 @@ class _ScreenSettingsState extends State<ScreenSettings> {
           CupertinoSwitch(
             value: value,
             onChanged: onChanged,
-            activeColor: Theme.of(context).primaryColor,
+            activeColor: AppColors.colorDarkBlue,
           ),
         ],
       ),

@@ -48,54 +48,62 @@ class _ScreenFeedbackState extends State<ScreenFeedback> {
   }
 
   Widget navigationWithLogo() {
-    return Stack(
-      children: [
-        InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Image.asset(
-            APPImages.icBack,
-            color: Theme.of(context).colorScheme.onSecondary, // Update with your logo path
-            height: Dimens.margin30,
-            width: Dimens.margin30,
-          ),
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onSecondary,
         ),
-        Center(
-          child: Image.asset(
-            APPImages.icCennecBottom, // Update with your logo path
-            height: 40,
-          ),
+        onPressed: () => Navigator.pop(context),
+      ),
+      title: Text(
+        'Feedback',
+        style: getTextStyleFromFont(
+          AppFont.poppins,
+          Dimens.margin20,
+          Theme.of(context).colorScheme.onSecondary,
+          FontWeight.w600,
         ),
-      ],
+      ),
+      centerTitle: true,
     );
   }
 
-  Widget cennecFeedbackTitle(BuildContext context) {
-    return Text(
-      getTranslate(APPStrings.textCorrectFeedback).toString(),
-      textAlign: TextAlign.center,
-      style: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin32,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
+  Widget cennecLogo() {
+    return Center(
+      child: Image.asset(
+        APPImages.icCennecBottom,
+        height: 80,
+        width: 120,
       ),
     );
   }
 
-  Widget _buildIntroText() {
+  Widget cennecFeedbackTitle(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          getTranslate(APPStrings.textFeedbackText1),
-          style: getTextStyleFromFont(AppFont.poppins, Dimens.margin16, Theme.of(context).colorScheme.secondary, FontWeight.w600),
+          'Your opinion is important this.',
+          textAlign: TextAlign.center,
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin16,
+            Theme.of(context).colorScheme.secondary,
+            FontWeight.w400,
+          ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 8),
         Text(
-          getTranslate(APPStrings.textFeedbackText2),
-          style: getTextStyleFromFont(AppFont.poppins, Dimens.margin16, Theme.of(context).colorScheme.secondary, FontWeight.w600),
+          'This way we can keep improving our app.',
+          textAlign: TextAlign.center,
+          style: getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin16,
+            Theme.of(context).colorScheme.secondary,
+            FontWeight.w400,
+          ),
         ),
       ],
     );
@@ -103,21 +111,31 @@ class _ScreenFeedbackState extends State<ScreenFeedback> {
 
   Widget _buildRatingWidget() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          getTranslate(APPStrings.textTapToRate),
-          style: getTextStyleFromFont(AppFont.poppins, Dimens.margin20, Theme.of(context).colorScheme.onSecondary, FontWeight.w600),
+          'What is your overall satisfaction\nwith Cennec?',
+          style: getTextStyleFromFont(
+              AppFont.poppins,
+              Dimens.margin20,
+              Theme.of(context).colorScheme.onSecondary,
+              FontWeight.w600
+          ),
         ),
+        const SizedBox(height: 20),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: List.generate(5, (index) {
-            return IconButton(
-              icon: Icon(
-                index < _rating ? Icons.star : Icons.star_border,
-                size: 40,
-                color: index < _rating ? Colors.amber : Theme.of(context).colorScheme.secondary,
+            return Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: GestureDetector(
+                onTap: () => _setRating(index + 1),
+                child: Icon(
+                  index < _rating ? Icons.star : Icons.star_border,
+                  size: 35,
+                  color: index < _rating ? Colors.amber : Theme.of(context).colorScheme.secondary,
+                ),
               ),
-              onPressed: () => _setRating(index + 1),
             );
           }),
         ),
@@ -132,36 +150,123 @@ class _ScreenFeedbackState extends State<ScreenFeedback> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${getTranslate(APPStrings.textFeedbackText3)}:',
-          style: getTextStyleFromFont(AppFont.poppins, Dimens.margin16, Theme.of(context).colorScheme.secondary, FontWeight.w600),
+          'Select the type of feedback you\'d like to give:',
+          style: getTextStyleFromFont(
+              AppFont.poppins,
+              Dimens.margin18,
+              Theme.of(context).colorScheme.onSecondary,
+              FontWeight.w600
+          ),
         ),
-        Column(
-          children: List.generate((modelQuestions.data ?? []).length, (index) {
-            return SizedBox(
-              height: Dimens.margin40,
-              child: RadioListTile(
-                splashRadius: 0,
-                enableFeedback: false,
-                activeColor: Theme.of(context).colorScheme.onPrimary,
-                title: Text(
-                  modelQuestions.data?[index].feedbackTitle ?? '',
-                  style: getTextStyleFromFont(AppFont.poppins, Dimens.margin18, Theme.of(context).colorScheme.onPrimary, FontWeight.w600),
-                ),
-                groupValue: selectedIndex,
-                value: modelQuestions.data?[index].id,
-                onChanged: (value) {
-                  if (errorFeedbackType.value.isNotEmpty) {
-                    errorFeedbackType.value = '';
-                  }
-                  printWrapped(value.toString());
-                  selectedIndex = value ?? 0;
-                  _setFeedbackType(value ?? 0);
-                },
-              ),
-            );
-          }),
-        ),
+        const SizedBox(height: 20),
+        _buildFeedbackOptionsGrid(),
       ],
+    );
+  }
+
+  Widget _buildFeedbackOptionsGrid() {
+    List<Data> feedbackOptions = modelQuestions.data ?? [];
+
+    if (feedbackOptions.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    List<Widget> rows = [];
+    for (int i = 0; i < feedbackOptions.length; i += 2) {
+      List<Widget> rowChildren = [];
+
+      // First option in row
+      rowChildren.add(
+        Expanded(
+          child: _buildFeedbackOption(
+            feedbackOptions[i].id ?? 0,
+            feedbackOptions[i].feedbackTitle ?? '',
+          ),
+        ),
+      );
+
+      // Second option in row (if exists)
+      if (i + 1 < feedbackOptions.length) {
+        rowChildren.add(const SizedBox(width: 16));
+        rowChildren.add(
+          Expanded(
+            child: _buildFeedbackOption(
+              feedbackOptions[i + 1].id ?? 0,
+              feedbackOptions[i + 1].feedbackTitle ?? '',
+            ),
+          ),
+        );
+      } else {
+        // If odd number of options, add empty expanded to balance
+        rowChildren.add(const SizedBox(width: 16));
+        rowChildren.add(const Expanded(child: SizedBox()));
+      }
+
+      rows.add(Row(children: rowChildren));
+
+      // Add spacing between rows (except last row)
+      if (i + 2 < feedbackOptions.length) {
+        rows.add(const SizedBox(height: 16));
+      }
+    }
+
+    return Column(children: rows);
+  }
+
+  Widget _buildFeedbackOption(int value, String title) {
+    bool isSelected = selectedIndex == value;
+    return GestureDetector(
+      onTap: () {
+        if (errorFeedbackType.value.isNotEmpty) {
+          errorFeedbackType.value = '';
+        }
+        setState(() {
+          selectedIndex = value;
+          _feedbackType = value;
+        });
+        printWrapped(value.toString());
+      },
+      child: Row(
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isSelected
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.secondary,
+                width: 2,
+              ),
+            ),
+            child: isSelected
+                ? Center(
+              child: Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            )
+                : null,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              title,
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin16,
+                Theme.of(context).colorScheme.onSecondary,
+                FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -169,16 +274,16 @@ class _ScreenFeedbackState extends State<ScreenFeedback> {
     return Container(
       height: Dimens.margin200,
       width: double.maxFinite,
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.margin20, vertical: Dimens.margin10),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        // color: Theme.of(context).primaryColor,
-        border: Border.all(color: Theme.of(context).colorScheme.onSecondary),
-        borderRadius: BorderRadius.circular(Dimens.margin20),
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
-        inputFormatters: feedbackTextController.text.isEmpty ? [AlphanumericAndSpecialCharFormatter(), FilteringTextInputFormatter.deny(RegExp(r'^\s'))] : null,
+        inputFormatters: feedbackTextController.text.isEmpty
+            ? [AlphanumericAndSpecialCharFormatter(), FilteringTextInputFormatter.deny(RegExp(r'^\s'))]
+            : null,
         keyboardType: TextInputType.multiline,
-
         onChanged: (value) {
           setState(() {});
           if (errorEmptyController.value.isNotEmpty) {
@@ -187,115 +292,146 @@ class _ScreenFeedbackState extends State<ScreenFeedback> {
         },
         controller: feedbackTextController,
         maxLength: 500,
-        maxLines: 10,
+        maxLines: null,
         style: getTextStyleFromFont(
           AppFont.poppins,
-          Dimens.margin18,
-          Theme.of(context).colorScheme.primary,
-          FontWeight.w600,
-        ), // Text color inside the TextField
+          Dimens.margin16,
+          Theme.of(context).colorScheme.onSecondary,
+          FontWeight.w400,
+        ),
         decoration: const InputDecoration(
           hintText: 'Write something here..',
-          border: InputBorder.none, // Removes the border
+          hintStyle: TextStyle(color: Colors.grey),
+          border: InputBorder.none,
+          counterText: '',
         ),
       ),
     );
   }
 
   Widget _buildSubmitButton() {
-    return CommonButton(isLoading: buttonLoading.value, text: getTranslate(APPStrings.textSend), backgroundColor: Theme.of(context).colorScheme.primary, onTap: () => validate());
+    return Container(
+      width: double.infinity,
+      height: 56,
+      child: CommonButton(
+        isLoading: buttonLoading.value,
+        text: 'Send Feedback',
+        backgroundColor: const Color(0xFF2C3E50), // Dark blue color from screenshot
+        textColor: Colors.white,
+        onTap: () => validate(),
+      ),
+    );
   }
 
   Widget getBody() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          navigationWithLogo(),
-          const SizedBox(height: 20),
-          cennecFeedbackTitle(context),
-          _buildIntroText(),
-          const SizedBox(height: 20),
-          _buildRatingWidget(),
-          const SizedBox(height: 20),
-          _buildFeedbackTypeSelector(),
-          Visibility(
-              visible: errorFeedbackType.value.isNotEmpty,
-              child: BaseTextFieldErrorIndicator(
-                errorText: errorFeedbackType.value,
-              )),
-          const SizedBox(height: 40),
-          textFieldSendMessage(),
-          Visibility(
-              visible: errorEmptyController.value.isNotEmpty,
-              child: BaseTextFieldErrorIndicator(
-                errorText: errorEmptyController.value,
-              )),
-          const SizedBox(height: 20),
-          _buildSubmitButton(),
-          const SizedBox(height: 20),
-        ],
-      ),
+    return Column(
+      children: [
+        navigationWithLogo(),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                cennecLogo(),
+                const SizedBox(height: 32),
+                cennecFeedbackTitle(context),
+                const SizedBox(height: 40),
+                _buildRatingWidget(),
+                const SizedBox(height: 40),
+                _buildFeedbackTypeSelector(),
+                Visibility(
+                  visible: errorFeedbackType.value.isNotEmpty,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: BaseTextFieldErrorIndicator(
+                      errorText: errorFeedbackType.value,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                textFieldSendMessage(),
+                Visibility(
+                  visible: errorEmptyController.value.isNotEmpty,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: BaseTextFieldErrorIndicator(
+                      errorText: errorEmptyController.value,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                _buildSubmitButton(),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiValueListenableBuilder(
-        valueListenables: [isLoading, errorEmptyController, errorFeedbackType, buttonLoading],
-        builder: (context, values, child) {
-          return SafeArea(
-            child: MultiBlocListener(
-              listeners: [
-                BlocListener<GetFeedbackQueBloc, GetFeedbackQueState>(
-                  listener: (context, state) {
-                    isLoading.value = state is GetFeedbackQueLoading;
-                    if (state is GetFeedbackQueFailure) {
-                      if (state.errorMessage.generalError!.isNotEmpty) {
-                        ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                      }
+      valueListenables: [isLoading, errorEmptyController, errorFeedbackType, buttonLoading],
+      builder: (context, values, child) {
+        return SafeArea(
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<GetFeedbackQueBloc, GetFeedbackQueState>(
+                listener: (context, state) {
+                  isLoading.value = state is GetFeedbackQueLoading;
+                  if (state is GetFeedbackQueFailure) {
+                    if (state.errorMessage.generalError!.isNotEmpty) {
+                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
                     }
-                    if (state is GetFeedbackQueResponse) {
-                      modelQuestions = state.modelFeedbackQuestions;
-                      _rating = state.modelFeedbackQuestions.givenRating ?? 0;
+                  }
+                  if (state is GetFeedbackQueResponse) {
+                    modelQuestions = state.modelFeedbackQuestions;
+                    _rating = state.modelFeedbackQuestions.givenRating ?? 0;
+                  }
+                },
+              ),
+              BlocListener<PostFeedbackBloc, PostFeedbackState>(
+                listener: (context, state) {
+                  buttonLoading.value = state is PostFeedbackLoading;
+                  if (state is PostFeedbackFailure) {
+                    if (state.errorMessage.generalError!.isNotEmpty) {
+                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
                     }
-                  },
-                ),
-                BlocListener<PostFeedbackBloc, PostFeedbackState>(
-                  listener: (context, state) {
-                    buttonLoading.value = state is PostFeedbackLoading;
-                    if (state is PostFeedbackFailure) {
-                      if (state.errorMessage.generalError!.isNotEmpty) {
-                        ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                      }
-                      if (state.errorMessage.feedbackId != null) {
-                        ToastController.showToast(context, state.errorMessage.feedbackId ?? '', false);
-                      }
+                    if (state.errorMessage.feedbackId != null) {
+                      ToastController.showToast(context, state.errorMessage.feedbackId ?? '', false);
                     }
-                    if (state is PostFeedbackResponse) {
-                      ToastController.showToast(context, state.modelFeedbackResponse.message ?? '', true);
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-              ],
-              child: Scaffold(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  body: Stack(
-                    children: [
-                      IgnorePointer(ignoring: isLoading.value || buttonLoading.value, child: getBody()),
-                      Visibility(
-                        visible: isLoading.value,
-                        child: const Center(
-                          child: CommonLoadingAnimation(),
-                        ),
-                      )
-                    ],
-                  )),
+                  }
+                  if (state is PostFeedbackResponse) {
+                    ToastController.showToast(context, state.modelFeedbackResponse.message ?? '', true);
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+            ],
+            child: Scaffold(
+              backgroundColor: Theme.of(context).primaryColor,
+              body: Stack(
+                children: [
+                  IgnorePointer(
+                    ignoring: isLoading.value || buttonLoading.value,
+                    child: getBody(),
+                  ),
+                  Visibility(
+                    visible: isLoading.value,
+                    child: const Center(
+                      child: CommonLoadingAnimation(),
+                    ),
+                  )
+                ],
+              ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   validate() {
