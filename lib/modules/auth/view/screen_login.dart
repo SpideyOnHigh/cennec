@@ -1,6 +1,7 @@
 import 'package:cennec/modules/auth/bloc/login_bloc/login_bloc.dart';
 import 'package:cennec/modules/core/common/widgets/base_text_field_error_indicator.dart';
 import 'package:cennec/modules/core/common/widgets/button.dart';
+import 'package:cennec/modules/core/common/widgets/common_password_form_field.dart';
 import 'package:cennec/modules/core/common/widgets/email_validation.dart';
 import 'package:cennec/modules/core/common/widgets/toast_controller.dart';
 import 'package:cennec/modules/core/utils/app_config.dart';
@@ -9,6 +10,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/api_service/preference_helper.dart';
+import '../../core/common/widgets/base_rounded_corner_widget.dart';
+import '../../core/common/widgets/common_text_field.dart';
 import '../../core/utils/common_import.dart';
 
 class ScreenLogin extends StatefulWidget {
@@ -69,46 +72,38 @@ class _ScreenLoginState extends State<ScreenLogin> {
   }
 
   Widget _buildEmailField() {
-    return BaseTextFormFieldRounded(
+    return CommonTextFormField(
       hintText: getTranslate(APPStrings.textEmail),
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
       controller: emailController,
-      onChange: () {
+      onChanged: (_) {
         emailError.value = '';
       },
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
+      label: "Email",
+
     );
   }
 
   Widget _buildPasswordField() {
-    return BasePasswordTextFormField(
+    return CommonPasswordTextFormField(
       hintText: getTranslate(APPStrings.textPassword),
       controller: passwordController,
       inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
-      hintStyle: getTextStyleFromFont(
-        AppFont.poppins,
-        Dimens.margin18,
-        Theme.of(context).hintColor,
-        FontWeight.w600,
-      ),
-      onChange: () {
+
+      onChanged: (_) {
         pwdError.value = '';
       },
       isShowPassword: !isShowPassword.value,
-      pressShowPassword: () {
+      onToggleVisibility: () {
         isShowPassword.value = !isShowPassword.value;
       },
+      label: 'Password',
     );
   }
 
   Widget _buildForgotPasswordButton(BuildContext context) {
     return Align(
-      alignment: Alignment.center,
+      alignment: Alignment.bottomRight,
       child: TextButton(
         onPressed: () {
           Navigator.pushNamed(context, AppRoutes.routesForgotPwdEmail);
@@ -117,7 +112,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
           getTranslate(APPStrings.textForgotPassword),
           style: getTextStyleFromFont(
             AppFont.poppins,
-            Dimens.margin18,
+            Dimens.margin14,
             Theme.of(context).colorScheme.secondary,
             FontWeight.w600,
           ),
@@ -145,16 +140,42 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   Widget _buildNoAccountText(BuildContext context) {
     return Center(
-      child: Text(
-        getTranslate(APPStrings.textNoAccount),
-        style: getTextStyleFromFont(
-          AppFont.poppins,
-          Dimens.margin18,
-          Theme.of(context).colorScheme.secondary,
-          FontWeight.w600,
-        ),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          Text(
+            "Don't have an account?", // "Already have an account?"
+            style: getTextStyleFromFont(
+              AppFont.poppins,
+              Dimens.margin14,
+              Theme.of(context).colorScheme.secondary,
+              FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 4),
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.routesSignUp);
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(0, 0),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              "Sign Up", // "Log In"
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin14,
+                Theme.of(context).colorScheme.onSecondary,
+                FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
+
   }
 
   Widget _buildSignUpButton(BuildContext context) {
@@ -182,11 +203,11 @@ class _ScreenLoginState extends State<ScreenLogin> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: Dimens.margin50),
-          _buildLogo(),
-          const SizedBox(height: Dimens.margin60),
-          _buildWelcomeText(context),
-          const SizedBox(height: 40),
+          // const SizedBox(height: Dimens.margin50),
+          // _buildLogo(),
+          // const SizedBox(height: Dimens.margin60),
+          // _buildWelcomeText(context),
+          // const SizedBox(height: 40),
           _buildEmailField(),
           Visibility(
             visible: emailError.value.isNotEmpty,
@@ -207,8 +228,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
           _buildSignInButton(context),
           const SizedBox(height: 20),
           _buildNoAccountText(context),
-          const SizedBox(height: 10),
-          _buildSignUpButton(context),
+
         ],
       ),
     );
@@ -224,15 +244,19 @@ class _ScreenLoginState extends State<ScreenLogin> {
               listener: (context, state) {
                 isLoading.value = state is LoginLoading;
                 if (state is LoginResponse) {
-                  ToastController.showToast(context, state.modelLogin.message ?? '', true);
-                  if (state.modelLogin.data?.hasInterests == true && state.modelLogin.data?.userData?.hasReadAboutUs == true) {
-                    PreferenceHelper.setBool(PreferenceHelper.hasReadAboutUs, true);
+                  ToastController.showToast(
+                      context, state.modelLogin.message ?? '', true);
+                  if (state.modelLogin.data?.hasInterests == true &&
+                      state.modelLogin.data?.userData?.hasReadAboutUs == true) {
+                    PreferenceHelper.setBool(
+                        PreferenceHelper.hasReadAboutUs, true);
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.routesScreenDashboard,
                       (route) => false,
                     );
-                  } else if (state.modelLogin.data?.userData?.hasReadAboutUs == false) {
+                  } else if (state.modelLogin.data?.userData?.hasReadAboutUs ==
+                      false) {
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.routesScreenAboutUs,
@@ -249,16 +273,23 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 }
                 if (state is LoginFailure) {
                   if (state.errorMessage.generalError!.isNotEmpty) {
-                    ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                    ToastController.showToast(
+                        context, state.errorMessage.generalError ?? '', false);
                   } else {
-                    ToastController.showToast(context, state.errorMessage.wrongCredentials ?? '', false);
+                    ToastController.showToast(context,
+                        state.errorMessage.wrongCredentials ?? '', false);
                   }
                 }
               },
-              child: Scaffold(
-                resizeToAvoidBottomInset: true,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                body: SingleChildScrollView(child: getBody(context)),
+              child: BaseRoundedBackgroundWidget(
+                appBarText: "Login",
+                margin: const EdgeInsets.all(0),
+                padding: const EdgeInsets.only(top: 24),
+                child: Scaffold(
+                  resizeToAvoidBottomInset: true,
+                  backgroundColor: Colors.transparent,
+                  body: SingleChildScrollView(child: getBody(context)),
+                ),
               ),
             );
           }),
@@ -275,7 +306,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
     } else if (emailController.text.isEmpty) {
       emailError.value = getTranslate(ValidationString.textValidateReqEml);
       isValid = false;
-    } else if (emailController.text.isNotEmpty && !EmailValidation.validate(emailController.text.toString().trim())) {
+    } else if (emailController.text.isNotEmpty &&
+        !EmailValidation.validate(emailController.text.toString().trim())) {
       emailError.value = getTranslate(ValidationString.textInvalidEml);
       isValid = false;
     } else if (passwordController.text.isEmpty) {
@@ -297,7 +329,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   loginEvent(String email, String password) async {
     // Map<String, dynamic> body = {AppConfig.paramEmail: email, AppConfig.paramPassword: password,AppConfig.paramToken:PreferenceHelper.getString(PreferenceHelper.fcmToken)};
-    Map<String, dynamic> body = {AppConfig.paramEmail: email, AppConfig.paramPassword: password,AppConfig.paramToken:"jasldnasndajknd"};
-    BlocProvider.of<LoginBloc>(context).add(OnLogin(body: body, url: AppUrls.apiUserLogin));
+    Map<String, dynamic> body = {
+      AppConfig.paramEmail: email,
+      AppConfig.paramPassword: password,
+      AppConfig.paramToken: "jasldnasndajknd"
+    };
+    BlocProvider.of<LoginBloc>(context)
+        .add(OnLogin(body: body, url: AppUrls.apiUserLogin));
   }
 }

@@ -106,7 +106,7 @@ class CommonTextFormField extends StatelessWidget {
             hintText: hintText,
             hintStyle: getTextStyleFromFont(AppFont.poppins, 15, theme.hintColor, FontWeight.w400),
             filled: true,
-            fillColor: AppColors.colorCardBackgroundProfile,
+            fillColor: Colors.white,
             counterText: '',
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
