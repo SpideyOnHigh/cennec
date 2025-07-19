@@ -16,13 +16,14 @@ class UserProfileBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.85,
-      maxChildSize: 0.95,
-      builder: (_, controller) => SingleChildScrollView(
-        controller: controller,
-        padding: const EdgeInsets.all(16),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.75, // fixed height (85% of screen)
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
