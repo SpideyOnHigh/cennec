@@ -102,6 +102,89 @@ class _DashboardMessagesState extends State<DashboardMessages> {
     );
   }
 
+
+  Widget buildTabSwitcher() {
+    return Container(
+      height: 52,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.colorSelectedInterestChip,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () => navIndex.value = 0,
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: navIndex.value == 0 ? AppColors.colorWhite : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  "My Cennections",
+                  style: getTextStyleFromFont(
+                    AppFont.poppins,
+                    14,
+                    AppColors.colorBlack,
+                    FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: () => navIndex.value = 1,
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: navIndex.value == 1 ? AppColors.colorWhite : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  "My Favorites",
+                  style: getTextStyleFromFont(
+                    AppFont.poppins,
+                    14,
+                    AppColors.colorBlack,
+                    FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabItem(int index, String label) {
+    final isSelected = navIndex.value == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => navIndex.value = index,
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.colorWhite : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            label,
+            style: getTextStyleFromFont(
+              AppFont.poppins,
+              14,
+              AppColors.colorBlack,
+              isSelected ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   final List<Interest> interests = [
     Interest(name: 'Interior design'),
     Interest(name: 'Economics'),
@@ -190,252 +273,241 @@ class _DashboardMessagesState extends State<DashboardMessages> {
       index: navIndex.value,
       children: [
         Visibility(
-            visible: myConnections.value.isNotEmpty,
-            replacement: Center(
-              child: Text(
-                getTranslate(isLoading.value ? APPStrings.textLoadingConnection : APPStrings.textNoConnections),
-                style: getTextStyleFromFont(
-                  AppFont.poppins,
-                  Dimens.margin18,
-                  Theme.of(context).hintColor,
-                  FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ?? FontWeight.w500,
-                ),
+          visible: myConnections.value.isNotEmpty,
+          replacement: Center(
+            child: Text(
+              getTranslate(isLoading.value ? APPStrings.textLoadingConnection : APPStrings.textNoConnections),
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin18,
+                Theme.of(context).hintColor,
+                FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ?? FontWeight.w500,
               ),
             ),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                      ),
-                      itemCount: myConnections.value.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.routesScreenChats,
-                                arguments: MessageRoomRequestData(
-                                    fromUserId: myConnections.value[index].id!,
-                                    page: 1,
-                                    name: myConnections.value[index].name!,
-                                    imageUrl: myConnections.value[index].defaultProfilePic ?? ''));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              children: [
-                                // (myConnections.value.data?[index].profileImages ?? []).isNotEmpty && myConnections.value.data?[index].profileImages != null
-                                myConnections.value[index].defaultProfilePic != null
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(Dimens.margin30),
-                                        child: Image.network(
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) {
-                                              return child; // Image is fully loaded
-                                            }
-                                            return const Center(
-                                              child: CommonLoadingAnimation(), // Show the loading animation
-                                            );
-                                          },
-                                          myConnections.value[index].defaultProfilePic ?? '',
-                                          width: Dimens.margin225,
-                                          height: Dimens.margin300,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : ClipRRect(
-                                        borderRadius: BorderRadius.circular(Dimens.margin30),
-                                        child: SizedBox(
-                                          width: Dimens.margin225,
-                                          height: Dimens.margin300,
-                                          child: Image.asset(
-                                            APPImages.icDummyProfile,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                      // image: const DecorationImage(image: AssetImage(APPImages.icDummyProfile), fit: BoxFit.cover), //todo change image
-                                      // color: Theme.of(context).primaryColor,
-                                      borderRadius: BorderRadius.circular(Dimens.margin30)),
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
-                                      child: Text(
-                                        myConnections.value[index].name ?? '',
-                                        style: getTextStyleFromFont(
-                                          shadow: <Shadow>[
-                                            const Shadow(
-                                              // offset: Offset(5.0, 5.0),
-                                              blurRadius: Dimens.margin20,
-                                              color: Color.fromARGB(255, 0, 0, 0),
-                                            ),
-                                          ],
-                                          AppFont.poppins,
-                                          Dimens.margin20,
-                                          Theme.of(context).primaryColor,
-                                          FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+          ),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: myConnections.value.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final user = myConnections.value[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.routesScreenChats,
+                            arguments: MessageRoomRequestData(
+                              fromUserId: user.id!,
+                              page: 1,
+                              name: user.name ?? '',
+                              imageUrl: user.defaultProfilePic ?? '',
+                            ));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.symmetric(horizontal: 0),
+                        decoration: BoxDecoration(
+                          color: AppColors.colorWhite,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade300,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                        );
-                      }),
-                  Visibility(
-                    visible: showLoadMoreForConnection.value,
-                    child: SizedBox(
-                        width: Dimens.margin120,
-                        child: Center(
-                          child: CommonButton(
-                            height: 50,
-                            text: "Load More",
-                            onTap: () {
-                              getMyConnections(pageNumber: connectionPageNumber);
-                            },
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            isLoading: paginationLoading.value,
-                          ),
-                        )),
-                  )
-                ],
-              ),
-            )),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: AppColors.colorGreyExtraLight,
+                              backgroundImage: user.defaultProfilePic != null
+                                  ? NetworkImage(user.defaultProfilePic!)
+                                  : null,
+                              child: user.defaultProfilePic == null
+                                  ? Text(
+                                user.name?.substring(0, 1).toUpperCase() ?? "?",
+                                style: getTextStyleFromFont(AppFont.poppins, 18, AppColors.colorWhite, FontWeight.bold),
+                              )
+                                  : null,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.name ?? '',
+                                    style: getTextStyleFromFont(AppFont.poppins, 16, AppColors.colorBlack, FontWeight.w600),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  //todo: recent message
+                                  // Text(
+                                  //   "Hey how’s it going?",
+                                  //   style: getTextStyleFromFont(AppFont.poppins, 14, AppColors.colorHyperLink80, FontWeight.normal),
+                                  // ),
+                                ],
+                              ),
+                            ),
+
+                            //todo:DOT
+                            // Row(
+                            //   children: [
+                            //     Container(
+                            //       width: 8,
+                            //       height: 8,
+                            //       decoration: const BoxDecoration(
+                            //         shape: BoxShape.circle,
+                            //         color: Colors.black,
+                            //       ),
+                            //     ),
+                            //     SizedBox(width: 4,),
+                            //     Text(
+                            //       "1hr ago",
+                            //       style: getTextStyleFromFont(AppFont.poppins, 12, AppColors.colorBlack1, FontWeight.normal),
+                            //     ),
+                            //   ],
+                            // )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                Visibility(
+                  visible: showLoadMoreForConnection.value,
+                  child: Center(
+                    child: CommonButton(
+                      height: 48,
+                      text: "Load More",
+                      onTap: () {
+                        getMyConnections(pageNumber: connectionPageNumber);
+                      },
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      isLoading: paginationLoading.value,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+        // === FAVORITES TAB ===
         Visibility(
-            visible: myFavourites.value.isNotEmpty,
-            replacement: Center(
-              child: Text(
-                getTranslate(isLoading.value ? APPStrings.textLoadingConnection : APPStrings.textNoConnections),
-                style: getTextStyleFromFont(
-                  AppFont.poppins,
-                  Dimens.margin18,
-                  Theme.of(context).hintColor,
-                  FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ?? FontWeight.w500,
-                ),
+          visible: myFavourites.value.isNotEmpty,
+          replacement: Center(
+            child: Text(
+              getTranslate(isLoading.value ? APPStrings.textLoadingConnection : APPStrings.textNoConnections),
+              style: getTextStyleFromFont(
+                AppFont.poppins,
+                Dimens.margin18,
+                Theme.of(context).hintColor,
+                FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ?? FontWeight.w500,
               ),
             ),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GridView.builder(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                      ),
-                      itemCount: myFavourites.value.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            if (myFavourites.value[index].isConnected == true) {
-                              Navigator.pushNamed(context, AppRoutes.routesScreenChats,
-                                  arguments: MessageRoomRequestData(
-                                      fromUserId: myFavourites.value[index].id!,
-                                      page: 1,
-                                      name: myFavourites.value[index].name!,
-                                      imageUrl: myFavourites.value[index].defaultProfilePic ?? ''));
-                            } else {
-                              Navigator.pushNamed(context, AppRoutes.routesScreenUserDetails,
-                                  arguments: ModelRequestDataTransfer(getUserId: myFavourites.value[index].id, isFromDashboard: true));
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              children: [
-                                // (myFavourites.value.data?[index].profileImages ?? []).isNotEmpty && myFavourites.value.data?[index].profileImages != null
-                                myFavourites.value[index].defaultProfilePic != null
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(Dimens.margin30),
-                                        child: Image.network(
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) {
-                                              return child; // Image is fully loaded
-                                            }
-                                            return const Center(
-                                              child: CommonLoadingAnimation(), // Show the loading animation
-                                            );
-                                          },
-                                          myFavourites.value[index].defaultProfilePic ?? '',
-                                          width: Dimens.margin225,
-                                          height: Dimens.margin300,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : ClipRRect(
-                                        borderRadius: BorderRadius.circular(Dimens.margin30),
-                                        child: SizedBox(
-                                          width: Dimens.margin225,
-                                          height: Dimens.margin300,
-                                          child: Image.asset(
-                                            APPImages.icDummyProfile,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                      // image: const DecorationImage(image: AssetImage(APPImages.icDummyProfile), fit: BoxFit.cover), //todo change image
-                                      // color: Theme.of(context).primaryColor,
-                                      borderRadius: BorderRadius.circular(Dimens.margin30)),
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
-                                      child: Text(
-                                        myFavourites.value[index].name ?? '',
-                                        style: getTextStyleFromFont(
-                                          shadow: <Shadow>[
-                                            const Shadow(
-                                              // offset: Offset(5.0, 5.0),
-                                              blurRadius: Dimens.margin20,
-                                              color: Color.fromARGB(255, 0, 0, 0),
-                                            ),
-                                          ],
-                                          AppFont.poppins,
-                                          Dimens.margin20,
-                                          Theme.of(context).primaryColor,
-                                          FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
+          ),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                  ),
+                  itemCount: myFavourites.value.length,
+                  itemBuilder: (context, index) {
+                    final fav = myFavourites.value[index];
+                    return InkWell(
+                      onTap: () {
+                        if (fav.isConnected == true) {
+                          Navigator.pushNamed(context, AppRoutes.routesScreenChats,
+                              arguments: MessageRoomRequestData(
+                                fromUserId: fav.id!,
+                                page: 1,
+                                name: fav.name!,
+                                imageUrl: fav.defaultProfilePic ?? '',
+                              ));
+                        } else {
+                          Navigator.pushNamed(context, AppRoutes.routesScreenUserDetails,
+                              arguments: ModelRequestDataTransfer(
+                                getUserId: fav.id,
+                                isFromDashboard: true,
+                              ));
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Stack(
+                          children: [
+                            fav.defaultProfilePic != null
+                                ? ClipRRect(
+                              borderRadius: BorderRadius.circular(Dimens.margin30),
+                              child: Image.network(
+                                fav.defaultProfilePic!,
+                                width: Dimens.margin225,
+                                height: Dimens.margin300,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                                : ClipRRect(
+                              borderRadius: BorderRadius.circular(Dimens.margin30),
+                              child: SizedBox(
+                                width: Dimens.margin225,
+                                height: Dimens.margin300,
+                                child: Image.asset(APPImages.icDummyProfile, fit: BoxFit.cover),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
+                                child: Text(
+                                  fav.name ?? '',
+                                  style: getTextStyleFromFont(
+                                    AppFont.poppins,
+                                    Dimens.margin20,
+                                    Theme.of(context).primaryColor,
+                                    FontWeight.w600,
+                                    shadow: const [
+                                      Shadow(blurRadius: 20, color: Colors.black),
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        );
-                      }),
-                  Visibility(
-                    visible: showLoadMoreForFavourite.value,
-                    child: SizedBox(
-                        width: Dimens.margin120,
-                        child: Center(
-                          child: CommonButton(
-                            height: 50,
-                            text: "Load More",
-                            onTap: () {
-                              getMYFavourites(pageNumber: favouritePageNumber);
-                            },
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            isLoading: paginationLoading.value,
-                          ),
-                        )),
-                  )
-                ],
-              ),
-            )),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                Visibility(
+                  visible: showLoadMoreForFavourite.value,
+                  child: Center(
+                    child: CommonButton(
+                      height: 48,
+                      text: "Load More",
+                      onTap: () {
+                        getMYFavourites(pageNumber: favouritePageNumber);
+                      },
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      isLoading: paginationLoading.value,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -445,15 +517,22 @@ class _DashboardMessagesState extends State<DashboardMessages> {
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: Dimens.margin10),
-          logo(),
+          // const SizedBox(height: Dimens.margin10),
+          // logo(),
+          // const SizedBox(height: Dimens.margin20),
+          // myMessages(context),
           const SizedBox(height: Dimens.margin20),
-          myMessages(context),
+          // messagesGridview(),
+          Text("Messages", style:  getTextStyleFromFont(
+            AppFont.poppins,
+            Dimens.margin28,
+            AppColors.colorDarkBlue,
+            FontWeight.w600,
+          )),
           const SizedBox(height: Dimens.margin20),
-          messagesGridview(),
-          const SizedBox(height: Dimens.margin20),
-          myCennectionAndFavouriteText(context),
+          buildTabSwitcher(),
           const SizedBox(height: Dimens.margin20),
           Expanded(
             child: connectionsGrid(),
@@ -552,7 +631,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                 ],
                 child: Scaffold(
                   resizeToAvoidBottomInset: true,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  backgroundColor: AppColors.colorRoundedBgContainer,
                   body: IgnorePointer(
                       ignoring: isLoading.value,
                       child: Stack(

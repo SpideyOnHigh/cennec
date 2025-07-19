@@ -40,4 +40,8 @@ class AppColors {
   // DC3E74
   static const menuPinkColor = Color(0xFFDC3E74);
   static const bgPercentChipLightColor = Color(0xFF1A74A8);
+
+  static const chatBubbleBg = Color(0xFFDBE0D4);
+
+
 }
