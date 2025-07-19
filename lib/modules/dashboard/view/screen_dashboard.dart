@@ -28,18 +28,22 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
     navIndex.value = index;
   }
 
-  Widget buildIcon(int index, String assetPath) {
+  Widget buildIcon(int index, String baseAssetPath) {
     final bool isSelected = navIndex.value == index;
+    final String iconAsset = isSelected
+        ? baseAssetPath.replaceFirst('.png', '_filled.png')
+        : baseAssetPath;
+
     return IconButton(
       onPressed: () => onItemTapped(index),
       icon: Image.asset(
-        assetPath,
-        color: isSelected ? AppColors.menuPinkColor : Colors.grey,
-        width: Dimens.margin28,
-        height: Dimens.margin28,
+        iconAsset,
+        width: Dimens.margin24,
+        height: Dimens.margin24,
       ),
     );
   }
+
 
   Widget buildFAB() {
     final bool isCenterSelected = navIndex.value == 2;
@@ -70,7 +74,7 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
         child: Image.asset(
           isCenterSelected
               ? APPImages.icCennecBottom // active colorful icon
-              : APPImages.icBottomCennec, // default grey icon
+              : APPImages.icCennecBottom, // default grey icon
           width: Dimens.margin35,
           height: Dimens.margin35,
         ),
