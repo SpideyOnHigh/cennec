@@ -52,4 +52,8 @@ class AppUrls {
   static String apiSetDefaultProfilePicture= '${baseUrl}default-user-image';
   static String apiRemoveUser(int id)=> '${baseUrl}remove-user?removed_user_id=$id';
   static String apiGetRequests= '${baseUrl}pending-req-list';
+  static String apiGetAllPost= '${baseUrl}pending-req-list';
+  static String apiGetSimilarPost= '${baseUrl}get-similar-posts';
+  static String apiGetInterestMatchPost= '${baseUrl}get-interest-matched-posts';
+  static String apiAddPost= '${baseUrl}add-user-post';
 }

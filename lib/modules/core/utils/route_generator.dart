@@ -40,14 +40,21 @@ class RouteGenerator {
     final args = settings.arguments;
     switch (settings.name) {
       case AppRoutes.routesSplash:
-        return MaterialPageRoute(builder: (_) => const ScreenSplash(), settings: const RouteSettings(name: AppRoutes.routesSplash));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenSplash(),
+            settings: const RouteSettings(name: AppRoutes.routesSplash));
 
       case AppRoutes.routesIntro:
-        return MaterialPageRoute(builder: (_) => const ScreenWelcome(), settings: const RouteSettings(name: AppRoutes.routesIntro));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenWelcome(),
+            settings: const RouteSettings(name: AppRoutes.routesIntro));
       case AppRoutes.routesLogin:
-        return MaterialPageRoute(builder: (_) => const ScreenLogin(), settings: const RouteSettings(name: AppRoutes.routesLogin));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenLogin(), settings: const RouteSettings(name: AppRoutes.routesLogin));
       case AppRoutes.routesSignUp:
-        return MaterialPageRoute(builder: (_) => const ScreenSignUp(), settings: const RouteSettings(name: AppRoutes.routesSignUp));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenSignUp(),
+            settings: const RouteSettings(name: AppRoutes.routesSignUp));
       case AppRoutes.routesVerifyEmail:
         return MaterialPageRoute(
             builder: (_) => ScreenVerifyEmail(
@@ -55,7 +62,9 @@ class RouteGenerator {
                 ),
             settings: const RouteSettings(name: AppRoutes.routesVerifyEmail));
       case AppRoutes.routesForgotPwdEmail:
-        return MaterialPageRoute(builder: (_) => const ScreenForgotPasswordEmail(), settings: const RouteSettings(name: AppRoutes.routesForgotPwdEmail));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenForgotPasswordEmail(),
+            settings: const RouteSettings(name: AppRoutes.routesForgotPwdEmail));
       case AppRoutes.routesScreenForgotPasswordOtp:
         return MaterialPageRoute(
             builder: (_) => ScreenForgotPasswordOtp(
@@ -82,16 +91,26 @@ class RouteGenerator {
             settings: const RouteSettings(name: AppRoutes.routesScreenSetNewPassword));
       case AppRoutes.routesScreenCommunityGuidelines:
         return MaterialPageRoute(
-            builder: (_) => const ScreenCommunityGuidelines(), settings: const RouteSettings(name: AppRoutes.routesScreenCommunityGuidelines));
+            builder: (_) =>  ScreenCommunityGuidelines(
+              isFromProfile: args as bool,
+            ),
+            settings: const RouteSettings(name: AppRoutes.routesScreenCommunityGuidelines));
       case AppRoutes.routesScreenSignupInterests:
-        return MaterialPageRoute(builder: (_) => const ScreenSignupInterests(), settings: const RouteSettings(name: AppRoutes.routesScreenSignupInterests));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenSignupInterests(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenSignupInterests));
       case AppRoutes.routesScreenFindConnectionsSignUp:
         return MaterialPageRoute(
-            builder: (_) => const ScreenFindConnectionsSignup(), settings: const RouteSettings(name: AppRoutes.routesScreenFindConnectionsSignUp));
+            builder: (_) => const ScreenFindConnectionsSignup(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenFindConnectionsSignUp));
       case AppRoutes.routesScreenDashboard:
-        return MaterialPageRoute(builder: (_) => const ScreenDashboard(), settings: const RouteSettings(name: AppRoutes.routesScreenDashboard));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenDashboard(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenDashboard));
       case AppRoutes.routesScreenNotifications:
-        return MaterialPageRoute(builder: (_) => const ScreenNotifications(), settings: const RouteSettings(name: AppRoutes.routesScreenNotifications));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenNotifications(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenNotifications));
       case AppRoutes.routesScreenSendRequest:
         return MaterialPageRoute(
             builder: (_) => ScreenSendRequest(
@@ -99,25 +118,48 @@ class RouteGenerator {
                 ),
             settings: const RouteSettings(name: AppRoutes.routesScreenSendRequest));
       case AppRoutes.routesScreenUserDetails:
-        return MaterialPageRoute(builder: (_) =>  ScreenUserDetails(modelRequestDataTransfer:  args as ModelRequestDataTransfer,), settings: const RouteSettings(name: AppRoutes.routesScreenUserDetails));
+        return MaterialPageRoute(
+            builder: (_) => ScreenUserDetails(
+                  modelRequestDataTransfer: args as ModelRequestDataTransfer,
+                ),
+            settings: const RouteSettings(name: AppRoutes.routesScreenUserDetails));
       case AppRoutes.routesScreenRecommendationOfInterests:
         return MaterialPageRoute(
-            builder: (_) => ScreenRecommendationOfInterests(modelInterestsDataTransfer: args as ModelInterestsDataTransfer),
+            builder: (_) => ScreenRecommendationOfInterests(
+                modelInterestsDataTransfer: args as ModelInterestsDataTransfer),
             settings: const RouteSettings(name: AppRoutes.routesScreenRecommendationOfInterests));
       case AppRoutes.routesScreenEditProfile:
-        return MaterialPageRoute(builder: (_) => const ScreenEditProfile(), settings: const RouteSettings(name: AppRoutes.routesScreenEditProfile));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenEditProfile(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenEditProfile));
       case AppRoutes.routesScreenSettings:
-        return MaterialPageRoute(builder: (_) => const ScreenSettings(), settings: const RouteSettings(name: AppRoutes.routesScreenSettings));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenSettings(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenSettings));
       case AppRoutes.routesScreenChangePassword:
-        return MaterialPageRoute(builder: (_) => const ScreenChangePassword(), settings: const RouteSettings(name: AppRoutes.routesScreenChangePassword));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenChangePassword(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenChangePassword));
       case AppRoutes.routesScreenFeedback:
-        return MaterialPageRoute(builder: (_) => const ScreenFeedback(), settings: const RouteSettings(name: AppRoutes.routesScreenFeedback));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenFeedback(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenFeedback));
       case AppRoutes.routesScreenPreferences:
-        return MaterialPageRoute(builder: (_) => const ScreenPreferences(), settings: const RouteSettings(name: AppRoutes.routesScreenPreferences));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenPreferences(),
+            settings: const RouteSettings(name: AppRoutes.routesScreenPreferences));
       case AppRoutes.routesScreenFavourite:
-        return MaterialPageRoute(builder: (_) =>  ScreenFavourites(modelRequestDataTransfer: args as ModelRequestDataTransfer,), settings: const RouteSettings(name: AppRoutes.routesScreenFavourite));
+        return MaterialPageRoute(
+            builder: (_) => ScreenFavourites(
+                  modelRequestDataTransfer: args as ModelRequestDataTransfer,
+                ),
+            settings: const RouteSettings(name: AppRoutes.routesScreenFavourite));
       case AppRoutes.routesScreenChats:
-        return MaterialPageRoute(builder: (_) => ScreenChatsModule(messageRoomRequestData: args as MessageRoomRequestData,), settings: const RouteSettings(name: AppRoutes.routesScreenChats));
+        return MaterialPageRoute(
+            builder: (_) => ScreenChatsModule(
+                  messageRoomRequestData: args as MessageRoomRequestData,
+                ),
+            settings: const RouteSettings(name: AppRoutes.routesScreenChats));
       case AppRoutes.routesScreenCms:
         return MaterialPageRoute(
             builder: (_) => ScreenHtmlContent(
@@ -125,17 +167,23 @@ class RouteGenerator {
                 ),
             settings: const RouteSettings(name: AppRoutes.routesScreenCms));
       case AppRoutes.routeSearchNewConnection:
-        return MaterialPageRoute(builder: (_) => const ScreenFindConnection(), settings: const RouteSettings(name: AppRoutes.routeSearchNewConnection));
-
+        return MaterialPageRoute(
+            builder: (_) => const ScreenFindConnection(),
+            settings: const RouteSettings(name: AppRoutes.routeSearchNewConnection));
 
       case AppRoutes.routeSearchNewConnectionDetails:
-        return MaterialPageRoute(builder: (_) => const ScreenConnectionDetails(), settings: const RouteSettings(name: AppRoutes.routeSearchNewConnectionDetails));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenConnectionDetails(),
+            settings: const RouteSettings(name: AppRoutes.routeSearchNewConnectionDetails));
       case AppRoutes.routeScreenSimilarAndInterest:
-        return MaterialPageRoute(builder: (_) => const ScreenSimilarAndInterest(), settings: const RouteSettings(name: AppRoutes.routeScreenSimilarAndInterest));
-
+        return MaterialPageRoute(
+            builder: (_) => const ScreenSimilarAndInterest(),
+            settings: const RouteSettings(name: AppRoutes.routeScreenSimilarAndInterest));
 
       default:
-        return MaterialPageRoute(builder: (_) => const ScreenSplash(), settings: const RouteSettings(name: AppRoutes.routesSplash));
+        return MaterialPageRoute(
+            builder: (_) => const ScreenSplash(),
+            settings: const RouteSettings(name: AppRoutes.routesSplash));
     }
   }
 }

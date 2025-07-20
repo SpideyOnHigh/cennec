@@ -1,3 +1,4 @@
+import 'package:cennec/modules/search_posts/model/similar_post_model.dart';
 import 'package:cennec/modules/search_posts/view/user_profile_bottomsheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cennec/modules/core/utils/app_font.dart';
@@ -14,6 +15,7 @@ class SimilarPostsCard extends StatelessWidget {
   final String description;
   final List<String> interests;
   final bool isFriend; // Determines button state
+  final SimilarPostData? similarPostData;
 
   const SimilarPostsCard({
     super.key,
@@ -25,6 +27,7 @@ class SimilarPostsCard extends StatelessWidget {
     required this.description,
     required this.interests,
     required this.isFriend,
+    this.similarPostData
   });
 
   @override
@@ -69,26 +72,32 @@ class SimilarPostsCard extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               backgroundColor: AppColors.colorWhite,
-              builder: (_) => const UserProfileBottomSheet(),
+              builder: (_) => UserProfileBottomSheet(
+                userName: userName ?? "Unknown User",
+                userImage: similarPostData?.userInfo?.defaultProfilePicture ?? "",
+                mutualConnections:  similarPostData?.mutualConnection ?? 0,
+                matchPercentage: matchPercentage ?? 0,
+                title:  similarPostData?.discussionTopic ?? "",
+                description: description ?? "",
+                interests: similarPostData?.userInterest?.map((interest) => interest.interestName ?? "").toList() ?? [],
+                isFriend: isFriend ?? false,
+                similarPostData: similarPostData,),
             );
           },
-
           child: CircleAvatar(
             radius: 24,
             backgroundColor: AppColors.colorGrey,
-            backgroundImage: (userImage != null && userImage!.isNotEmpty)
-                ? NetworkImage(userImage!)
-                : null,
+            backgroundImage: (userImage != null && userImage!.isNotEmpty) ? NetworkImage(userImage!) : null,
             child: (userImage == null || userImage!.isEmpty)
                 ? Text(
-              userName.isNotEmpty ? userName[0].toUpperCase() : "?",
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                16,
-                AppColors.colorWhite,
-                FontWeight.bold,
-              ),
-            )
+                    userName.isNotEmpty ? userName[0].toUpperCase() : "?",
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      16,
+                      AppColors.colorWhite,
+                      FontWeight.bold,
+                    ),
+                  )
                 : null,
           ),
         ),
@@ -110,8 +119,7 @@ class SimilarPostsCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: AppColors.bgPercentChipLightColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(6),
@@ -189,7 +197,7 @@ class SimilarPostsCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text("🎯 ", style: TextStyle(fontSize: 14)),
+          // const Text("🎯 ", style: TextStyle(fontSize: 14)),
           Text(
             label,
             style: getTextStyleFromFont(
@@ -215,18 +223,18 @@ class SimilarPostsCard extends StatelessWidget {
           width: 1.5,
         ),
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColors.colorBlackTransparent,
             blurRadius: 2,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           )
         ],
       ),
       child: Icon(
         isFriend ? Icons.chat_bubble_outline : Icons.person_add_alt_1,
         size: 20,
-        color: AppColors.colorHyperLink,
+        color: isFriend ? AppColors.colorHyperLink : AppColors.colorWhite,
       ),
     );
   }

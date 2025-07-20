@@ -68,7 +68,7 @@ class _CustomConnectionTextFieldState extends State<CustomConnectionTextField> {
             const SizedBox(height: 4),
             Container(
               height: 2,
-              width: 40,
+              width: double.infinity,
               color: AppColors.colorGreyExtraLight,
             )
           ],
@@ -95,7 +95,7 @@ class _CustomConnectionTextFieldState extends State<CustomConnectionTextField> {
             const SizedBox(height: 4),
             Container(
               height: 2,
-              width: 40,
+              width: double.infinity,
               color: Colors.black26,
             )
           ],

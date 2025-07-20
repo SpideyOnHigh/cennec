@@ -1,3 +1,4 @@
+import 'package:cennec/modules/search_posts/view/screen_similar_and_interest.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cennec/modules/core/utils/app_colors.dart';
@@ -9,16 +10,17 @@ import '../../core/common/widgets/button.dart';
 import '../../core/common/widgets/common_connection_textfield.dart';
 
 class ScreenConnectionDetails extends StatefulWidget {
-  const ScreenConnectionDetails({super.key});
+  final String desc;
+  const ScreenConnectionDetails({super.key, this.desc = ""});
 
   @override
   State<ScreenConnectionDetails> createState() => _ScreenConnectionDetailsState();
 }
 
 class _ScreenConnectionDetailsState extends State<ScreenConnectionDetails> {
-  final TextEditingController activityController = TextEditingController(text: "Hiking");
+  final TextEditingController activityController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
-  final TextEditingController dateController = TextEditingController(text: "this Friday");
+  final TextEditingController dateController = TextEditingController();
   final TextEditingController whoController = TextEditingController();
   final TextEditingController whatController = TextEditingController();
 
@@ -132,7 +134,23 @@ class _ScreenConnectionDetailsState extends State<ScreenConnectionDetails> {
                             textColor: isEnabled ? Colors.white : Colors.grey.shade600,
                             borderRadius: BorderRadius.circular(12),
                             onTap: isEnabled ? () {
-                              Navigator.pushNamed(context, AppRoutes.routeScreenSimilarAndInterest);
+                              // Navigator.pushNamed(context, AppRoutes.routeScreenSimilarAndInterest);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ScreenSimilarAndInterest(
+                                    searchText: widget.desc,
+                                    discussionTopic: whatController.text.trim(),
+                                    location: locationController.text.trim(),
+                                    meetAt: dateController.text.trim(),
+                                    meetWith: whoController.text.trim(),
+                                    activity: activityController.text.trim(),
+
+                                    // searchText: searchController.text.trim(),
+
+                                  ),
+                                ),
+                              );
 
                             } : null,
                           );

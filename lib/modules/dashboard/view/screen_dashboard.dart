@@ -1,6 +1,7 @@
 import 'dart:io';
 import '../../core/utils/common_import.dart';
 import '../../search_posts/view/screen_find_connection.dart';
+import '../../search_posts/view/screen_similar_and_interest.dart';
 import 'dashboard_home.dart';
 import 'dashboard_messages.dart';
 import 'dashboard_profile.dart';
@@ -18,7 +19,7 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
   ValueNotifier<int> navIndex = ValueNotifier(0);
 
   final List<Widget> _screens = [
-    const DashboardHome(),
+    const ScreenSimilarAndInterest(),
     const DashboardSearch(),
     const ScreenFindConnection(),
     const DashboardMessages(),

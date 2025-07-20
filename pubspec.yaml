@@ -84,6 +84,7 @@ dependencies:
   package_info_plus: ^8.0.1
 
   url_launcher: ^6.3.0
+  flutter_styled_toast: ^2.2.1
 
 
     #For hive and  hive_flutter use to local DB

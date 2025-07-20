@@ -51,12 +51,17 @@ import 'package:cennec/modules/profile/bloc/post_user_que_ans/post_user_que_ans_
 import 'package:cennec/modules/profile/bloc/set_default_profile_pic/set_default_profile_pic_bloc.dart';
 import 'package:cennec/modules/profile/bloc/update_user_profile/update_user_profile_bloc.dart';
 import 'package:cennec/modules/profile/repository/repository_profile.dart';
+import 'package:cennec/modules/search_posts/bloc/get_similar_post/get_similar_post_bloc.dart';
+import 'package:cennec/modules/search_posts/bloc/user_add_post/add_user_post_bloc.dart';
+import 'package:cennec/modules/search_posts/repository/repository_add_user_post.dart';
+import 'package:cennec/modules/search_posts/repository/repository_similar_post.dart';
 import 'package:cennec/modules/settings/bloc/edit_user_settings/edit_user_settings_bloc.dart';
 import 'package:cennec/modules/settings/bloc/get_user_settings/get_user_setting_bloc.dart';
 import 'package:cennec/modules/settings/repository/settings_repository.dart';
 import 'package:http/http.dart' as http;
 
 import '../../chat/bloc/message_room_bloc.dart';
+import '../../search_posts/bloc/get_interest_match_post/get_interest_post_bloc.dart';
 
 class BlocGenerator {
   static generateBloc(
@@ -65,145 +70,204 @@ class BlocGenerator {
   ) {
     return [
       BlocProvider<LoginBloc>(
-        create: (BuildContext context) => LoginBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
+        create: (BuildContext context) =>
+            LoginBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
       ),
       BlocProvider<LogoutBloc>(
-        create: (BuildContext context) => LogoutBloc(apiProvider: apiProvider, client: client, repositoryLogOut: RepositoryAuth()),
+        create: (BuildContext context) =>
+            LogoutBloc(apiProvider: apiProvider, client: client, repositoryLogOut: RepositoryAuth()),
       ),
       BlocProvider<SignUpInvitationBloc>(
-        create: (BuildContext context) => SignUpInvitationBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
+        create: (BuildContext context) =>
+            SignUpInvitationBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
       ),
       BlocProvider<VerifySignUpOtpBloc>(
-        create: (BuildContext context) => VerifySignUpOtpBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
+        create: (BuildContext context) =>
+            VerifySignUpOtpBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
       ),
       BlocProvider<SignUpDetailsBloc>(
-        create: (BuildContext context) => SignUpDetailsBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
+        create: (BuildContext context) =>
+            SignUpDetailsBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
       ),
       BlocProvider<ForgotPasswordEmailBloc>(
-        create: (BuildContext context) => ForgotPasswordEmailBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
+        create: (BuildContext context) => ForgotPasswordEmailBloc(
+            apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
       ),
       BlocProvider<ChangeOrSetNewPwdBloc>(
-        create: (BuildContext context) => ChangeOrSetNewPwdBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
+        create: (BuildContext context) =>
+            ChangeOrSetNewPwdBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
       ),
       BlocProvider<DeleteProfileBloc>(
-        create: (BuildContext context) => DeleteProfileBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
+        create: (BuildContext context) =>
+            DeleteProfileBloc(apiProvider: apiProvider, client: client, repositoryAuth: RepositoryAuth()),
       ),
       BlocProvider<GetUserSettingBloc>(
-        create: (BuildContext context) => GetUserSettingBloc(apiProvider: apiProvider, client: client, repositorySettings: RepositorySettings()),
+        create: (BuildContext context) => GetUserSettingBloc(
+            apiProvider: apiProvider, client: client, repositorySettings: RepositorySettings()),
       ),
       BlocProvider<EditUserSettingsBloc>(
-        create: (BuildContext context) => EditUserSettingsBloc(apiProvider: apiProvider, client: client, repositorySettings: RepositorySettings()),
+        create: (BuildContext context) => EditUserSettingsBloc(
+            apiProvider: apiProvider, client: client, repositorySettings: RepositorySettings()),
       ),
       BlocProvider<GetInterestsListsBloc>(
-        create: (BuildContext context) => GetInterestsListsBloc(apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
+        create: (BuildContext context) => GetInterestsListsBloc(
+            apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
       ),
       BlocProvider<UpdateUserInterestsBloc>(
-        create: (BuildContext context) => UpdateUserInterestsBloc(apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
+        create: (BuildContext context) => UpdateUserInterestsBloc(
+            apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
       ),
       BlocProvider<RecommendationsOfInterestBloc>(
-        create: (BuildContext context) => RecommendationsOfInterestBloc(apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
+        create: (BuildContext context) => RecommendationsOfInterestBloc(
+            apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
       ),
       BlocProvider<AddRemoveInterestsBloc>(
-        create: (BuildContext context) => AddRemoveInterestsBloc(apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
+        create: (BuildContext context) => AddRemoveInterestsBloc(
+            apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
       ),
       BlocProvider<GetCmsPageBloc>(
-        create: (BuildContext context) => GetCmsPageBloc(apiProvider: apiProvider, client: client, repositoryGetCmsPage: RepositoryGetCmsPage()),
+        create: (BuildContext context) => GetCmsPageBloc(
+            apiProvider: apiProvider, client: client, repositoryGetCmsPage: RepositoryGetCmsPage()),
       ),
       BlocProvider<FetchUserDetailsBloc>(
-        create: (BuildContext context) => FetchUserDetailsBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => FetchUserDetailsBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<SendRequestBloc>(
-        create: (BuildContext context) => SendRequestBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => SendRequestBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<FavouritesBloc>(
-        create: (BuildContext context) => FavouritesBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => FavouritesBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<BlockUserBloc>(
-        create: (BuildContext context) => BlockUserBloc(apiProvider: apiProvider, client: client, repositoryPreferences: RepositoryPreferences()),
+        create: (BuildContext context) => BlockUserBloc(
+            apiProvider: apiProvider, client: client, repositoryPreferences: RepositoryPreferences()),
       ),
       BlocProvider<ReportUserBloc>(
-        create: (BuildContext context) => ReportUserBloc(apiProvider: apiProvider, client: client, repositoryPreferences: RepositoryPreferences()),
+        create: (BuildContext context) => ReportUserBloc(
+            apiProvider: apiProvider, client: client, repositoryPreferences: RepositoryPreferences()),
       ),
       BlocProvider<GetMyInterestsBloc>(
-        create: (BuildContext context) => GetMyInterestsBloc(apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
+        create: (BuildContext context) => GetMyInterestsBloc(
+            apiProvider: apiProvider, client: client, repositoryInterests: RepositoryInterests()),
       ),
       BlocProvider<GetUserProfilePrefBloc>(
-        create: (BuildContext context) => GetUserProfilePrefBloc(apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
+        create: (BuildContext context) => GetUserProfilePrefBloc(
+            apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
       ),
       BlocProvider<NotificationsListBloc>(
-        create: (BuildContext context) => NotificationsListBloc(apiProvider: apiProvider, client: client, repositoryNotification: RepositoryNotification()),
+        create: (BuildContext context) => NotificationsListBloc(
+            apiProvider: apiProvider, client: client, repositoryNotification: RepositoryNotification()),
       ),
       BlocProvider<AcceptRejectRequestsBloc>(
-        create: (BuildContext context) => AcceptRejectRequestsBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => AcceptRejectRequestsBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<GetMyConnectionsBloc>(
-        create: (BuildContext context) => GetMyConnectionsBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => GetMyConnectionsBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<GetMyFavouritesBloc>(
-        create: (BuildContext context) => GetMyFavouritesBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => GetMyFavouritesBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<UpdateUserProfileBloc>(
-        create: (BuildContext context) => UpdateUserProfileBloc(apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
+        create: (BuildContext context) => UpdateUserProfileBloc(
+            apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
       ),
       BlocProvider<GetUserQueAnsBloc>(
-        create: (BuildContext context) => GetUserQueAnsBloc(apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
+        create: (BuildContext context) => GetUserQueAnsBloc(
+            apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
       ),
       BlocProvider<PostUserQueAnsBloc>(
-        create: (BuildContext context) => PostUserQueAnsBloc(apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
+        create: (BuildContext context) => PostUserQueAnsBloc(
+            apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
       ),
       BlocProvider<DeleteConnectionBloc>(
-        create: (BuildContext context) => DeleteConnectionBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => DeleteConnectionBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<GetFeedbackQueBloc>(
-        create: (BuildContext context) => GetFeedbackQueBloc(apiProvider: apiProvider, client: client, repositoryFeedback: RepositoryFeedback()),
+        create: (BuildContext context) => GetFeedbackQueBloc(
+            apiProvider: apiProvider, client: client, repositoryFeedback: RepositoryFeedback()),
       ),
       BlocProvider<PostFeedbackBloc>(
-        create: (BuildContext context) => PostFeedbackBloc(apiProvider: apiProvider, client: client, repositoryFeedback: RepositoryFeedback()),
+        create: (BuildContext context) => PostFeedbackBloc(
+            apiProvider: apiProvider, client: client, repositoryFeedback: RepositoryFeedback()),
       ),
       BlocProvider<RemoveFromFavouriteBloc>(
-        create: (BuildContext context) => RemoveFromFavouriteBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => RemoveFromFavouriteBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<GetRecommendationsBloc>(
-        create: (BuildContext context) => GetRecommendationsBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => GetRecommendationsBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<GetRecommendationsBloc>(
-        create: (BuildContext context) => GetRecommendationsBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => GetRecommendationsBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<GetUserPreferenceBloc>(
-        create: (BuildContext context) => GetUserPreferenceBloc(apiProvider: apiProvider, client: client, repositoryPreferences: RepositoryPreferences()),
+        create: (BuildContext context) => GetUserPreferenceBloc(
+            apiProvider: apiProvider, client: client, repositoryPreferences: RepositoryPreferences()),
       ),
       BlocProvider<PostUserPreferenceBloc>(
-        create: (BuildContext context) => PostUserPreferenceBloc(apiProvider: apiProvider, client: client, repositoryPreferences: RepositoryPreferences()),
+        create: (BuildContext context) => PostUserPreferenceBloc(
+            apiProvider: apiProvider, client: client, repositoryPreferences: RepositoryPreferences()),
       ),
       BlocProvider<MessageListBloc>(
-        create: (BuildContext context) => MessageListBloc(apiProvider: apiProvider, client: client, repositoryChat: Repositorychat()),
+        create: (BuildContext context) =>
+            MessageListBloc(apiProvider: apiProvider, client: client, repositoryChat: Repositorychat()),
       ),
       BlocProvider<MessageRoomBloc>(
-        create: (BuildContext context) => MessageRoomBloc(apiProvider: apiProvider, client: client, repositoryChat: Repositorychat()),
+        create: (BuildContext context) =>
+            MessageRoomBloc(apiProvider: apiProvider, client: client, repositoryChat: Repositorychat()),
       ),
       BlocProvider<SendMessageBloc>(
-        create: (BuildContext context) => SendMessageBloc(apiProvider: apiProvider, client: client, repositoryChat: Repositorychat()),
+        create: (BuildContext context) =>
+            SendMessageBloc(apiProvider: apiProvider, client: client, repositoryChat: Repositorychat()),
       ),
       BlocProvider<UserReadedAboutUsBloc>(
-        create: (BuildContext context) => UserReadedAboutUsBloc(apiProvider: apiProvider, client: client, repositoryGetCmsPage: RepositoryGetCmsPage()),
+        create: (BuildContext context) => UserReadedAboutUsBloc(
+            apiProvider: apiProvider, client: client, repositoryGetCmsPage: RepositoryGetCmsPage()),
       ),
       BlocProvider<PostProfilePictureBloc>(
-        create: (BuildContext context) => PostProfilePictureBloc(apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
+        create: (BuildContext context) => PostProfilePictureBloc(
+            apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
       ),
       BlocProvider<GetUserProfilePicBloc>(
-        create: (BuildContext context) => GetUserProfilePicBloc(apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
+        create: (BuildContext context) => GetUserProfilePicBloc(
+            apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
       ),
       BlocProvider<SetDefaultProfilePicBloc>(
-        create: (BuildContext context) => SetDefaultProfilePicBloc(apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
+        create: (BuildContext context) => SetDefaultProfilePicBloc(
+            apiProvider: apiProvider, client: client, repositoryProfile: RepositoryProfile()),
       ),
       BlocProvider<RemoveUserFromInterestsBloc>(
-        create: (BuildContext context) => RemoveUserFromInterestsBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => RemoveUserFromInterestsBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<RemoveUserFromDetailsBloc>(
-        create: (BuildContext context) => RemoveUserFromDetailsBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => RemoveUserFromDetailsBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
       ),
       BlocProvider<GetRequestsBloc>(
-        create: (BuildContext context) => GetRequestsBloc(apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+        create: (BuildContext context) => GetRequestsBloc(
+            apiProvider: apiProvider, client: client, repositoryConnections: RepositoryConnections()),
+      ),
+      BlocProvider<GetSimilarPostsBloc>(
+        create: (BuildContext context) => GetSimilarPostsBloc(
+            apiProvider: apiProvider, client: client, repositorySimilarPosts: RepositorySimilarPosts()),
+      ),
+      BlocProvider<GetInterestMatchesBloc>(
+        create: (BuildContext context) => GetInterestMatchesBloc(
+            apiProvider: apiProvider, client: client, repositorySimilarPosts: RepositorySimilarPosts()),
+      ),
+      BlocProvider<AddUserPostBloc>(
+        create: (BuildContext context) => AddUserPostBloc(
+            apiProvider: apiProvider, client: client, repositoryAddUserPost: RepositoryAddUserPost()),
       ),
     ];
   }

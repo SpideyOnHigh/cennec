@@ -1,21 +1,44 @@
+import 'package:cennec/modules/search_posts/model/similar_post_model.dart';
 import 'package:cennec/modules/search_posts/view/user_send_request_bottomsheet.dart';
 
 import '../../core/utils/common_import.dart';
+
 final List<String> imageUrls = [
   "https://picsum.photos/id/237/400/250",
   "https://picsum.photos/id/238/400/250",
   "https://picsum.photos/id/239/400/250",
 ];
 
-
 final PageController _pageController = PageController();
 final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
 
 class UserProfileBottomSheet extends StatelessWidget {
-  const UserProfileBottomSheet({super.key});
+  final SimilarPostData? similarPostData;
+  final String userName;
+  final String? userImage;
+  final int mutualConnections;
+  final int matchPercentage;
+  final String title;
+  final String description;
+  final List<String> interests;
+  final bool isFriend; // Determines button state
+
+  const UserProfileBottomSheet({
+    super.key,
+    required this.similarPostData,
+    required this.userName,
+    this.userImage,
+    required this.mutualConnections,
+    required this.matchPercentage,
+    required this.title,
+    required this.description,
+    required this.interests,
+    required this.isFriend,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (similarPostData == null) return const SizedBox();
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.85,
@@ -58,7 +81,7 @@ class UserProfileBottomSheet extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 24,
-          backgroundImage: NetworkImage("https://yourbaseurl.com/user_profile_images/66e825745ac82.jpg"),
+          backgroundImage: NetworkImage("${userImage}"),
           backgroundColor: AppColors.colorGreyExtraLight,
         ),
         const SizedBox(width: 10),
@@ -68,8 +91,8 @@ class UserProfileBottomSheet extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text("Test User",
-                      style: TextStyle(
+                  Text("${similarPostData?.userName}",
+                      style: const TextStyle(
                         fontFamily: AppFont.poppins,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -83,8 +106,8 @@ class UserProfileBottomSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      "95%",
-                      style: TextStyle(
+                      "${similarPostData?.matchPercentage}%",
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: AppColors.colorHyperLink,
@@ -95,8 +118,8 @@ class UserProfileBottomSheet extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                "21 mutual connections",
-                style: TextStyle(
+                "${similarPostData?.mutualConnection} mutual connections",
+                style: const TextStyle(
                   fontFamily: AppFont.poppins,
                   fontSize: 13,
                   color: AppColors.colorGrey,
@@ -105,21 +128,21 @@ class UserProfileBottomSheet extends StatelessWidget {
             ],
           ),
         ),
-        _buildFriendIcon(false,context),
+        _buildFriendIcon(false, context),
       ],
     );
   }
 
   Widget _buildFriendIcon(bool isFriend, context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          builder: (_) => BottomSheetConnectRequest(
+          builder: (_) => const BottomSheetConnectRequest(
             currentUserImage: 'https://yourbaseurl.com/user_profile_images/123.jpg',
             targetUserImage: 'https://yourbaseurl.com/user_profile_images/456.jpg',
             targetUserName: 'John',
@@ -131,7 +154,6 @@ I want to go on a hike near Seattle at night with expert Hikers for a sense of a
 Would you be interested?''',
           ),
         );
-
       },
       child: Container(
         width: 32,
@@ -144,10 +166,10 @@ Would you be interested?''',
           ),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
-            BoxShadow(
+            const BoxShadow(
               color: AppColors.colorBlackTransparent,
               blurRadius: 2,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             )
           ],
         ),
@@ -170,12 +192,12 @@ Would you be interested?''',
           children: [
             PageView.builder(
               controller: _pageController,
-              itemCount: imageUrls.length,
+              itemCount: similarPostData?.userInfo?.profilePictures?.length ?? 0,
               onPageChanged: (index) => _currentIndex.value = index,
               itemBuilder: (context, index) {
                 return Image.network(
-                  imageUrls[index],
-                  fit: BoxFit.cover,
+                  similarPostData?.userInfo?.profilePictures?[index].imageUrl ?? "",
+                  fit: BoxFit.contain,
                   width: double.infinity,
                 );
               },
@@ -195,9 +217,7 @@ Would you be interested?''',
                         width: isActive ? 8 : 6,
                         height: isActive ? 8 : 6,
                         decoration: BoxDecoration(
-                          color: isActive
-                              ? AppColors.colorBlack
-                              : AppColors.colorBlack.withOpacity(0.4),
+                          color: isActive ? AppColors.colorBlack : AppColors.colorBlack.withOpacity(0.4),
                           shape: BoxShape.circle,
                         ),
                       );
@@ -211,9 +231,10 @@ Would you be interested?''',
       ),
     );
   }
+
   Widget _buildBio() {
-    return Text(
-      "Experienced professional with a demonstrated history of working in the apparel, film, art, music.",
+    return  Text(
+      "${similarPostData?.userInfo?.bio}",
       style: TextStyle(
         fontFamily: AppFont.poppins,
         fontSize: 14,
@@ -228,7 +249,7 @@ Would you be interested?''',
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppFont.poppins,
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -241,12 +262,6 @@ Would you be interested?''',
   }
 
   Widget _buildInterests() {
-    final interests = [
-      "🎯 Sports Events & News",
-      "🌎 Destinations & Attractions",
-      "🎵 Music Production",
-      "🎥 Film Making"
-    ];
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -260,7 +275,7 @@ Would you be interested?''',
           ),
           child: Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: AppFont.poppins,
               fontSize: 13,
               color: AppColors.colorBlack,
@@ -273,15 +288,14 @@ Would you be interested?''',
   }
 
   Widget _buildRecentPosts() {
-    final posts = [
-      "I wanna hike this Friday to get back in shape",
-      "Taking time to meditate by the lake this weekend",
-    ];
+    // final posts = similarPostData.userInfo.latestPosts;
+    if(similarPostData?.userInfo?.latestPosts == null) return SizedBox();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, // Ensures left alignment
-      children: posts.map((text) {
+      children: similarPostData!.userInfo!.latestPosts!.map((text) {
         return Container(
-          width: double.infinity, // Ensures equal width for all posts
+          width: double.infinity,
+          // Ensures equal width for all posts
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
@@ -289,8 +303,8 @@ Would you be interested?''',
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
-            text,
-            style: TextStyle(
+            text.description ?? "",
+            style: const TextStyle(
               fontFamily: AppFont.poppins,
               fontSize: 16,
               color: AppColors.colorBlack1,
@@ -301,4 +315,3 @@ Would you be interested?''',
     );
   }
 }
-

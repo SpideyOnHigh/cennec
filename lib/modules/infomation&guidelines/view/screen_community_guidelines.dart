@@ -9,7 +9,8 @@ import 'package:cennec/modules/core/utils/common_import.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class ScreenCommunityGuidelines extends StatefulWidget {
-  const ScreenCommunityGuidelines({super.key});
+  final bool isFromProfile;
+  const ScreenCommunityGuidelines({super.key, this.isFromProfile = false});
 
   @override
   State<ScreenCommunityGuidelines> createState() => _ScreenCommunityGuidelinesState();
@@ -113,38 +114,44 @@ class _ScreenCommunityGuidelinesState extends State<ScreenCommunityGuidelines> {
   }
 
   Widget getBody(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: Dimens.margin20),
-        logo(),
-        const SizedBox(height: Dimens.margin30),
-        Expanded(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                guideLines(),
-                const SizedBox(height: Dimens.margin40),
-              ],
+    return Container(
+      width: double.infinity,
+      child: Column(
+        children: [
+          const SizedBox(height: Dimens.margin20),
+          logo(),
+          const SizedBox(height: Dimens.margin30),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  guideLines(),
+                  const SizedBox(height: Dimens.margin40),
+                ],
+              ),
             ),
           ),
-        ),
-        // Container(
-        //   padding: const EdgeInsets.all(20),
-        //   decoration: BoxDecoration(
-        //     color: Theme.of(context).scaffoldBackgroundColor,
-        //     boxShadow: [
-        //       BoxShadow(
-        //         color: Colors.grey.withOpacity(0.1),
-        //         spreadRadius: 1,
-        //         blurRadius: 5,
-        //         offset: const Offset(0, -2),
-        //       ),
-        //     ],
-        //   ),
-        //   child: nextButton(context),
-        // ),
-      ],
+          Visibility(
+            visible: !widget.isFromProfile,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: nextButton(context),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

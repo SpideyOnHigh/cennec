@@ -1,3 +1,5 @@
+import 'package:cennec/modules/search_posts/view/screen_find_connections_details.dart';
+import 'package:cennec/modules/search_posts/view/screen_similar_and_interest.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/common/widgets/button.dart';
@@ -56,7 +58,7 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
 
                 // White card container
                 Container(
-                  padding: const EdgeInsets.only(top: 20,left: 20,right: 20,bottom: 20),
+                  padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
@@ -78,7 +80,6 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
                         fontSize: 22,
                       ),
                       const SizedBox(height: 16),
-
                       ValueListenableBuilder<bool>(
                         valueListenable: isSearchEnabled,
                         builder: (_, isEnabled, __) {
@@ -88,10 +89,27 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
                             backgroundColor: isEnabled ? AppColors.colorDarkBlue : Colors.grey.shade300,
                             textColor: isEnabled ? Colors.white : Colors.grey.shade600,
                             borderRadius: BorderRadius.circular(12),
-                            onTap: isEnabled ? () {
-                              Navigator.pushNamed(context, AppRoutes.routeSearchNewConnectionDetails);
-
-                            } : null,
+                            onTap: isEnabled
+                                ? () {
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => ScreenSimilarAndInterest(
+                                    //       searchText: searchController.text.trim(),
+                                    //     ),
+                                    //   ),
+                                    // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ScreenConnectionDetails(
+                                    desc: searchController.text.trim(),
+                                  ),
+                                ),
+                              );
+                                    // Navigator.pushNamed(context, AppRoutes.routeSearchNewConnectionDetails);
+                                  }
+                                : null,
                           );
                         },
                       ),
