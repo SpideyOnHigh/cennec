@@ -160,30 +160,6 @@ class _DashboardMessagesState extends State<DashboardMessages> {
     );
   }
 
-  Widget _buildTabItem(int index, String label) {
-    final isSelected = navIndex.value == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => navIndex.value = index,
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.colorWhite : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            label,
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              14,
-              AppColors.colorBlack,
-              isSelected ? FontWeight.w600 : FontWeight.w400,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   final List<Interest> interests = [
     Interest(name: 'Interior design'),
@@ -272,6 +248,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
     return IndexedStack(
       index: navIndex.value,
       children: [
+        // === CONNECTIONS TAB ===
         Visibility(
           visible: myConnections.value.isNotEmpty,
           replacement: Center(
@@ -347,7 +324,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                                   const SizedBox(height: 4),
                                   //todo: recent message
                                   // Text(
-                                  //   "Hey how’s it going?",
+                                  //   "Hey how's it going?",
                                   //   style: getTextStyleFromFont(AppFont.poppins, 14, AppColors.colorHyperLink80, FontWeight.normal),
                                   // ),
                                 ],
@@ -416,13 +393,11 @@ class _DashboardMessagesState extends State<DashboardMessages> {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                GridView.builder(
+                ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  ),
                   itemCount: myFavourites.value.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final fav = myFavourites.value[index];
                     return InkWell(
@@ -443,44 +418,47 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                               ));
                         }
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Stack(
-                          children: [
-                            fav.defaultProfilePic != null
-                                ? ClipRRect(
-                              borderRadius: BorderRadius.circular(Dimens.margin30),
-                              child: Image.network(
-                                fav.defaultProfilePic!,
-                                width: Dimens.margin225,
-                                height: Dimens.margin300,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                                : ClipRRect(
-                              borderRadius: BorderRadius.circular(Dimens.margin30),
-                              child: SizedBox(
-                                width: Dimens.margin225,
-                                height: Dimens.margin300,
-                                child: Image.asset(APPImages.icDummyProfile, fit: BoxFit.cover),
-                              ),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.symmetric(horizontal: 0),
+                        decoration: BoxDecoration(
+                          color: AppColors.colorWhite,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade300,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
                             ),
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
-                                child: Text(
-                                  fav.name ?? '',
-                                  style: getTextStyleFromFont(
-                                    AppFont.poppins,
-                                    Dimens.margin20,
-                                    Theme.of(context).primaryColor,
-                                    FontWeight.w600,
-                                    shadow: const [
-                                      Shadow(blurRadius: 20, color: Colors.black),
-                                    ],
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: AppColors.colorGreyExtraLight,
+                              backgroundImage: fav.defaultProfilePic != null
+                                  ? NetworkImage(fav.defaultProfilePic!)
+                                  : null,
+                              child: fav.defaultProfilePic == null
+                                  ? Text(
+                                fav.name?.substring(0, 1).toUpperCase() ?? "?",
+                                style: getTextStyleFromFont(AppFont.poppins, 18, AppColors.colorWhite, FontWeight.bold),
+                              )
+                                  : null,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    fav.name ?? '',
+                                    style: getTextStyleFromFont(AppFont.poppins, 16, AppColors.colorBlack, FontWeight.w600),
                                   ),
-                                ),
+                                  const SizedBox(height: 4),
+
+                                ],
                               ),
                             ),
                           ],
@@ -489,6 +467,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                     );
                   },
                 ),
+                const SizedBox(height: 16),
                 Visibility(
                   visible: showLoadMoreForFavourite.value,
                   child: Center(
@@ -511,7 +490,6 @@ class _DashboardMessagesState extends State<DashboardMessages> {
       ],
     );
   }
-
   Widget getBody(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),

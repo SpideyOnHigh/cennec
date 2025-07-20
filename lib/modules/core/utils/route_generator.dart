@@ -1,3 +1,4 @@
+import 'package:cennec/modules/allPosts/view/screen_posts.dart';
 import 'package:cennec/modules/auth/model/model_sign_up_data_transfer.dart';
 import 'package:cennec/modules/auth/view/screen_VerifyEmail.dart';
 import 'package:cennec/modules/auth/view/screen_change_password.dart';
@@ -132,6 +133,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ScreenConnectionDetails(), settings: const RouteSettings(name: AppRoutes.routeSearchNewConnectionDetails));
       case AppRoutes.routeScreenSimilarAndInterest:
         return MaterialPageRoute(builder: (_) => const ScreenSimilarAndInterest(), settings: const RouteSettings(name: AppRoutes.routeScreenSimilarAndInterest));
+
+      case AppRoutes.routeAllPosts:
+        return MaterialPageRoute(builder: (_) => const ScreenPosts(), settings: const RouteSettings(name: AppRoutes.routeAllPosts));
 
 
       default:

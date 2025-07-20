@@ -31,6 +31,7 @@ class AppRoutes {
   static const String routeSearchNewConnection = '/ScreenSearchNewConnection';
   static const String routeSearchNewConnectionDetails = '/ScreenSearchNewConnectionDetails';
   static const String routeScreenSimilarAndInterest = '/ScreenSimilarAndInterest';
+  static const String routeAllPosts = '/ScreenAllPosts';
 
 
 

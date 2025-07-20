@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cennec/modules/allPosts/view/screen_posts.dart';
+
 import '../../core/utils/common_import.dart';
 import 'dashboard_home.dart';
 import 'dashboard_messages.dart';
@@ -17,7 +19,8 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
   ValueNotifier<int> navIndex = ValueNotifier(0);
 
   final List<Widget> _screens = [
-    const DashboardHome(),
+    const ScreenPosts(),
+    // const DashboardHome(),
     const DashboardSearch(),
     const DashboardRecommendations(),
     const DashboardMessages(),
