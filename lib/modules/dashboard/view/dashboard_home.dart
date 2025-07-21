@@ -43,10 +43,6 @@ class _DashboardHomeState extends State<DashboardHome> {
   @override
   void initState() {
     _focusNode = FocusNode();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarIconBrightness: Brightness.dark, // Icons will be light (good on dark background)
-      statusBarBrightness: Brightness.light, // For iOS: text/icon brightness
-    ));
     getInterests();
     checkNotificationPermission();
     super.initState();

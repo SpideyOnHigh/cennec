@@ -28,7 +28,6 @@ class _ScreenPostsState extends State<ScreenPosts> {
   @override
   void initState() {
     super.initState();
-    // Set the status bar to a dark theme manually
 
     _getPostsBloc = GetPostsBloc(
       repositoryPosts: RepositoryPosts(),
@@ -80,6 +79,11 @@ class _ScreenPostsState extends State<ScreenPosts> {
         child: Scaffold(
           backgroundColor: AppColors.colorRoundedBgContainer,
           appBar: AppBar(
+            systemOverlayStyle:  const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness:  Brightness.light,
+            ),
             elevation: 0, // No shadow
             backgroundColor: Colors.transparent, // Transparent background
             centerTitle: true, // Ensures the title is centered on all platforms
@@ -120,7 +124,7 @@ class _ScreenPostsState extends State<ScreenPosts> {
                   },
                   child: ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16).copyWith(bottom: 100),
                     itemCount: posts.length + (state.isLoadingMore ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == posts.length) {
@@ -263,17 +267,6 @@ class _ScreenPostsState extends State<ScreenPosts> {
                           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                         ),
                         builder: (_) => BottomSheetConnectRequest(
-                          // currentUserImage: '${getUser().userData?.defaultProfilePic}',
-                          // targetUserImage: '${post.userImage}',
-                          // targetUserName: '${post.userName}',
-                          // // mutualInterests: InterestHelper.getMutualInterests(
-                          // //     loggedInUserInterests, post.),
-                          // mutualInterests: ["Box Cricket "],
-                          // message: '''Hey ${post.userName}!
-//
-// ${post.discussionTopic}
-
-// Would you be interested?''',
                           modelRequestDataTransfer: ModelRequestDataTransfer(
                             isFromDashboard: true,
                             getUserId: getUser().userData?.id,

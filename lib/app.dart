@@ -46,8 +46,6 @@ class MyAppState extends State<MaterialAppWidget> {
   static ValueNotifier<bool> isConnected = ValueNotifier<bool>(false);
   late StreamSubscription<ConnectivityResult> onConnectivityChanged;
 
-
-
   ValueNotifier<bool> isDrawerClose = ValueNotifier<bool>(false);
 
   static bool themeChangeValue = false;
@@ -61,20 +59,18 @@ class MyAppState extends State<MaterialAppWidget> {
 
     super.initState();
   }
+
   Future<void> init() async {
     isConnected.value = await checkConnectivity();
-    onConnectivityChanged = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult event) async {
-      if (event == ConnectivityResult.mobile ||
-          event == ConnectivityResult.wifi) {
+    onConnectivityChanged =
+        Connectivity().onConnectivityChanged.listen((ConnectivityResult event) async {
+      if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi) {
         isConnected.value = true;
         themeChangeValue = getThemeData(def: false);
         if ((NavigatorKey.navigatorKey.currentContext ??
-            NavigatorKey.navigatorKey.currentState?.context) ==
+                NavigatorKey.navigatorKey.currentState?.context) ==
             null) {
-          await Future.delayed(const Duration(milliseconds: 500))
-              .whenComplete(() {
+          await Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
             setThemeData(getNavigatorKeyContext(), isDark: themeChangeValue);
           });
         } else {
@@ -97,7 +93,7 @@ class MyAppState extends State<MaterialAppWidget> {
         return MultiProvider(
           providers: BlocGenerator.generateBloc(apiProvider, client),
           child: MultiValueListenableBuilder(
-              valueListenables: [isDrawerClose,getCurrentChatUserId,isConnected],
+              valueListenables: [isDrawerClose, getCurrentChatUserId, isConnected],
               builder: (BuildContext context, values, Widget? child) {
                 return BlocBuilder<ThemeCubit, ThemeState>(
                   builder: (context, state) {
@@ -108,7 +104,7 @@ class MyAppState extends State<MaterialAppWidget> {
                         title: APPStrings.appName,
                         theme: getTheme(state.themeData, context),
                         locale: newLocale,
-                        localizationsDelegates:  const [
+                        localizationsDelegates: const [
                           GlobalMaterialLocalizations.delegate,
                           GlobalWidgetsLocalizations.delegate,
                           GlobalCupertinoLocalizations.delegate,
@@ -158,26 +154,36 @@ class MyAppState extends State<MaterialAppWidget> {
       hintColor: AppColors.colorBlack60,
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
-        primary: AppColors.colorDarkBlue, // Random color
-        onPrimary: AppColors.colorDarkBlue, // White
-        secondary: AppColors.colorGreyLight, // Random color
-        onSecondary: AppColors.colorGreyLight1, // Black
-        error: Color(0xFFF44336), // Random color
-        onError: Color(0xFFFFFFFF), // White
-        surface: Color(0xFFFFFFFF), // White
-        onSurface: Color(0xFF000000), // Black
-        background: Color(0xFFE0E0E0), // Light grey
-        onBackground: Color(0xFF000000),),
+        primary: AppColors.colorDarkBlue,
+        // Random color
+        onPrimary: AppColors.colorDarkBlue,
+        // White
+        secondary: AppColors.colorGreyLight,
+        // Random color
+        onSecondary: AppColors.colorGreyLight1,
+        // Black
+        error: Color(0xFFF44336),
+        // Random color
+        onError: Color(0xFFFFFFFF),
+        // White
+        surface: Color(0xFFFFFFFF),
+        // White
+        onSurface: Color(0xFF000000),
+        // Black
+        background: Color(0xFFE0E0E0),
+        // Light grey
+        onBackground: Color(0xFF000000),
+      ),
       // primaryColorLight: ,
       // backgroundColor: AppColors.colorWhite,
       canvasColor: AppColors.colorGrey,
       cardColor: AppColors.colorBlack,
       indicatorColor: AppColors.colorPrimary2,
       primaryTextTheme: const TextTheme(
-        // headline1: AppFont.regularBlack,
-        // headline2: AppFont.colorWhite,
-        // headline3: AppFont.colorRed,
-      ),
+          // headline1: AppFont.regularBlack,
+          // headline2: AppFont.colorWhite,
+          // headline3: AppFont.colorRed,
+          ),
       appBarTheme: const AppBarTheme(
         iconTheme: IconThemeData(color: Colors.white), // black icons for light theme
       ),
@@ -194,15 +200,14 @@ class MyAppState extends State<MaterialAppWidget> {
       canvasColor: AppColors.colorGrey,
       cardColor: AppColors.colorWhite,
       primaryTextTheme: const TextTheme(
-        // headline1: AppFont.colorWhite,
-        // headline2: AppFont.regularBlack,
-        // headline3: AppFont.colorGreen,
-      ),
+          // headline1: AppFont.colorWhite,
+          // headline2: AppFont.regularBlack,
+          // headline3: AppFont.colorGreen,
+          ),
       scaffoldBackgroundColor: Colors.black,
       appBarTheme: const AppBarTheme(
         iconTheme: IconThemeData(color: Colors.black), // black icons for light theme
       ),
-
     );
   }
 
@@ -213,16 +218,18 @@ class MyAppState extends State<MaterialAppWidget> {
       DeviceOrientation.portraitDown,
     ]);
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.light.copyWith(
         statusBarColor: (Theme.of(context).brightness == Brightness.dark)
             ? Colors.transparent
-            : Colors.transparent
+            : Colors.transparent,
         /* set Status bar color in Android devices. */
 
-        // statusBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light
         /* set Status bar icons color in Android devices.*/
         // statusBarBrightness: Brightness.dark,
-    ),
+      ),
     );
   }
 

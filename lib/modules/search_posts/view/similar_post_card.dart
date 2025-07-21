@@ -1,12 +1,11 @@
 import 'package:cennec/modules/search_posts/model/similar_post_model.dart';
 import 'package:cennec/modules/search_posts/view/user_profile_bottomsheet.dart';
-import 'package:flutter/material.dart';
-import 'package:cennec/modules/core/utils/app_font.dart';
-import 'package:cennec/modules/core/utils/app_colors.dart';
-import 'package:cennec/modules/core/utils/app_dimens.dart';
+import 'package:cennec/modules/search_posts/view/user_send_request_bottomsheet.dart';
 import 'package:cennec/modules/core/utils/common_import.dart';
 
-class SimilarPostsCard extends StatelessWidget {
+import '../../connections/model/model_send_request.dart';
+
+class SimilarPostsCard extends StatefulWidget {
   final String userName;
   final String? userImage;
   final int mutualConnections;
@@ -31,6 +30,11 @@ class SimilarPostsCard extends StatelessWidget {
   });
 
   @override
+  State<SimilarPostsCard> createState() => _SimilarPostsCardState();
+}
+
+class _SimilarPostsCardState extends State<SimilarPostsCard> {
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -42,19 +46,39 @@ class SimilarPostsCard extends StatelessWidget {
           BoxShadow(color: Colors.black12, blurRadius: 4),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTopRow(context),
-          const SizedBox(height: 16),
-          const Divider(),
-          const SizedBox(height: 12),
-          _buildTitle(),
-          const SizedBox(height: 8),
-          _buildDescription(),
-          const SizedBox(height: 12),
-          _buildInterestChips(),
-        ],
+      child: InkWell(
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            backgroundColor: AppColors.colorWhite,
+            builder: (_) => UserProfileBottomSheet(
+              userName: widget.userName ?? "Unknown User",
+              userImage: widget.similarPostData?.userInfo?.defaultProfilePicture ?? "",
+              mutualConnections:  widget.similarPostData?.mutualConnection ?? 0,
+              matchPercentage: widget.matchPercentage ?? 0,
+              title:  widget.similarPostData?.discussionTopic ?? "",
+              description: widget.description ?? "",
+              interests: widget.similarPostData?.userInterest?.map((interest) => interest.interestName ?? "").toList() ?? [],
+              isFriend: widget.isFriend ?? false,
+              similarPostData: widget.similarPostData,),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTopRow(context),
+            const SizedBox(height: 12),
+            const Divider(),
+            _buildTitle(),
+            _buildDescription(),
+            const SizedBox(height: 12),
+            _buildInterestChips(),
+          ],
+        ),
       ),
     );
   }
@@ -63,43 +87,21 @@ class SimilarPostsCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        GestureDetector(
-          onTap: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              backgroundColor: AppColors.colorWhite,
-              builder: (_) => UserProfileBottomSheet(
-                userName: userName ?? "Unknown User",
-                userImage: similarPostData?.userInfo?.defaultProfilePicture ?? "",
-                mutualConnections:  similarPostData?.mutualConnection ?? 0,
-                matchPercentage: matchPercentage ?? 0,
-                title:  similarPostData?.discussionTopic ?? "",
-                description: description ?? "",
-                interests: similarPostData?.userInterest?.map((interest) => interest.interestName ?? "").toList() ?? [],
-                isFriend: isFriend ?? false,
-                similarPostData: similarPostData,),
-            );
-          },
-          child: CircleAvatar(
-            radius: 24,
-            backgroundColor: AppColors.colorGrey,
-            backgroundImage: (userImage != null && userImage!.isNotEmpty) ? NetworkImage(userImage!) : null,
-            child: (userImage == null || userImage!.isEmpty)
-                ? Text(
-                    userName.isNotEmpty ? userName[0].toUpperCase() : "?",
-                    style: getTextStyleFromFont(
-                      AppFont.poppins,
-                      16,
-                      AppColors.colorWhite,
-                      FontWeight.bold,
-                    ),
-                  )
-                : null,
-          ),
+        CircleAvatar(
+          radius: 24,
+          backgroundColor: AppColors.colorGrey,
+          backgroundImage: (widget.userImage != null && widget.userImage!.isNotEmpty) ? NetworkImage(widget.userImage!) : null,
+          child: (widget.userImage == null || widget.userImage!.isEmpty)
+              ? Text(
+                  widget.userName.isNotEmpty ? widget.userName[0].toUpperCase() : "?",
+                  style: getTextStyleFromFont(
+                    AppFont.poppins,
+                    16,
+                    AppColors.colorWhite,
+                    FontWeight.bold,
+                  ),
+                )
+              : null,
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -109,7 +111,7 @@ class SimilarPostsCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    userName,
+                    widget.userName,
                     style: getTextStyleFromFont(
                       AppFont.poppins,
                       16,
@@ -125,7 +127,7 @@ class SimilarPostsCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      "$matchPercentage%",
+                      "${widget.matchPercentage}%",
                       style: getTextStyleFromFont(
                         AppFont.poppins,
                         12,
@@ -138,7 +140,7 @@ class SimilarPostsCard extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                "$mutualConnections mutual connections",
+                "${widget.mutualConnections} mutual connections",
                 style: getTextStyleFromFont(
                   AppFont.poppins,
                   13,
@@ -149,26 +151,31 @@ class SimilarPostsCard extends StatelessWidget {
             ],
           ),
         ),
-        _buildFriendIcon(isFriend),
+        _buildFriendIcon(widget.isFriend),
       ],
     );
   }
 
   Widget _buildTitle() {
-    return Text(
-      title,
-      style: getTextStyleFromFont(
-        AppFont.poppins,
-        15,
-        AppColors.colorBlack,
-        FontWeight.w600,
+    if( widget.title.isEmpty)return SizedBox();
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        widget.title,
+        style: getTextStyleFromFont(
+          AppFont.poppins,
+          15,
+          AppColors.colorBlack,
+          FontWeight.w600,
+        ),
       ),
     );
   }
 
   Widget _buildDescription() {
+    if( widget.description.isEmpty) return SizedBox();
     return Text(
-      description,
+      widget.description,
       style: getTextStyleFromFont(
         AppFont.poppins,
         13,
@@ -178,12 +185,49 @@ class SimilarPostsCard extends StatelessWidget {
     );
   }
 
+  // Widget _buildInterestChips() {
+  //   return Wrap(
+  //     spacing: 8,
+  //     runSpacing: 8,
+  //     children: widget.interests.map((label) => _interestChip(label)).toList(),
+  //   );
+  // }
+
+  bool _showAllChips = false;
+
   Widget _buildInterestChips() {
+    List<String> chipsToShow = _showAllChips
+        ? widget.interests
+        : widget.interests.take(3).toList();
+
+    List<Widget> chips = chipsToShow
+        .map((label) => _interestChip(label))
+        .toList();
+
+    if (widget.interests.length > 3) {
+      chips.add(
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _showAllChips = !_showAllChips;
+            });
+          },
+          child: _viewMore(_showAllChips ? 'View Less' : 'View More')
+        ),
+      );
+    }
+
     return Wrap(
+      runAlignment: WrapAlignment.center,
       spacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
       runSpacing: 8,
-      children: interests.map((label) => _interestChip(label)).toList(),
+      children: chips,
     );
+  }
+
+  Widget _viewMore(String text){
+    return Text(text,style: TextStyle(decoration: TextDecoration.underline, fontSize: 15, color: Colors.blue, decorationColor: Colors.blue),);
   }
 
   Widget _interestChip(String label) {
@@ -213,28 +257,49 @@ class SimilarPostsCard extends StatelessWidget {
   }
 
   Widget _buildFriendIcon(bool isFriend) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: isFriend ? AppColors.colorWhite : AppColors.colorHyperLink,
-        border: Border.all(
-          color: AppColors.colorHyperLink,
-          width: 1.5,
+    return InkWell(
+      onTap: (){
+        showModalBottomSheet(
+          context: context,
+          constraints: BoxConstraints(
+            maxHeight:  MediaQuery.of(context).size.height * 0.75,
+          ),
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          builder: (_) => BottomSheetConnectRequest(
+            modelRequestDataTransfer: ModelRequestDataTransfer(
+              isFromDashboard: true,
+              getUserId: getUser().userData?.id,
+              toSendUserID: widget.similarPostData?.userId,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: isFriend ? AppColors.colorWhite : AppColors.colorHyperLink,
+          border: Border.all(
+            color: AppColors.colorHyperLink,
+            width: 1.5,
+          ),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.colorBlackTransparent,
+              blurRadius: 2,
+              offset: Offset(0, 2),
+            )
+          ],
         ),
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.colorBlackTransparent,
-            blurRadius: 2,
-            offset: Offset(0, 2),
-          )
-        ],
-      ),
-      child: Icon(
-        isFriend ? Icons.chat_bubble_outline : Icons.person_add_alt_1,
-        size: 20,
-        color: isFriend ? AppColors.colorHyperLink : AppColors.colorWhite,
+        child: Icon(
+          isFriend ? Icons.chat_bubble_outline : Icons.person_add_alt_1,
+          size: 20,
+          color: isFriend ? AppColors.colorHyperLink : AppColors.colorWhite,
+        ),
       ),
     );
   }

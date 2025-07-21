@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cennec/modules/allPosts/view/screen_posts.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/utils/common_import.dart';
 import '../../search_posts/view/screen_find_connection.dart';
@@ -54,7 +55,6 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
     );
   }
 
-
   Widget buildFAB() {
     final bool isCenterSelected = navIndex.value == 2;
 
@@ -92,8 +92,10 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
+
     return MultiValueListenableBuilder(
       valueListenables: [navIndex],
       builder: (context, values, _) {
