@@ -10,6 +10,7 @@ import 'package:cennec/modules/dashboard/bloc/requests_bloc/get_requests_bloc.da
 import 'package:cennec/modules/dashboard/model/model_requests.dart';
 import 'package:cennec/modules/interests/bloc/get_my_interests/get_my_interests_bloc.dart';
 import 'package:cennec/modules/notifications/model/model_notification.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/utils/app_config.dart';
@@ -42,6 +43,10 @@ class _DashboardHomeState extends State<DashboardHome> {
   @override
   void initState() {
     _focusNode = FocusNode();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarIconBrightness: Brightness.dark, // Icons will be light (good on dark background)
+      statusBarBrightness: Brightness.light, // For iOS: text/icon brightness
+    ));
     getInterests();
     checkNotificationPermission();
     super.initState();

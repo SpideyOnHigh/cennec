@@ -43,6 +43,7 @@ class _ScreenSimilarAndInterestState extends State<ScreenSimilarAndInterest> {
   final ValueNotifier<bool> hasMoreSimilarData = ValueNotifier<bool>(true);
   final ValueNotifier<bool> hasMoreInterestData = ValueNotifier<bool>(true);
   final ValueNotifier<bool> isInterestLoading = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isPubliclyPostDone = ValueNotifier<bool>(false);
   final ValueNotifier<List<SimilarPostData>> allSimilarPosts = ValueNotifier<List<SimilarPostData>>([]);
   final ValueNotifier<List<SimilarPostData>> allInterestMatches = ValueNotifier<List<SimilarPostData>>([]);
 
@@ -178,6 +179,7 @@ class _ScreenSimilarAndInterestState extends State<ScreenSimilarAndInterest> {
         body: body,
       ),
     );
+
   }
 
   Widget _buildLoadingView() {
@@ -336,6 +338,7 @@ class _ScreenSimilarAndInterestState extends State<ScreenSimilarAndInterest> {
                     "Your search is now public",
                     true, // This parameter makes it green/success toast
                   );
+                  isPubliclyPostDone.value = true;
 
                   // Optionally refresh the posts after successful posting
                   _refreshPosts();
@@ -361,6 +364,7 @@ class _ScreenSimilarAndInterestState extends State<ScreenSimilarAndInterest> {
                 icon: const Icon(Icons.arrow_back),
                 color: AppColors.colorGrey,
                 onPressed: () {
+                  Navigator.pop(context);
                   Navigator.pop(context);
                 },
               ),
@@ -423,6 +427,7 @@ class _ScreenSimilarAndInterestState extends State<ScreenSimilarAndInterest> {
   }
 
   Widget _buildUserPostCard() {
+    if(isPubliclyPostDone.value) return SizedBox();
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

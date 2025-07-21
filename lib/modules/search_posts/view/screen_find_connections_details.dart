@@ -49,117 +49,120 @@ class _ScreenConnectionDetailsState extends State<ScreenConnectionDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F5F3),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              children: [
-                const SizedBox(height: 24),
-                Text(
-                  "Add more details to find ideal connections.",
-                  textAlign: TextAlign.center,
-                  style: getTextStyleFromFont(AppFont.poppins, 18, Colors.black, FontWeight.w600),
-                ),
-                const SizedBox(height: 24),
-
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      )
-                    ],
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF4F5F3),
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                children: [
+                  const SizedBox(height: 24),
+                  Text(
+                    "Add more details to find ideal connections.",
+                    textAlign: TextAlign.center,
+                    style: getTextStyleFromFont(AppFont.poppins, 18, Colors.black, FontWeight.w600),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Activity
-                      CustomConnectionTextField(
-                        controller: activityController,
-                        fontSize: 16,
-                        hintText: "What do you want to do",
-                      ),
-                      const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
-                      // Location
-                      CustomConnectionTextField(
-                        controller: locationController,
-                        fontSize: 16,
-                        hintText: "Where do you want to go",
-                        onChanged: (_) => _updateSearchButtonState(),
-                      ),
-                      const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Activity
+                        CustomConnectionTextField(
+                          controller: activityController,
+                          fontSize: 16,
+                          hintText: "What do you want to do",
+                        ),
+                        const SizedBox(height: 20),
 
-                      // Date
-                      CustomConnectionTextField(
-                        controller: dateController,
-                        fontSize: 16,
-                        hintText: "When do you want to go",
-                      ),
-                      const SizedBox(height: 20),
+                        // Location
+                        CustomConnectionTextField(
+                          controller: locationController,
+                          fontSize: 16,
+                          hintText: "Where do you want to go",
+                          onChanged: (_) => _updateSearchButtonState(),
+                        ),
+                        const SizedBox(height: 20),
 
-                      // Who to meet (placeholder-style)
-                      CustomConnectionTextField(
-                        controller: whoController,
-                        fontSize: 16,
-                        hintText: "Who do you want to meet",
-                      ),
-                      const SizedBox(height: 20),
+                        // Date
+                        CustomConnectionTextField(
+                          controller: dateController,
+                          fontSize: 16,
+                          hintText: "When do you want to go",
+                        ),
+                        const SizedBox(height: 20),
 
-                      // What to discuss (placeholder-style)
-                      CustomConnectionTextField(
-                        controller: whatController,
-                        fontSize: 16,
-                        hintText: "What do you want to discuss",
-                      ),
-                      const SizedBox(height: 24),
+                        // Who to meet (placeholder-style)
+                        CustomConnectionTextField(
+                          controller: whoController,
+                          fontSize: 16,
+                          hintText: "Who do you want to meet",
+                        ),
+                        const SizedBox(height: 20),
 
-                      // Search Button
-                      ValueListenableBuilder<bool>(
-                        valueListenable: isSearchEnabled,
-                        builder: (_, isEnabled, __) {
-                          return CommonButton(
-                            text: "Search",
-                            height: 48,
+                        // What to discuss (placeholder-style)
+                        CustomConnectionTextField(
+                          controller: whatController,
+                          fontSize: 16,
+                          hintText: "What do you want to discuss",
+                        ),
+                        const SizedBox(height: 24),
 
-                            backgroundColor: isEnabled ? AppColors.colorDarkBlue : Colors.grey.shade300,
-                            textColor: isEnabled ? Colors.white : Colors.grey.shade600,
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: isEnabled ? () {
-                              // Navigator.pushNamed(context, AppRoutes.routeScreenSimilarAndInterest);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ScreenSimilarAndInterest(
-                                    searchText: widget.desc,
-                                    discussionTopic: whatController.text.trim(),
-                                    location: locationController.text.trim(),
-                                    meetAt: dateController.text.trim(),
-                                    meetWith: whoController.text.trim(),
-                                    activity: activityController.text.trim(),
+                        // Search Button
+                        ValueListenableBuilder<bool>(
+                          valueListenable: isSearchEnabled,
+                          builder: (_, isEnabled, __) {
+                            return CommonButton(
+                              text: "Search",
+                              height: 48,
 
-                                    // searchText: searchController.text.trim(),
-
+                              backgroundColor: isEnabled ? AppColors.colorDarkBlue : Colors.grey.shade300,
+                              textColor: isEnabled ? Colors.white : Colors.grey.shade600,
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: isEnabled ? () {
+                                // Navigator.pushNamed(context, AppRoutes.routeScreenSimilarAndInterest);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ScreenSimilarAndInterest(
+                                      searchText: widget.desc,
+                                      discussionTopic: whatController.text.trim(),
+                                      location: locationController.text.trim(),
+                                      meetAt: dateController.text.trim(),
+                                      meetWith: whoController.text.trim(),
+                                      activity: activityController.text.trim(),
+                                      // searchText: searchController.text.trim(),
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
 
-                            } : null,
-                          );
-                        },
-                      ),
-                    ],
+                              } : null,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

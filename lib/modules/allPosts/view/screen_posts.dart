@@ -1,9 +1,13 @@
+import 'package:cennec/modules/core/utils/app_get_selected_interest.dart';
+import 'package:flutter/services.dart';
+
 import '../../chat/models/MessageRoomRequestData.dart';
 import '../../connections/model/model_send_request.dart';
 import '../../core/utils/app_urls.dart';
 import '../../core/utils/common_import.dart';
 import 'package:http/http.dart' as http;
 
+import '../../search_posts/view/user_send_request_bottomsheet.dart';
 import '../bloc/get_posts_bloc.dart';
 import '../model/model_posts.dart';
 import '../repository/repository_posts.dart';
@@ -24,6 +28,8 @@ class _ScreenPostsState extends State<ScreenPosts> {
   @override
   void initState() {
     super.initState();
+    // Set the status bar to a dark theme manually
+
     _getPostsBloc = GetPostsBloc(
       repositoryPosts: RepositoryPosts(),
       apiProvider: ApiProvider(),
@@ -35,8 +41,7 @@ class _ScreenPostsState extends State<ScreenPosts> {
 
   void _setupScrollListener() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         _loadMorePosts();
       }
     });
@@ -248,14 +253,42 @@ class _ScreenPostsState extends State<ScreenPosts> {
                         ),
                       );
                     } else {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.routesScreenUserDetails,
-                        arguments: ModelRequestDataTransfer(
-                          getUserId: post.userId ?? 0,
-                          isFromDashboard: true,
+                      showModalBottomSheet(
+                        context: context,
+                        constraints: BoxConstraints(
+                          maxHeight:  MediaQuery.of(context).size.height * 0.75,
+                        ),
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                        ),
+                        builder: (_) => BottomSheetConnectRequest(
+                          // currentUserImage: '${getUser().userData?.defaultProfilePic}',
+                          // targetUserImage: '${post.userImage}',
+                          // targetUserName: '${post.userName}',
+                          // // mutualInterests: InterestHelper.getMutualInterests(
+                          // //     loggedInUserInterests, post.),
+                          // mutualInterests: ["Box Cricket "],
+                          // message: '''Hey ${post.userName}!
+//
+// ${post.discussionTopic}
+
+// Would you be interested?''',
+                          modelRequestDataTransfer: ModelRequestDataTransfer(
+                            isFromDashboard: true,
+                            getUserId: getUser().userData?.id,
+                            toSendUserID: post.userId,
+                          ),
                         ),
                       );
+//                       Navigator.pushNamed(
+//                         context,
+//                         AppRoutes.routesScreenUserDetails,
+//                         arguments: ModelRequestDataTransfer(
+//                           getUserId: post.userId ?? 0,
+//                           isFromDashboard: true,
+//                         ),
+//                       );
                     }
                   },
                   child: _buildFriendIcon(post.isFriend ?? false),
@@ -280,7 +313,6 @@ class _ScreenPostsState extends State<ScreenPosts> {
         ),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
-
           BoxShadow(
             color: AppColors.colorBlackTransparent,
             blurRadius: 2,

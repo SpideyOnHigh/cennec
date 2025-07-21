@@ -1,3 +1,4 @@
+import 'package:cennec/modules/connections/model/model_send_request.dart';
 import 'package:cennec/modules/search_posts/model/similar_post_model.dart';
 import 'package:cennec/modules/search_posts/view/user_send_request_bottomsheet.dart';
 
@@ -142,16 +143,18 @@ class UserProfileBottomSheet extends StatelessWidget {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          builder: (_) => const BottomSheetConnectRequest(
-            currentUserImage: 'https://yourbaseurl.com/user_profile_images/123.jpg',
-            targetUserImage: 'https://yourbaseurl.com/user_profile_images/456.jpg',
-            targetUserName: 'John',
-            mutualInterests: ['🎨 Visual Design', '🎬 Independent Film', '📷 Photography'],
-            message: '''Hey John!
-
-I want to go on a hike near Seattle at night with expert Hikers for a sense of adventure
-
-Would you be interested?''',
+          builder: (_) => BottomSheetConnectRequest(
+//             currentUserImage: 'https://yourbaseurl.com/user_profile_images/123.jpg',
+//             targetUserImage: 'https://yourbaseurl.com/user_profile_images/456.jpg',
+//             targetUserName: 'John',
+//             mutualInterests: ['🎨 Visual Design', '🎬 Independent Film', '📷 Photography'],
+//             message: '''Hey John!
+//
+// I want to go on a hike near Seattle at night with expert Hikers for a sense of adventure
+//
+// Would you be interested?''',
+            modelRequestDataTransfer:
+                ModelRequestDataTransfer(getUserId: 123, isFromDashboard: false, toSendUserID: 2222),
           ),
         );
       },
@@ -233,7 +236,7 @@ Would you be interested?''',
   }
 
   Widget _buildBio() {
-    return  Text(
+    return Text(
       "${similarPostData?.userInfo?.bio}",
       style: TextStyle(
         fontFamily: AppFont.poppins,
@@ -289,7 +292,7 @@ Would you be interested?''',
 
   Widget _buildRecentPosts() {
     // final posts = similarPostData.userInfo.latestPosts;
-    if(similarPostData?.userInfo?.latestPosts == null) return SizedBox();
+    if (similarPostData?.userInfo?.latestPosts == null) return SizedBox();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, // Ensures left alignment
       children: similarPostData!.userInfo!.latestPosts!.map((text) {
