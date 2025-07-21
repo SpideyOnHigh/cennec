@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cennec/modules/allPosts/view/screen_posts.dart';
+
 import '../../core/utils/common_import.dart';
 import '../../search_posts/view/screen_find_connection.dart';
 import '../../search_posts/view/screen_similar_and_interest.dart';
@@ -19,7 +21,8 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
   ValueNotifier<int> navIndex = ValueNotifier(0);
 
   final List<Widget> _screens = [
-    const ScreenSimilarAndInterest(),
+    const ScreenPosts(),
+    // const DashboardHome(),
     const DashboardSearch(),
     const ScreenFindConnection(),
     const DashboardMessages(),
@@ -30,8 +33,12 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
     navIndex.value = index;
   }
 
-  Widget buildIcon(int index, String assetPath) {
+  Widget buildIcon(int index, String baseAssetPath) {
     final bool isSelected = navIndex.value == index;
+    final String iconAsset = isSelected
+        ? baseAssetPath.replaceFirst('.png', '_filled.png')
+        : baseAssetPath;
+
     return IconButton(
       visualDensity: VisualDensity.standard,
       splashColor: Colors.transparent,
@@ -40,14 +47,13 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
       focusColor: Colors.transparent,
       onPressed: () => onItemTapped(index),
       icon: Image.asset(
-        assetPath,
-        color: isSelected ? AppColors.menuPinkColor : Colors.grey,
-        colorBlendMode: BlendMode.srcIn,
-        width: Dimens.margin28,
-        height: Dimens.margin28,
+        iconAsset,
+        width: Dimens.margin24,
+        height: Dimens.margin24,
       ),
     );
   }
+
 
   Widget buildFAB() {
     final bool isCenterSelected = navIndex.value == 2;
@@ -78,7 +84,7 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
         child: Image.asset(
           isCenterSelected
               ? APPImages.icCennecBottom // active colorful icon
-              : APPImages.icBottomCennec, // default grey icon
+              : APPImages.icCennecBottom, // default grey icon
           width: Dimens.margin35,
           height: Dimens.margin35,
         ),

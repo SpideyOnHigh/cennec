@@ -56,4 +56,9 @@ class AppUrls {
   static String apiGetSimilarPost= '${baseUrl}get-similar-posts';
   static String apiGetInterestMatchPost= '${baseUrl}get-interest-matched-posts';
   static String apiAddPost= '${baseUrl}add-user-post';
+
+
+  static String apiGetAllPosts= '${baseUrl}get-all-posts';
+
+
 }

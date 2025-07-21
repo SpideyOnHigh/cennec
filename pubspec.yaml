@@ -98,6 +98,8 @@ dependencies:
   google_fonts: ^4.0.4
   flutter_html:
 
+  confetti: ^0.7.0
+
 
 dependency_overrides:
   google_api_availability:

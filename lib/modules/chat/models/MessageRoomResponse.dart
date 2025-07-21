@@ -87,6 +87,38 @@ class MessageModel {
     }
     return "$date $time";
   }
+
+  // Add this method to your MessageModel class
+  // DateTime get getLocalDateTime {
+  //   try {
+  //     // Assuming your date format is something like "2024-01-15" and time is "14:30:00"
+  //     // Adjust the parsing logic based on your actual date/time format
+  //     String dateTimeString = '$date $time';
+  //     return DateTime.parse(dateTimeString);
+  //   } catch (e) {
+  //     // Fallback to current time if parsing fails
+  //     return DateTime.now();
+  //   }
+  // }
+
+// Or if you need to handle different date formats:
+  DateTime get getLocalDateTime {
+    try {
+      // For formats like "15/01/2024 14:30:00"
+      DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
+      String dateTimeString = '$date $time';
+      return formatter.parse(dateTimeString);
+    } catch (e) {
+      try {
+        // Try alternative format "2024-01-15 14:30:00"
+        DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+        String dateTimeString = '$date $time';
+        return formatter.parse(dateTimeString);
+      } catch (e) {
+        return DateTime.now();
+      }
+    }
+  }
 }
 
 class Pagination {

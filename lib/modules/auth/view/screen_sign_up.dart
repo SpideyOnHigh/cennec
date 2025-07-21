@@ -421,10 +421,10 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
       emailError.value = getTranslate(ValidationString.textInvalidEml);
       isValid = false;
     }
-    if (codeController.text.isEmpty) {
-      codeError.value = getTranslate(ValidationString.textValidateInvCode);
-      isValid = false;
-    }
+    // if (codeController.text.isEmpty) {
+    //   codeError.value = getTranslate(ValidationString.textValidateInvCode);
+    //   isValid = false;
+    // }
     if (agreedToTerms == false) {
       isValid = false;
       errorAgreement.value = getTranslate(ValidationString.textValidateTermsAndCondition);
