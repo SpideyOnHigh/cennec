@@ -255,6 +255,7 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
       onTap: (){
         showModalBottomSheet(
           context: context,
+          backgroundColor: AppColors.colorWhite,
           constraints: BoxConstraints(
             maxHeight:  MediaQuery.of(context).size.height * 0.75,
           ),

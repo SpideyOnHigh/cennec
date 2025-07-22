@@ -148,15 +148,10 @@ class UserProfileBottomSheet extends StatelessWidget {
           // constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.75),
 
           builder: (_) => BottomSheetConnectRequest(
-//             currentUserImage: 'https://yourbaseurl.com/user_profile_images/123.jpg',
-//             targetUserImage: 'https://yourbaseurl.com/user_profile_images/456.jpg',
-//             targetUserName: 'John',
-//             mutualInterests: ['🎨 Visual Design', '🎬 Independent Film', '📷 Photography'],
-//             message: '''Hey John!
-//
-// I want to go on a hike near Seattle at night with expert Hikers for a sense of adventure
-//
-// Would you be interested?''',
+            onPressed: (){
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
             modelRequestDataTransfer:
                 ModelRequestDataTransfer(getUserId: 123, isFromDashboard: false, toSendUserID: 2222),
           ),

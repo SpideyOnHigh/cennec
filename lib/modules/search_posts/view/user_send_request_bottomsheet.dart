@@ -250,10 +250,12 @@ import '../../core/utils/common_import.dart';
 // }
 class BottomSheetConnectRequest extends StatefulWidget {
   final ModelRequestDataTransfer modelRequestDataTransfer;
+  final void Function()? onPressed;
 
   const BottomSheetConnectRequest({
     super.key,
     required this.modelRequestDataTransfer,
+    this.onPressed
   });
 
   @override
@@ -339,7 +341,7 @@ class _BottomSheetConnectRequestState extends State<BottomSheetConnectRequest> {
                       constraints: BoxConstraints(
                         minHeight:  MediaQuery.of(context).size.height * 0.75,
                       ),
-                      backgroundColor: Colors.red,
+                      backgroundColor: AppColors.colorWhite,
                       builder: (_) => BottomSheetConnectionSent(
                         currentUserImage: getUser().userData?.defaultProfilePic ?? '',
                         targetUserImage: modelFetchUserDetail.data?.defaultProfilePic ?? '',
@@ -355,41 +357,39 @@ class _BottomSheetConnectRequestState extends State<BottomSheetConnectRequest> {
             constraints:  BoxConstraints(maxHeight: MediaQuery.of(context).size.height*.75),
             child: Stack(
               children: [
-                Flexible(
-                  child: IgnorePointer(
-                    ignoring: loading,
-                    child: Padding(
-                      padding: MediaQuery.of(context).viewInsets,
-                      child: Container(
-                        // height: MediaQuery.of(context).size.height * 0.75,
-                        padding: const EdgeInsets.all(20),
-                        decoration: const BoxDecoration(
-                          color: AppColors.colorWhite,
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildHeader(context),
-                            const SizedBox(height: 20),
-                            _buildAvatars(),
-                            const SizedBox(height: 16),
-                            _buildMutualInterests(),
-                            const SizedBox(height: 16),
-                            _buildMessageBox(context),
-                            const SizedBox(height: 40),
-                            CommonButton(
-                              text: "Send Request",
-                              height: 48,
-                              backgroundColor: AppColors.colorPrimary,
-                              onTap: () async {
-                                sendConnectionRequest();
+                IgnorePointer(
+                  ignoring: loading,
+                  child: Padding(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: Container(
+                      // height: MediaQuery.of(context).size.height * 0.75,
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(
+                        color: AppColors.colorWhite,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildHeader(context),
+                          const SizedBox(height: 20),
+                          _buildAvatars(),
+                          const SizedBox(height: 16),
+                          _buildMutualInterests(),
+                          const SizedBox(height: 16),
+                          _buildMessageBox(context),
+                          const SizedBox(height: 40),
+                          CommonButton(
+                            text: "Send Request",
+                            height: 48,
+                            backgroundColor: AppColors.colorPrimary,
+                            onTap: () async {
+                              sendConnectionRequest();
 
-                              },
-                              // onTap: sendConnectionRequest,
-                            ),
-                          ],
-                        ),
+                            },
+                            // onTap: sendConnectionRequest,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -411,7 +411,7 @@ class _BottomSheetConnectRequestState extends State<BottomSheetConnectRequest> {
       children: [
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 18),
-          onPressed: () => Navigator.pop(context),
+          onPressed: widget.onPressed ?? () => Navigator.pop(context),
         ),
         const SizedBox(width: 4),
         Expanded(
