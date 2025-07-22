@@ -54,6 +54,7 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.75),
             backgroundColor: AppColors.colorWhite,
             builder: (_) => UserProfileBottomSheet(
               userName: widget.userName ?? "Unknown User",
@@ -206,14 +207,7 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
 
     if (widget.interests.length > 3) {
       chips.add(
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _showAllChips = !_showAllChips;
-            });
-          },
-          child: _viewMore(_showAllChips ? 'View Less' : 'View More')
-        ),
+        _viewMore(_showAllChips ? 'View Less' : 'View More'),
       );
     }
 

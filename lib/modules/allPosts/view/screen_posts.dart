@@ -7,6 +7,7 @@ import '../../core/utils/app_urls.dart';
 import '../../core/utils/common_import.dart';
 import 'package:http/http.dart' as http;
 
+import '../../search_posts/view/user_profile_bottomsheet.dart';
 import '../../search_posts/view/user_send_request_bottomsheet.dart';
 import '../bloc/get_posts_bloc.dart';
 import '../model/model_posts.dart';
@@ -79,20 +80,26 @@ class _ScreenPostsState extends State<ScreenPosts> {
         child: Scaffold(
           backgroundColor: AppColors.colorRoundedBgContainer,
           appBar: AppBar(
-            systemOverlayStyle:  const SystemUiOverlayStyle(
+            systemOverlayStyle: const SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness:  Brightness.light,
+              statusBarBrightness: Brightness.light,
             ),
-            elevation: 0, // No shadow
-            backgroundColor: Colors.transparent, // Transparent background
-            centerTitle: true, // Ensures the title is centered on all platforms
+            elevation: 0,
+            // No shadow
+            backgroundColor: Colors.transparent,
+            // Transparent background
+            centerTitle: true,
+            // Ensures the title is centered on all platforms
             title: Text(
               "All Posts",
               style: getTextStyleFromFont(
                 AppFont.poppins,
                 Dimens.margin26,
-                Theme.of(context).colorScheme.onPrimary,
+                Theme
+                    .of(context)
+                    .colorScheme
+                    .onPrimary,
                 FontWeight.w600,
               ),
             ),
@@ -111,7 +118,9 @@ class _ScreenPostsState extends State<ScreenPosts> {
                       style: getTextStyleFromFont(
                         AppFont.poppins,
                         Dimens.margin16,
-                        Theme.of(context).hintColor,
+                        Theme
+                            .of(context)
+                            .hintColor,
                         FontWeight.w400,
                       ),
                     ),
@@ -154,7 +163,10 @@ class _ScreenPostsState extends State<ScreenPosts> {
                         style: getTextStyleFromFont(
                           AppFont.poppins,
                           Dimens.margin16,
-                          Theme.of(context).colorScheme.onBackground,
+                          Theme
+                              .of(context)
+                              .colorScheme
+                              .onBackground,
                           FontWeight.w400,
                         ),
                       ),
@@ -183,112 +195,152 @@ class _ScreenPostsState extends State<ScreenPosts> {
   }
 
   Widget _buildPostCard(PostData post) {
-    return Card(
-      color: Colors.white,
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Post Description
-            Text(
-              post.description ?? "",
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                16,
-                Theme.of(context).colorScheme.onPrimary,
-                FontWeight.w600,
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            const Divider(height: 1, color: Colors.grey),
-
-            const SizedBox(height: 12),
-
-            // User info and icon row
-            Row(
-              children: [
-                // Avatar
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.grey.shade300,
-                  backgroundImage: post.userImage != null && post.userImage!.isNotEmpty
-                      ? NetworkImage(post.userImage!)
-                      : null,
-                  child: (post.userImage == null || post.userImage!.isEmpty)
-                      ? const Icon(Icons.person, color: Colors.white)
-                      : null,
+    return InkWell(
+      onTap: () {
+        // showModalBottomSheet(
+        //   context: context,
+        //   isScrollControlled: true,
+        //   shape: const RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        //   ),
+        //   constraints: BoxConstraints(maxHeight: MediaQuery
+        //       .of(context)
+        //       .size
+        //       .height * 0.75),
+        //   backgroundColor: AppColors.colorWhite,
+        //   builder: (_) =>
+        //       // UserProfileBottomSheet(
+        //       //   userName: post.userName ?? "Unknown User",
+        //       //   userImage: post.userImage ?? "",
+        //       //   mutualConnections: post. ?? 0,
+        //       //   matchPercentage: post.matchPercentage ?? 0,
+        //       //   title: post.similarPostData?.discussionTopic ?? "",
+        //       //   description: post.description ?? "",
+        //       //   interests: post.similarPostData?.userInterest
+        //       //       ?.map((interest) => interest.interestName ?? "")
+        //       //       .toList() ?? [],
+        //       //   isFriend: post.isFriend ?? false,
+        //       //   similarPostData: post.similarPostData,),
+        // );
+      },
+      child: Card(
+        color: Colors.white,
+        margin: const EdgeInsets.only(bottom: 16),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Post Description
+              Text(
+                post.description ?? "",
+                style: getTextStyleFromFont(
+                  AppFont.poppins,
+                  16,
+                  Theme
+                      .of(context)
+                      .colorScheme
+                      .onPrimary,
+                  FontWeight.w600,
                 ),
+              ),
 
-                const SizedBox(width: 12),
+              const SizedBox(height: 16),
 
-                // Username
-                Expanded(
-                  child: Text(
-                    post.userName ?? "Unknown User",
-                    style: getTextStyleFromFont(
-                      AppFont.poppins,
-                      16,
-                      Theme.of(context).colorScheme.onPrimary,
-                      FontWeight.w500,
+              const Divider(height: 1, color: Colors.grey),
+
+              const SizedBox(height: 12),
+
+              // User info and icon row
+              Row(
+                children: [
+                  // Avatar
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.grey.shade300,
+                    backgroundImage: post.userImage != null && post.userImage!.isNotEmpty
+                        ? NetworkImage(post.userImage!)
+                        : null,
+                    child: (post.userImage == null || post.userImage!.isEmpty)
+                        ? const Icon(Icons.person, color: Colors.white)
+                        : null,
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  // Username
+                  Expanded(
+                    child: Text(
+                      post.userName ?? "Unknown User",
+                      style: getTextStyleFromFont(
+                        AppFont.poppins,
+                        16,
+                        Theme
+                            .of(context)
+                            .colorScheme
+                            .onPrimary,
+                        FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
 
-                // Friend / Chat Icon with logic
-                InkWell(
-                  onTap: () {
-                    if (post.isFriend == true) {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.routesScreenChats,
-                        arguments: MessageRoomRequestData(
-                          fromUserId: post.userId ?? 0,
-                          page: 1,
-                          name: post.userName ?? '',
-                          imageUrl: post.userImage ?? '',
-                        ),
-                      );
-                    } else {
-                      showModalBottomSheet(
-                        context: context,
-                        constraints: BoxConstraints(
-                          maxHeight:  MediaQuery.of(context).size.height * 0.75,
-                        ),
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                        ),
-                        builder: (_) => BottomSheetConnectRequest(
-                          modelRequestDataTransfer: ModelRequestDataTransfer(
-                            isFromDashboard: true,
-                            getUserId: getUser().userData?.id,
-                            toSendUserID: post.userId,
+                  // Friend / Chat Icon with logic
+                  InkWell(
+                    onTap: () {
+                      if (post.isFriend == true) {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.routesScreenChats,
+                          arguments: MessageRoomRequestData(
+                            fromUserId: post.userId ?? 0,
+                            page: 1,
+                            name: post.userName ?? '',
+                            imageUrl: post.userImage ?? '',
                           ),
-                        ),
-                      );
-//                       Navigator.pushNamed(
-//                         context,
-//                         AppRoutes.routesScreenUserDetails,
-//                         arguments: ModelRequestDataTransfer(
-//                           getUserId: post.userId ?? 0,
-//                           isFromDashboard: true,
-//                         ),
-//                       );
-                    }
-                  },
-                  child: _buildFriendIcon(post.isFriend ?? false),
-                ),
-              ],
-            ),
-          ],
+                        );
+                      } else {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: AppColors.colorWhite,
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery
+                                .of(context)
+                                .size
+                                .height * 0.75,
+                          ),
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                          ),
+                          builder: (_) =>
+                              BottomSheetConnectRequest(
+                                modelRequestDataTransfer: ModelRequestDataTransfer(
+                                  isFromDashboard: true,
+                                  getUserId: getUser().userData?.id,
+                                  toSendUserID: post.userId,
+                                ),
+                              ),
+                        );
+                        //                       Navigator.pushNamed(
+                        //                         context,
+                        //                         AppRoutes.routesScreenUserDetails,
+                        //                         arguments: ModelRequestDataTransfer(
+                        //                           getUserId: post.userId ?? 0,
+                        //                           isFromDashboard: true,
+                        //                         ),
+                        //                       );
+                      }
+                    },
+                    child: _buildFriendIcon(post.isFriend ?? false),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

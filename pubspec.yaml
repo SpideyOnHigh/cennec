@@ -55,7 +55,7 @@ dependencies:
   cached_network_image: ^3.2.3
 
     # For Network check connectivity
-  connectivity_plus: ^3.0.2
+  connectivity_plus: ^6.1.4
 
   intl: ^0.19.0
   webview_flutter: ^4.0.1

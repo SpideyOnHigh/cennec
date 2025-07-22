@@ -44,7 +44,8 @@ class MyAppState extends State<MaterialAppWidget> {
   ApiProvider apiProvider = ApiProvider();
   http.Client client = http.Client();
   static ValueNotifier<bool> isConnected = ValueNotifier<bool>(false);
-  late StreamSubscription<ConnectivityResult> onConnectivityChanged;
+  // late StreamSubscription<ConnectivityResult> onConnectivityChanged;
+  late StreamSubscription<List<ConnectivityResult>> onConnectivityChanged;
 
   ValueNotifier<bool> isDrawerClose = ValueNotifier<bool>(false);
 
@@ -62,24 +63,47 @@ class MyAppState extends State<MaterialAppWidget> {
 
   Future<void> init() async {
     isConnected.value = await checkConnectivity();
+    // onConnectivityChanged =
+    //     Connectivity().onConnectivityChanged.listen((ConnectivityResult event) async {
+    //   if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi) {
+    //     isConnected.value = true;
+    //     themeChangeValue = getThemeData(def: false);
+    //     if ((NavigatorKey.navigatorKey.currentContext ??
+    //             NavigatorKey.navigatorKey.currentState?.context) ==
+    //         null) {
+    //       await Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
+    //         setThemeData(getNavigatorKeyContext(), isDark: themeChangeValue);
+    //       });
+    //     } else {
+    //       setThemeData(getNavigatorKeyContext(), isDark: themeChangeValue);
+    //     }
+    //   } else {
+    //     isConnected.value = false;
+    //   }
+    // });
     onConnectivityChanged =
-        Connectivity().onConnectivityChanged.listen((ConnectivityResult event) async {
-      if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi) {
-        isConnected.value = true;
-        themeChangeValue = getThemeData(def: false);
-        if ((NavigatorKey.navigatorKey.currentContext ??
-                NavigatorKey.navigatorKey.currentState?.context) ==
-            null) {
-          await Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
-            setThemeData(getNavigatorKeyContext(), isDark: themeChangeValue);
-          });
-        } else {
-          setThemeData(getNavigatorKeyContext(), isDark: themeChangeValue);
-        }
-      } else {
-        isConnected.value = false;
-      }
-    });
+        Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> events) async {
+          // Assuming you care about the first event or any of them being connected
+          final isNowConnected = events.any((event) =>
+          event == ConnectivityResult.mobile || event == ConnectivityResult.wifi);
+
+          isConnected.value = isNowConnected;
+
+          if (isNowConnected) {
+            themeChangeValue = getThemeData(def: false);
+            final context = NavigatorKey.navigatorKey.currentContext ??
+                NavigatorKey.navigatorKey.currentState?.context;
+
+            if (context == null) {
+              await Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
+                setThemeData(getNavigatorKeyContext(), isDark: themeChangeValue);
+              });
+            } else {
+              setThemeData(getNavigatorKeyContext(), isDark: themeChangeValue);
+            }
+          }
+        });
+
     PreferenceHelper.load().whenComplete(() {
       updateLanguage();
     });
@@ -225,8 +249,8 @@ class MyAppState extends State<MaterialAppWidget> {
             : Colors.transparent,
         /* set Status bar color in Android devices. */
 
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark
         /* set Status bar icons color in Android devices.*/
         // statusBarBrightness: Brightness.dark,
       ),

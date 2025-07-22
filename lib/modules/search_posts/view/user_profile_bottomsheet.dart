@@ -1,4 +1,5 @@
 import 'package:cennec/modules/connections/model/model_send_request.dart';
+import 'package:cennec/modules/core/utils/my_print.dart';
 import 'package:cennec/modules/search_posts/model/similar_post_model.dart';
 import 'package:cennec/modules/search_posts/view/user_send_request_bottomsheet.dart';
 
@@ -139,10 +140,13 @@ class UserProfileBottomSheet extends StatelessWidget {
       onTap: () {
         showModalBottomSheet(
           context: context,
+          backgroundColor: AppColors.colorWhite,
           isScrollControlled: true,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
+          // constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.75),
+
           builder: (_) => BottomSheetConnectRequest(
 //             currentUserImage: 'https://yourbaseurl.com/user_profile_images/123.jpg',
 //             targetUserImage: 'https://yourbaseurl.com/user_profile_images/456.jpg',
@@ -296,6 +300,7 @@ class UserProfileBottomSheet extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, // Ensures left alignment
       children: similarPostData!.userInfo!.latestPosts!.map((text) {
+        if(text.description == null || text.description!.isEmpty)return SizedBox();
         return Container(
           width: double.infinity,
           // Ensures equal width for all posts
