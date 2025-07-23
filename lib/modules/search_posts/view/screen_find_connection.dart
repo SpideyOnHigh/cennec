@@ -112,6 +112,20 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
                                           ),
                                         ),
                                       );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ScreenSimilarAndInterest(
+                                      searchText: searchController.text.trim(),
+                                      // discussionTopic: whatController.text.trim(),
+                                      // location: locationController.text.trim(),
+                                      // meetAt: dateController.text.trim(),
+                                      // meetWith: whoController.text.trim(),
+                                      // activity: activityController.text.trim(),
+                                      // searchText: searchController.text.trim(),
+                                    ),
+                                  ),
+                                );
                                       // Navigator.pushNamed(context, AppRoutes.routeSearchNewConnectionDetails);
                                     }
                                   : null,

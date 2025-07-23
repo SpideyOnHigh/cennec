@@ -144,11 +144,11 @@ class _ScreenConnectionDetailsState extends State<ScreenConnectionDetails> {
                                   MaterialPageRoute(
                                     builder: (context) => ScreenSimilarAndInterest(
                                       searchText: widget.desc,
-                                      discussionTopic: whatController.text.trim(),
-                                      location: locationController.text.trim(),
-                                      meetAt: dateController.text.trim(),
-                                      meetWith: whoController.text.trim(),
-                                      activity: activityController.text.trim(),
+                                      // discussionTopic: whatController.text.trim(),
+                                      // location: locationController.text.trim(),
+                                      // meetAt: dateController.text.trim(),
+                                      // meetWith: whoController.text.trim(),
+                                      // activity: activityController.text.trim(),
                                       // searchText: searchController.text.trim(),
                                     ),
                                   ),

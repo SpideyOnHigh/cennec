@@ -197,12 +197,12 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
   bool _showAllChips = false;
 
   Widget _buildInterestChips() {
-    List<String> chipsToShow = _showAllChips
-        ? widget.interests
-        : widget.interests.take(3).toList();
+    List<UserInterest> chipsToShow = _showAllChips
+        ? widget.similarPostData!.userInterest!
+        : widget.similarPostData!.userInterest!.take(3).toList();
 
     List<Widget> chips = chipsToShow
-        .map((label) => _interestChip(label))
+        .map((label) => _interestChip(label.interestName ?? "", label.interestMatch ?? false ))
         .toList();
 
     if (widget.interests.length > 3) {
@@ -220,15 +220,15 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
     );
   }
 
-  Widget _viewMore(String text){
+  Widget _viewMore(String text,){
     return Text(text,style: TextStyle(decoration: TextDecoration.underline, fontSize: 15, color: Colors.blue, decorationColor: Colors.blue),);
   }
 
-  Widget _interestChip(String label) {
+  Widget _interestChip(String label, bool isMatch) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.colorSelectedInterestChip,
+        color: isMatch ? AppColors.colorSelectedInterestChip : AppColors.colorSelectedInterestChip.withOpacity(.2),
         border: Border.all(color: AppColors.colorGreyExtraLight),
         borderRadius: BorderRadius.circular(20),
       ),

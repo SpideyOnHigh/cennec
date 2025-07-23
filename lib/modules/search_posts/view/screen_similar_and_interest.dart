@@ -84,12 +84,13 @@ class _ScreenSimilarAndInterestState extends State<ScreenSimilarAndInterest> {
     // Create the pagination body
     Map<String, dynamic> body = {
       "skip": isLoadMore ? (currentSimilarPage * pageSize).toString() : "0",
+      "description":widget.searchText.trim(),
       "take": pageSize.toString(),
-      "activity": activity,
-      "location": location,
-      "meet_at": meetAt,
-      "meet_with": meetWith,
-      "discussion_topic": discussionTopic,
+      // "activity": activity,
+      // "location": location,
+      // "meet_at": meetAt,
+      // "meet_with": meetWith,
+      // "discussion_topic": discussionTopic,
     };
 
     BlocProvider.of<GetSimilarPostsBloc>(context).add(

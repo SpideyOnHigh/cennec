@@ -409,7 +409,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
     if (emailController.text.isEmpty && codeController.text.isEmpty) {
       /// Display an error message for all three fields being empty
       emailError.value = getTranslate(ValidationString.textValidateReqEml);
-      codeError.value = getTranslate(ValidationString.textValidateInvCode);
+      // codeError.value = getTranslate(ValidationString.textValidateInvCode);
       // codeError.value = "Invitation code is required";
       isValid = false;
     }
