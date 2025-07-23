@@ -25,7 +25,7 @@ class _MyConnectionsState extends State<MyConnections> {
   ValueNotifier<List<ConnectionsModel>> myConnections = ValueNotifier([]);
   ValueNotifier<bool> isLoading = ValueNotifier(true);
   ValueNotifier<bool> isApiBusy = ValueNotifier(false);
-  
+
   int connectionPageNumber = 1;
   bool isFavouriteView = false;
 
