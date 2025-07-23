@@ -250,7 +250,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
       children: [
         // === CONNECTIONS TAB ===
         Visibility(
-          visible: myConnections.value.isNotEmpty,
+          visible: messageList.value.isNotEmpty,
           replacement: Center(
             child: Text(
               getTranslate(isLoading.value ? APPStrings.textLoadingConnection : APPStrings.textNoConnections),
@@ -258,7 +258,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                 AppFont.poppins,
                 Dimens.margin18,
                 Theme.of(context).hintColor,
-                FontWeight.lerp(FontWeight.w500, FontWeight.w600, 0.5) ?? FontWeight.w500,
+                FontWeight.w500,
               ),
             ),
           ),
@@ -269,23 +269,29 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                 ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: myConnections.value.length,
+                  itemCount: messageList.value.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
-                    final user = myConnections.value[index];
+                    final user = messageList.value[index];
+                    final messageTime = user.latestMessageTime != null
+                        ? DateTime.tryParse(user.latestMessageTime!) ?? DateTime.now()
+                        : DateTime.now();
+
                     return InkWell(
                       onTap: () {
-                        Navigator.pushNamed(context, AppRoutes.routesScreenChats,
-                            arguments: MessageRoomRequestData(
-                              fromUserId: user.id!,
-                              page: 1,
-                              name: user.name ?? '',
-                              imageUrl: user.defaultProfilePic ?? '',
-                            ));
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.routesScreenChats,
+                          arguments: MessageRoomRequestData(
+                            fromUserId: user.id!,
+                            page: 1,
+                            name: user.username ?? '',
+                            imageUrl: user.defaultProfilePicture ?? '',
+                          ),
+                        );
                       },
                       child: Container(
                         padding: const EdgeInsets.all(12),
-                        margin: const EdgeInsets.symmetric(horizontal: 0),
                         decoration: BoxDecoration(
                           color: AppColors.colorWhite,
                           borderRadius: BorderRadius.circular(16),
@@ -302,12 +308,12 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                             CircleAvatar(
                               radius: 24,
                               backgroundColor: AppColors.colorGreyExtraLight,
-                              backgroundImage: user.defaultProfilePic != null
-                                  ? NetworkImage(user.defaultProfilePic!)
+                              backgroundImage: user.defaultProfilePicture != null
+                                  ? NetworkImage(user.defaultProfilePicture!)
                                   : null,
-                              child: user.defaultProfilePic == null
+                              child: user.defaultProfilePicture == null
                                   ? Text(
-                                user.name?.substring(0, 1).toUpperCase() ?? "?",
+                                user.username?.substring(0, 1).toUpperCase() ?? "?",
                                 style: getTextStyleFromFont(AppFont.poppins, 18, AppColors.colorWhite, FontWeight.bold),
                               )
                                   : null,
@@ -318,37 +324,42 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    user.name ?? '',
+                                    user.username ?? '',
                                     style: getTextStyleFromFont(AppFont.poppins, 16, AppColors.colorBlack, FontWeight.w600),
                                   ),
                                   const SizedBox(height: 4),
-                                  //todo: recent message
-                                  // Text(
-                                  //   "Hey how's it going?",
-                                  //   style: getTextStyleFromFont(AppFont.poppins, 14, AppColors.colorHyperLink80, FontWeight.normal),
-                                  // ),
+                                  // Uncomment when backend sends message preview
+                                  Text(
+                                    user.lastMessage ?? '',
+                                    style: getTextStyleFromFont(
+                                        AppFont.poppins,
+                                        14,
+                                        AppColors.colorHyperLink80,
+                                        FontWeight.normal
+                                    ),
+                                    maxLines: 1, // Limits text to a single line
+                                    overflow: TextOverflow.ellipsis, // Adds ... when text overflows
+                                  ),
                                 ],
                               ),
                             ),
-
-                            //todo:DOT
-                            // Row(
-                            //   children: [
-                            //     Container(
-                            //       width: 8,
-                            //       height: 8,
-                            //       decoration: const BoxDecoration(
-                            //         shape: BoxShape.circle,
-                            //         color: Colors.black,
-                            //       ),
-                            //     ),
-                            //     SizedBox(width: 4,),
-                            //     Text(
-                            //       "1hr ago",
-                            //       style: getTextStyleFromFont(AppFont.poppins, 12, AppColors.colorBlack1, FontWeight.normal),
-                            //     ),
-                            //   ],
-                            // )
+                            Row(
+                              children: [
+                                // Container(
+                                //   width: 8,
+                                //   height: 8,
+                                //   decoration: const BoxDecoration(
+                                //     shape: BoxShape.circle,
+                                //     color: Colors.black,
+                                //   ),
+                                // ),
+                                // const SizedBox(width: 4),
+                                Text(
+                                  getRelativeTime(messageTime),
+                                  style: getTextStyleFromFont(AppFont.poppins, 12, AppColors.colorBlack1, FontWeight.normal),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -356,26 +367,10 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                   },
                 ),
                 const SizedBox(height: 16),
-                Visibility(
-                  visible: showLoadMoreForConnection.value,
-                  child: Center(
-                    child: CommonButton(
-                      height: 48,
-                      text: "Load More",
-                      onTap: () {
-                        getMyConnections(pageNumber: connectionPageNumber);
-                      },
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      isLoading: paginationLoading.value,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
               ],
             ),
           ),
-        ),
-        // === FAVORITES TAB ===
+        ),        // === FAVORITES TAB ===
         Visibility(
           visible: myFavourites.value.isNotEmpty,
           replacement: Center(
@@ -637,5 +632,29 @@ class _DashboardMessagesState extends State<DashboardMessages> {
 
   void getMYFavourites({required int pageNumber}) {
     BlocProvider.of<GetMyFavouritesBloc>(context).add(GetMyFavourites(url: "${AppUrls.apiMyFavourites}?page=$pageNumber&per_page=15"));
+  }
+}
+
+String getRelativeTime(DateTime messageTime) {
+  final now = DateTime.now();
+  final difference = now.difference(messageTime);
+
+  if (difference.inSeconds < 60) {
+    return 'now';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}m ago';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}h ago';
+  } else if (difference.inDays < 7) {
+    return '${difference.inDays}d ago';
+  } else if (difference.inDays < 30) {
+    final weeks = (difference.inDays / 7).floor();
+    return '${weeks}w ago';
+  } else if (difference.inDays < 365) {
+    final months = (difference.inDays / 30).floor();
+    return '${months}mo ago';
+  } else {
+    final years = (difference.inDays / 365).floor();
+    return '${years}y ago';
   }
 }

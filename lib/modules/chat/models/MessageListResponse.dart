@@ -47,6 +47,7 @@ class MessageList {
     required this.deletedAt,
     required this.latestMessageTime,
     required this.defaultProfilePicture,
+    required this.lastMessage
   });
   late final int? id;
   late final String? name;
@@ -62,6 +63,7 @@ class MessageList {
   late final String? deletedAt;
   late final String? latestMessageTime;
   late final String? defaultProfilePicture;
+  late final String? lastMessage;
   late final List<ProfileImages>? profileImages;
 
   MessageList.fromJson(Map<String, dynamic> json){
@@ -79,6 +81,7 @@ class MessageList {
     deletedAt = json['deleted_at'];
     latestMessageTime = json['latest_message_time'];
     defaultProfilePicture = json['default_profile_picture'];
+    lastMessage = json['last_message'];
     // if (profileImages != null) {
     //   json['profile_images'] =
     //       profileImages!.map((v) => v.toJson()).toList();
@@ -101,6 +104,7 @@ class MessageList {
     data['deleted_at'] = deletedAt;
     data['latest_message_time'] = latestMessageTime;
     data['default_profile_picture'] = defaultProfilePicture;
+    data['last_message'] = lastMessage;
     return data;
   }
 }

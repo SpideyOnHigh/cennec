@@ -17,9 +17,25 @@ class ModelError {
   String? genderPreference;
   String? userReported;
 
-  ModelError({this.invitationCode, this.userExists, this.wrongOtp, this.generalError = '', this.wrongCredentials,
-    this.wrongPassword,this.failed,this.invalidPassword,this.interestId,this.requestComment,this.samePassword,this.alreadySent,this.genderPreference,
-    this.email,this.newPassword,this.feedbackId,this.userReported});
+  ModelError({
+    this.invitationCode,
+    this.userExists,
+    this.wrongOtp,
+    this.generalError = '',
+    this.wrongCredentials,
+    this.wrongPassword,
+    this.failed,
+    this.invalidPassword,
+    this.interestId,
+    this.requestComment,
+    this.samePassword,
+    this.alreadySent,
+    this.genderPreference,
+    this.email,
+    this.newPassword,
+    this.feedbackId,
+    this.userReported,
+  });
 
   ModelError.fromJson(Map<String, dynamic> json) {
     invitationCode = json['invitation_code'];
@@ -36,8 +52,28 @@ class ModelError {
     alreadySent = json['already_sent'];
     feedbackId = json['feedback_type_id'];
     genderPreference = json['gender_preference'];
-    generalError = json['failed'] ?? ''; //todo to check
+    generalError = json['failed'] ?? json['username'] ?? json['name'] ?? json['rating'] ?? '';
     userReported = json['user_reported'];
-    generalError = json['failed'] ?? json['username']?? json['name'] ?? json['rating'] ?? ''; //todo to check
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['invitation_code'] = invitationCode;
+    data['wrong_credentials'] = wrongCredentials;
+    data['user_exists'] = userExists;
+    data['wrong_otp'] = wrongOtp;
+    data['email'] = email;
+    data['wrong_password'] = wrongPassword;
+    data['password'] = invalidPassword;
+    data['interest_id'] = interestId;
+    data['request_comment'] = requestComment;
+    data['same_password'] = samePassword;
+    data['new_password'] = newPassword;
+    data['already_sent'] = alreadySent;
+    data['feedback_type_id'] = feedbackId;
+    data['gender_preference'] = genderPreference;
+    data['failed'] = generalError;
+    data['user_reported'] = userReported;
+    return data;
   }
 }
