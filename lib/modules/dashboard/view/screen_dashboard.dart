@@ -10,6 +10,7 @@ import '../../search_posts/view/screen_find_connection.dart';
 import '../../search_posts/view/screen_similar_and_interest.dart';
 import 'dashboard_home.dart';
 import 'dashboard_messages.dart';
+import 'dashboard_mycennections.dart';
 import 'dashboard_profile.dart';
 import 'dashboard_recommendations.dart';
 import 'dashboard_search.dart';
@@ -25,9 +26,9 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
   ValueNotifier<int> navIndex = ValueNotifier(2);
 
   final List<Widget> _screens = [
-    // const ScreenPosts(),
-    ScreenSignupInterests(),
-    const DashboardSearch(),
+    const ScreenPosts(),
+    // const DashboardHome(),
+    const MyConnections(),
     const ScreenFindConnection(),
     const DashboardMessages(),
     const DashboardProfile(),

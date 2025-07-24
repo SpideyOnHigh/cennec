@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../chat/models/MessageRoomRequestData.dart';
 import '../../connections/model/model_send_request.dart';
+import '../../core/common/widgets/dialog/common_loading_animation.dart';
 import '../../core/utils/app_urls.dart';
 import '../../core/utils/common_import.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +30,6 @@ class _ScreenPostsState extends State<ScreenPosts> {
   @override
   void initState() {
     super.initState();
-
     _getPostsBloc = GetPostsBloc(
       repositoryPosts: RepositoryPosts(),
       apiProvider: ApiProvider(),
@@ -76,152 +76,118 @@ class _ScreenPostsState extends State<ScreenPosts> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<GetPostsBloc>(
-        create: (context) => _getPostsBloc,
-        child: Scaffold(
-          backgroundColor: AppColors.colorRoundedBgContainer,
-          appBar: AppBar(
-            systemOverlayStyle: const SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness: Brightness.light,
-            ),
-            elevation: 0,
-            // No shadow
-            backgroundColor: Colors.transparent,
-            // Transparent background
-            centerTitle: true,
-            // Ensures the title is centered on all platforms
-            title: Text(
-              "All Posts",
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                Dimens.margin26,
-                Theme
-                    .of(context)
-                    .colorScheme
-                    .onPrimary,
-                FontWeight.w600,
-              ),
+      create: (context) => _getPostsBloc,
+      child: Scaffold(
+        backgroundColor: AppColors.colorRoundedBgContainer,
+        appBar: AppBar(
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          centerTitle: true,
+          title: Text(
+            "All Posts",
+            style: getTextStyleFromFont(
+              AppFont.poppins,
+              Dimens.margin26,
+              Theme.of(context).colorScheme.onPrimary,
+              FontWeight.w600,
             ),
           ),
-          body: BlocBuilder<GetPostsBloc, GetPostsState>(
-            builder: (context, state) {
-              if (state is GetPostsLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is GetPostsResponse) {
-                final posts = state.modelPosts.data ?? [];
+        ),
+        body: BlocBuilder<GetPostsBloc, GetPostsState>(
+          builder: (context, state) {
+            if (state is GetPostsLoading) {
+              return const Center(child: CommonLoadingAnimation());
+            } else if (state is GetPostsResponse) {
+              final posts = state.modelPosts.data ?? [];
 
-                if (posts.isEmpty) {
-                  return Center(
-                    child: Text(
-                      "No posts available",
-                      style: getTextStyleFromFont(
-                        AppFont.poppins,
-                        Dimens.margin16,
-                        Theme
-                            .of(context)
-                            .hintColor,
-                        FontWeight.w400,
-                      ),
-                    ),
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    _loadInitialPosts();
-                  },
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16).copyWith(bottom: 100),
-                    itemCount: posts.length + (state.isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == posts.length) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-
-                      final post = posts[index];
-                      return _buildPostCard(post);
-                    },
-                  ),
-                );
-              } else if (state is GetPostsFailure) {
+              if (posts.isEmpty) {
                 return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                      const SizedBox(height: 16),
-                      Text(
-                        state.errorMessage.generalError ?? "Something went wrong",
-                        textAlign: TextAlign.center,
-                        style: getTextStyleFromFont(
-                          AppFont.poppins,
-                          Dimens.margin16,
-                          Theme
-                              .of(context)
-                              .colorScheme
-                              .onBackground,
-                          FontWeight.w400,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loadInitialPosts,
-                        child: Text(
-                          "Retry",
-                          style: getTextStyleFromFont(
-                            AppFont.poppins,
-                            Dimens.margin14,
-                            Colors.white,
-                            FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    "No posts available",
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      Dimens.margin16,
+                      Theme.of(context).hintColor,
+                      FontWeight.w400,
+                    ),
                   ),
                 );
               }
 
-              return const SizedBox.shrink();
-            },
-          ),
-        ));
+              return RefreshIndicator(
+                onRefresh: () async {
+                  _loadInitialPosts();
+                },
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(16).copyWith(bottom: 100),
+                  itemCount: posts.length + (state.isLoadingMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == posts.length) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    final post = posts[index];
+                    return _buildPostCard(post);
+                  },
+                ),
+              );
+            } else if (state is GetPostsFailure) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                    const SizedBox(height: 16),
+                    Text(
+                      state.errorMessage.generalError ?? "Something went wrong",
+                      textAlign: TextAlign.center,
+                      style: getTextStyleFromFont(
+                        AppFont.poppins,
+                        Dimens.margin16,
+                        Theme.of(context).colorScheme.onBackground,
+                        FontWeight.w400,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _loadInitialPosts,
+                      child: Text(
+                        "Retry",
+                        style: getTextStyleFromFont(
+                          AppFont.poppins,
+                          Dimens.margin14,
+                          Colors.white,
+                          FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildPostCard(PostData post) {
     return InkWell(
       onTap: () {
-        // showModalBottomSheet(
-        //   context: context,
-        //   isScrollControlled: true,
-        //   shape: const RoundedRectangleBorder(
-        //     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        //   ),
-        //   constraints: BoxConstraints(maxHeight: MediaQuery
-        //       .of(context)
-        //       .size
-        //       .height * 0.75),
-        //   backgroundColor: AppColors.colorWhite,
-        //   builder: (_) =>
-        //       // UserProfileBottomSheet(
-        //       //   userName: post.userName ?? "Unknown User",
-        //       //   userImage: post.userImage ?? "",
-        //       //   mutualConnections: post. ?? 0,
-        //       //   matchPercentage: post.matchPercentage ?? 0,
-        //       //   title: post.similarPostData?.discussionTopic ?? "",
-        //       //   description: post.description ?? "",
-        //       //   interests: post.similarPostData?.userInterest
-        //       //       ?.map((interest) => interest.interestName ?? "")
-        //       //       .toList() ?? [],
-        //       //   isFriend: post.isFriend ?? false,
-        //       //   similarPostData: post.similarPostData,),
-        // );
+        // TODO: Open bottom sheet or profile card if needed
       },
       child: Card(
         color: Colors.white,
@@ -235,30 +201,20 @@ class _ScreenPostsState extends State<ScreenPosts> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Post Description
               Text(
                 post.description ?? "",
                 style: getTextStyleFromFont(
                   AppFont.poppins,
                   16,
-                  Theme
-                      .of(context)
-                      .colorScheme
-                      .onPrimary,
+                  Theme.of(context).colorScheme.onPrimary,
                   FontWeight.w600,
                 ),
               ),
-
               const SizedBox(height: 16),
-
               const Divider(height: 1, color: Colors.grey),
-
               const SizedBox(height: 12),
-
-              // User info and icon row
               Row(
                 children: [
-                  // Avatar
                   CircleAvatar(
                     radius: 20,
                     backgroundColor: Colors.grey.shade300,
@@ -269,26 +225,18 @@ class _ScreenPostsState extends State<ScreenPosts> {
                         ? const Icon(Icons.person, color: Colors.white)
                         : null,
                   ),
-
                   const SizedBox(width: 12),
-
-                  // Username
                   Expanded(
                     child: Text(
                       post.userName ?? "Unknown User",
                       style: getTextStyleFromFont(
                         AppFont.poppins,
                         16,
-                        Theme
-                            .of(context)
-                            .colorScheme
-                            .onPrimary,
+                        Theme.of(context).colorScheme.onPrimary,
                         FontWeight.w500,
                       ),
                     ),
                   ),
-
-                  // Friend / Chat Icon with logic
                   InkWell(
                     onTap: () {
                       if (post.isFriend == true) {
@@ -307,32 +255,20 @@ class _ScreenPostsState extends State<ScreenPosts> {
                           context: context,
                           backgroundColor: AppColors.colorWhite,
                           constraints: BoxConstraints(
-                            maxHeight: MediaQuery
-                                .of(context)
-                                .size
-                                .height * 0.75,
+                            maxHeight: MediaQuery.of(context).size.height * 0.75,
                           ),
                           isScrollControlled: true,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                           ),
-                          builder: (_) =>
-                              BottomSheetConnectRequest(
-                                modelRequestDataTransfer: ModelRequestDataTransfer(
-                                  isFromDashboard: true,
-                                  getUserId: getUser().userData?.id,
-                                  toSendUserID: post.userId,
-                                ),
-                              ),
+                          builder: (_) => BottomSheetConnectRequest(
+                            modelRequestDataTransfer: ModelRequestDataTransfer(
+                              isFromDashboard: true,
+                              getUserId: getUser().userData?.id,
+                              toSendUserID: post.userId,
+                            ),
+                          ),
                         );
-                        //                       Navigator.pushNamed(
-                        //                         context,
-                        //                         AppRoutes.routesScreenUserDetails,
-                        //                         arguments: ModelRequestDataTransfer(
-                        //                           getUserId: post.userId ?? 0,
-                        //                           isFromDashboard: true,
-                        //                         ),
-                        //                       );
                       }
                     },
                     child: _buildFriendIcon(post.isFriend ?? false),

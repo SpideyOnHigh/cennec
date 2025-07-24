@@ -20,6 +20,7 @@ import 'package:cennec/modules/profile/widgets/custom_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../chat/models/MessageRoomRequestData.dart';
+import '../../core/common/widgets/button.dart';
 
 class ScreenUserDetails extends StatefulWidget {
   final ModelRequestDataTransfer modelRequestDataTransfer;
@@ -40,7 +41,10 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   ValueNotifier<bool> isUpdating = ValueNotifier(false);
   ModelFetchUserDetail modelFetchUserDetail = ModelFetchUserDetail();
-  ModelNavigationBackHandling modelNavigationBackHandling = ModelNavigationBackHandling();
+  ModelNavigationBackHandling modelNavigationBackHandling =
+      ModelNavigationBackHandling();
+  final PageController _pageController = PageController();
+  int currentPage = 0;
 
   Widget myProfileTexts(BuildContext context) {
     return Row(
@@ -56,6 +60,101 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
         ),
       ],
     );
+  }
+
+  PreferredSizeWidget buildAppBar() {
+    return AppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () => Navigator.pop(context, modelNavigationBackHandling),
+      ),
+      centerTitle: true,
+      title: Text(
+        'Profile Details',
+        style: getTextStyleFromFont(
+          AppFont.poppins,
+          18,
+          Theme.of(context).colorScheme.onBackground,
+          FontWeight.w600,
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.more_vert, color: Colors.black),
+          onPressed: _showMenuBottomSheet,
+        ),
+
+      ],
+    );
+  }
+
+  void _showMenuBottomSheet() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              showCupertinoDialog(
+                context: context,
+                builder: (context) => CupertinoConfirmationDialog(
+                  title: getTranslate(APPStrings.textReportUser),
+                  description: getTranslate(APPStrings.textReportCnf),
+                  cancelText: getTranslate(APPStrings.textCancel),
+                  confirmText: getTranslate(APPStrings.textOk),
+                  onCancel: () => Navigator.pop(context),
+                  onConfirm: () {
+                    Navigator.pop(context);
+                    reportConnection(modelFetchUserDetail.data?.id ?? 0);
+                  },
+                ),
+              );
+            },
+            isDestructiveAction: true,
+            child: Text(getTranslate(APPStrings.textReportUser)),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              showCupertinoDialog(
+                context: context,
+                builder: (context) => CupertinoConfirmationDialog(
+                  title: getTranslate(APPStrings.textBlockUser),
+                  description: getTranslate(APPStrings.textBlockCnf),
+                  cancelText: getTranslate(APPStrings.textCancel),
+                  confirmText: getTranslate(APPStrings.textOk),
+                  onCancel: () => Navigator.pop(context),
+                  onConfirm: () {
+                    Navigator.pop(context);
+                    blockConnection(modelFetchUserDetail.data?.id ?? 0);
+                  },
+                ),
+              );
+            },
+            isDestructiveAction: true,
+            child: Text(getTranslate(APPStrings.textBlockUser)),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Cancel'),
+          isDefaultAction: true,
+        ),
+      ),
+    );
+  }
+
+  void reportConnection(int userId) {
+    reportUser(userId); // internally using old method
+  }
+
+  void blockConnection(int userId) {
+    blockUser(userId); // internally using old method
   }
 
   Widget myAnswers(BuildContext context) {
@@ -101,9 +200,12 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
             mainAxisSize: MainAxisSize.min,
             children: [
               InkWell(
-                onTap: () => Navigator.pop(context, modelNavigationBackHandling),
+                onTap: () =>
+                    Navigator.pop(context, modelNavigationBackHandling),
                 child: Container(
-                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(Dimens.margin50)),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(Dimens.margin50)),
                   height: Dimens.margin45,
                   width: Dimens.margin45,
                   child: Padding(
@@ -120,20 +222,28 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                     InkWell(
                       onTap: () {
                         if (modelFetchUserDetail.data?.isFavourite ?? false) {
-                          removeFromFavourite(widget.modelRequestDataTransfer.getUserId ?? 0);
+                          removeFromFavourite(
+                              widget.modelRequestDataTransfer.getUserId ?? 0);
                         } else {
-                          addToFavourite(widget.modelRequestDataTransfer.getUserId ?? 0);
+                          addToFavourite(
+                              widget.modelRequestDataTransfer.getUserId ?? 0);
                         }
                       },
                       child: Container(
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimens.margin100), color: Theme.of(context).colorScheme.primary),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(Dimens.margin100),
+                              color: Theme.of(context).colorScheme.primary),
                           height: Dimens.margin40,
                           width: Dimens.margin40,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Image.asset(
                               APPImages.icStarPng,
-                              color: (modelFetchUserDetail.data?.isFavourite ?? false) ? Colors.white : Colors.grey,
+                              color: (modelFetchUserDetail.data?.isFavourite ??
+                                      false)
+                                  ? Colors.white
+                                  : Colors.grey,
                             ),
                           )),
                     ),
@@ -147,14 +257,16 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       color: Colors.white,
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
                         PopupMenuItem<String>(
                           onTap: () {
                             showCupertinoDialog(
                               context: context,
                               builder: (context) => CupertinoConfirmationDialog(
                                 title: getTranslate(APPStrings.textReportUser),
-                                description: getTranslate(APPStrings.textReportCnf),
+                                description:
+                                    getTranslate(APPStrings.textReportCnf),
                                 cancelText: getTranslate(APPStrings.textCancel),
                                 confirmText: getTranslate(APPStrings.textOk),
                                 onCancel: () {
@@ -162,7 +274,8 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                                 },
                                 onConfirm: () {
                                   printWrapped("pressed key");
-                                  reportUser(modelFetchUserDetail.data?.id ?? 0);
+                                  reportUser(
+                                      modelFetchUserDetail.data?.id ?? 0);
                                   // Navigator.pop(context);
                                   Navigator.pop(context);
                                 },
@@ -178,7 +291,8 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                               context: context,
                               builder: (context) => CupertinoConfirmationDialog(
                                 title: getTranslate(APPStrings.textBlockUser),
-                                description: getTranslate(APPStrings.textBlockCnf),
+                                description:
+                                    getTranslate(APPStrings.textBlockCnf),
                                 cancelText: getTranslate(APPStrings.textCancel),
                                 confirmText: getTranslate(APPStrings.textOk),
                                 onCancel: () {
@@ -196,15 +310,20 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                         ),
                       ],
                       child: Container(
-                          decoration:
-                              BoxDecoration(borderRadius: BorderRadius.circular(Dimens.margin50), color: Theme.of(context).primaryColor.withOpacity(0.7)),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(Dimens.margin50),
+                              color: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.7)),
                           height: Dimens.margin40,
                           width: Dimens.margin40,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Image.asset(
                               APPImages.icPopUp,
-                              color: /*dummyName.value[index].isFavourite ? Colors.deepOrangeAccent : */ Colors.grey,
+                              color: /*dummyName.value[index].isFavourite ? Colors.deepOrangeAccent : */
+                                  Colors.grey,
                             ),
                           )),
                     ),
@@ -239,11 +358,16 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
           (modelFetchUserDetail.data?.mutualInterests ?? []).length,
           (index) => GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.routesScreenRecommendationOfInterests,
-                  arguments: ModelInterestsDataTransfer(interestId: modelFetchUserDetail.data?.mutualInterests?[index].id, interestName: modelFetchUserDetail.data?.mutualInterests?[index].interestName)).then(
-                    (value) {
-                  if(value == true)
-                  {
+              Navigator.pushNamed(
+                      context, AppRoutes.routesScreenRecommendationOfInterests,
+                      arguments: ModelInterestsDataTransfer(
+                          interestId: modelFetchUserDetail
+                              .data?.mutualInterests?[index].id,
+                          interestName: modelFetchUserDetail
+                              .data?.mutualInterests?[index].interestName))
+                  .then(
+                (value) {
+                  if (value == true) {
                     fetchDetail();
                   }
                 },
@@ -257,12 +381,16 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                     color: Theme.of(context).colorScheme.primary,
                     width: 2.3,
                   ),
-                  color: hexToColor(modelFetchUserDetail.data?.mutualInterests?[index].interestColor ?? ''),
+                  color: hexToColor(modelFetchUserDetail
+                          .data?.mutualInterests?[index].interestColor ??
+                      ''),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 padding: const EdgeInsets.all(Dimens.margin8),
                 child: Text(
-                  modelFetchUserDetail.data?.mutualInterests?[index].interestName ?? '',
+                  modelFetchUserDetail
+                          .data?.mutualInterests?[index].interestName ??
+                      '',
                   style: getTextStyleFromFont(
                     AppFont.poppins,
                     Dimens.margin18,
@@ -278,15 +406,16 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
     );
   }
 
-  Widget userPreferences(QuestionsWithAnswers data)
-  {
+  Widget userPreferences(QuestionsWithAnswers data) {
     return Material(
       color: Colors.transparent,
       elevation: 5,
       borderRadius: BorderRadius.circular(Dimens.margin20),
       child: Container(
         // height: Dimens.margin100,
-        decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(Dimens.margin20)),
+        decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            borderRadius: BorderRadius.circular(Dimens.margin20)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -337,6 +466,7 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
               height: Dimens.margin10,
             ),
             textWidget(modelFetchUserDetail.data?.bio ?? getTranslate(APPStrings.textNoBio)),
+
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: mutualInterestsTexts(context),
@@ -362,12 +492,16 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
               physics: const BouncingScrollPhysics(),
               child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: (modelFetchUserDetail.data?.questionAnswersList ?? []).length,
+                itemCount:
+                    (modelFetchUserDetail.data?.questionAnswersList ?? [])
+                        .length,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: userPreferences(modelFetchUserDetail.data?.questionAnswersList?[index] ?? QuestionsWithAnswers()),
+                    child: userPreferences(modelFetchUserDetail
+                            .data?.questionAnswersList?[index] ??
+                        QuestionsWithAnswers()),
                   );
                 },
               ),
@@ -405,52 +539,60 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
           SizedBox(
             width: Dimens.margin120,
             child: Row(
-              mainAxisAlignment: modelFetchUserDetail.data?.isSentRequest == true ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  modelFetchUserDetail.data?.isSentRequest == true
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
                     onTap: () {
-                      if(modelFetchUserDetail.data?.isConnected == true) {
+                      if (modelFetchUserDetail.data?.isConnected == true) {
                         showCupertinoDialog(
                           context: context,
-                          builder: (context) =>
-                              CupertinoConfirmationDialog(
-                                title: getTranslate(APPStrings.textDeleteConnection),
-                                description: getTranslate(APPStrings.textDeleteCnf),
-                                cancelText: getTranslate(APPStrings.textCancel),
-                                confirmText: getTranslate(APPStrings.textOk),
-                                onCancel: () {
-                                  Navigator.pop(context);
-                                },
-                                onConfirm: () {
-                                  deleteConnection(modelFetchUserDetail.data?.id ?? 0);
-                                  Navigator.pop(context);
-                                },
-                              ),
+                          builder: (context) => CupertinoConfirmationDialog(
+                            title:
+                                getTranslate(APPStrings.textDeleteConnection),
+                            description: getTranslate(APPStrings.textDeleteCnf),
+                            cancelText: getTranslate(APPStrings.textCancel),
+                            confirmText: getTranslate(APPStrings.textOk),
+                            onCancel: () {
+                              Navigator.pop(context);
+                            },
+                            onConfirm: () {
+                              deleteConnection(
+                                  modelFetchUserDetail.data?.id ?? 0);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      } else {
+                        showCupertinoDialog(
+                          context: context,
+                          builder: (context) => CupertinoConfirmationDialog(
+                            title: "Remove User",
+                            description:
+                                "Are you sure you want to remove this user?",
+                            cancelText: "Cancel",
+                            confirmText: "OK",
+                            onCancel: () {
+                              Navigator.pop(context);
+                            },
+                            onConfirm: () {
+                              printWrapped("pressed key");
+                              Navigator.pop(context);
+                              removeUserFromDetails(
+                                  widget.modelRequestDataTransfer.getUserId ??
+                                      0);
+                            },
+                          ),
                         );
                       }
-                      else
-                        {
-                          showCupertinoDialog(
-                            context: context,
-                            builder: (context) => CupertinoConfirmationDialog(
-                              title: "Remove User",
-                              description: "Are you sure you want to remove this user?",
-                              cancelText: "Cancel",
-                              confirmText: "OK",
-                              onCancel: () {
-                                Navigator.pop(context);
-                              },
-                              onConfirm: () {
-                                printWrapped("pressed key");
-                                Navigator.pop(context);
-                                removeUserFromDetails(widget.modelRequestDataTransfer.getUserId ?? 0);
-                              },
-                            ),
-                          );
-                        }
                     },
                     child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimens.margin100), color: Theme.of(context).colorScheme.primary),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(Dimens.margin100),
+                            color: Theme.of(context).colorScheme.primary),
                         height: Dimens.margin55,
                         width: Dimens.margin55,
                         child: Padding(
@@ -463,34 +605,55 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                   visible: modelFetchUserDetail.data?.isSentRequest == false,
                   child: InkWell(
                     onTap: () {
-                      if(modelFetchUserDetail.data?.isConnected == true){
-                        Navigator.pushNamed(context, AppRoutes.routesScreenChats,arguments: MessageRoomRequestData(fromUserId: widget.modelRequestDataTransfer.getUserId!, page: 1,name: modelFetchUserDetail.data?.username ?? '',
-                            imageUrl:modelFetchUserDetail.data?.defaultProfilePic ??  ''));
-
-                      } else{
-                        Navigator.pushNamed(context, AppRoutes.routesScreenSendRequest,
-                            arguments: ModelRequestDataTransfer(toSendUserID: widget.modelRequestDataTransfer.getUserId))
+                      if (modelFetchUserDetail.data?.isConnected == true) {
+                        Navigator.pushNamed(
+                            context, AppRoutes.routesScreenChats,
+                            arguments: MessageRoomRequestData(
+                                fromUserId:
+                                    widget.modelRequestDataTransfer.getUserId!,
+                                page: 1,
+                                name: modelFetchUserDetail.data?.username ?? '',
+                                imageUrl: modelFetchUserDetail
+                                        .data?.defaultProfilePic ??
+                                    ''));
+                      } else {
+                        Navigator.pushNamed(
+                                context, AppRoutes.routesScreenSendRequest,
+                                arguments: ModelRequestDataTransfer(
+                                    toSendUserID: widget
+                                        .modelRequestDataTransfer.getUserId))
                             .then(
-                              (value) {
+                          (value) {
                             if (value != null) {
                               fetchDetail();
                             }
                           },
                         );
-
                       }
                     },
                     child: Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(Dimens.margin100),
-                            color: modelFetchUserDetail.data?.isConnected == true ? Theme.of(context).hintColor : null),
+                            borderRadius:
+                                BorderRadius.circular(Dimens.margin100),
+                            color:
+                                modelFetchUserDetail.data?.isConnected == true
+                                    ? Theme.of(context).hintColor
+                                    : null),
                         height: Dimens.margin55,
                         width: Dimens.margin55,
                         child: Padding(
-                          padding: EdgeInsets.all(modelFetchUserDetail.data?.isConnected == true ? 10.0 : 0),
+                          padding: EdgeInsets.all(
+                              modelFetchUserDetail.data?.isConnected == true
+                                  ? 10.0
+                                  : 0),
                           child: Image.asset(
-                            modelFetchUserDetail.data?.isConnected == true ? APPImages.icBottomMsg : APPImages.icCennecButton,
-                            color: modelFetchUserDetail.data?.isConnected == true ? Colors.white : null,
+                            modelFetchUserDetail.data?.isConnected == true
+                                ? APPImages.icBottomMsg
+                                : APPImages.icCennecButton,
+                            color:
+                                modelFetchUserDetail.data?.isConnected == true
+                                    ? Colors.white
+                                    : null,
                           ),
                         )),
                   ),
@@ -503,8 +666,7 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
     );
   }
 
-  Widget images(ProfileImages data)
-  {
+  Widget images(ProfileImages data) {
     return Image.network(
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) {
@@ -521,85 +683,343 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
     );
   }
 
-
   Widget getBody() {
     return Stack(
       children: [
-        SizedBox(
-          height:  MediaQuery.of(context).size.height / 1.7,
-          child: Visibility(
-            visible: (modelFetchUserDetail.data?.profileImages ?? []).isNotEmpty,
-            replacement: Image.asset(
-              APPImages.icDummyProfile, // Replace with your actual image path
-              fit: BoxFit.cover,
-              width: double.maxFinite,
-              height: MediaQuery.of(context).size.height / 1.7,
-            ),
-            child: PageView.custom(
-              allowImplicitScrolling: false,
-              onPageChanged: (value) {
-                // pageIndex.value = value;
-              },
-              childrenDelegate: SliverChildListDelegate(
-                List.generate((modelFetchUserDetail.data?.profileImages ?? []).length, (index) {
-                  return SizedBox(
-                      child: images(modelFetchUserDetail.data?.profileImages?[index] ?? ProfileImages()));
-                },),
-              ),
-            ),
-          ),
-        ),
-        SafeArea(child: navigationWithLogo()),
-        // Positioned(
-        //     left: 20,
-        //     top: 80,
-        //     child: navigationWithLogo()),
-        // Content
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              userNameAndconnection(),
-              Container(
-                height: Dimens.margin400,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(Dimens.margin30), topRight: Radius.circular(Dimens.margin30)),
-                    color: Theme.of(context).primaryColor),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: Dimens.margin200,
-                        child: CustomProgressBar(
-                          totalSteps: 2,
-                          currentSteps: pageIndex.value + 1,
+        IgnorePointer(
+          ignoring: isLoading.value,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+
+                // Outer soft container
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDBE0D4),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Name
+                        Text(
+                          modelFetchUserDetail.data?.username ?? '',
+                          style: getTextStyleFromFont(
+                            AppFont.poppins,
+                            20,
+                            Theme.of(context).colorScheme.primary,
+                            FontWeight.w700,
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: Dimens.margin10,
-                    ),
-                    Expanded(
-                      child: PageView.custom(
-                        onPageChanged: (value) {
-                          pageIndex.value = value;
-                        },
-                        childrenDelegate: SliverChildListDelegate(
-                          [tabOne(), tabTwo()],
+                        const SizedBox(height: 12),
+
+                        // Image carousel with buttons
+                        Stack(
+                          children: [
+                            // Carousel
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: SizedBox(
+                                height: 250,
+                                width: double.infinity,
+                                child: PageView.builder(
+                                  controller: _pageController,
+                                  onPageChanged: (index) {
+                                    setState(() => currentPage = index);
+                                  },
+                                  itemCount: modelFetchUserDetail
+                                          .data?.profileImages?.length ??
+                                      0,
+                                  itemBuilder: (context, index) {
+                                    final imageUrl = modelFetchUserDetail.data
+                                            ?.profileImages?[index].imageUrl ??
+                                        '';
+                                    return Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      loadingBuilder:
+                                          (context, child, progress) {
+                                        return progress == null
+                                            ? child
+                                            : const Center(
+                                                child:
+                                                    CommonLoadingAnimation());
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+
+                            // Star icon
+                            Positioned(
+                              top: 12,
+                              right: 12,
+                              child: InkWell(
+                                onTap: () {
+                                  modelFetchUserDetail.data?.isFavourite == true
+                                      ? removeFromFavourite(widget
+                                              .modelRequestDataTransfer
+                                              .getUserId ??
+                                          0)
+                                      : addToFavourite(widget
+                                              .modelRequestDataTransfer
+                                              .getUserId ??
+                                          0);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child:
+                                  Icon(
+                                    modelFetchUserDetail
+                                        .data?.isFavourite ==
+                                        true ? Icons.star_rounded : Icons.star_border_rounded,
+                                    color: Colors.orange,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Chat icon
+                            Positioned(
+                              bottom: 12,
+                              right: 12,
+                              child: InkWell(
+                                onTap: () {
+                                  if (modelFetchUserDetail.data?.isConnected ==
+                                      true) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.routesScreenChats,
+                                      arguments: MessageRoomRequestData(
+                                        fromUserId: widget
+                                            .modelRequestDataTransfer
+                                            .getUserId!,
+                                        page: 1,
+                                        name: modelFetchUserDetail
+                                                .data?.username ??
+                                            '',
+                                        imageUrl: modelFetchUserDetail
+                                                .data?.defaultProfilePic ??
+                                            '',
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.routesScreenSendRequest,
+                                      arguments: ModelRequestDataTransfer(
+                                        toSendUserID: widget
+                                            .modelRequestDataTransfer.getUserId,
+                                      ),
+                                    ).then((value) {
+                                      if (value != null) fetchDetail();
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.chat_bubble_outline,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+
+                            // Carousel indicator
+                            Positioned(
+                              top: 8,
+                              left: 0,
+                              right: 0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  modelFetchUserDetail
+                                          .data?.profileImages?.length ??
+                                      0,
+                                  (index) => Container(
+                                    height: 4,
+                                    width: 28,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 4),
+                                    decoration: BoxDecoration(
+                                      color: index == currentPage
+                                          ? Colors.white
+                                          : Colors.white.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 24),
+
+                // Bio
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      modelFetchUserDetail.data?.bio?.trim().isEmpty == true
+                          ? getTranslate(APPStrings.textNoBio)
+                          : modelFetchUserDetail.data?.bio ?? '',
+                      style: getTextStyleFromFont(AppFont.poppins, 14,
+                          AppColors.colorBlack, FontWeight.w400),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Mutual Interests
+                if ((modelFetchUserDetail.data?.mutualInterests?.isNotEmpty ??
+                    false)) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${modelFetchUserDetail.data?.mutualInterests?.length ?? 0} Mutual Interests",
+                            style: getTextStyleFromFont(AppFont.poppins, 14,
+                                AppColors.colorBlack, FontWeight.w600),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: modelFetchUserDetail
+                                .data!.mutualInterests!
+                                .map((e) => buildInterestChip(e))
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 32),
+
+                // Remove connection
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: buildRemoveConnectionButton()
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ),
-        // Bottom Navigation Bar
+
+        // Centered Loader
+        ValueListenableBuilder(
+          valueListenable: isLoading,
+          builder: (_, val, __) {
+            return Visibility(
+              visible: val,
+              child: const Center(child: CommonLoadingAnimation()),
+            );
+          },
+        ),
       ],
+    );
+  }
+
+  Widget buildRemoveConnectionButton() {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: AppColors.colorPrimary, width: 1.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        backgroundColor: Colors.transparent,
+      ),
+      onPressed: () {
+        if (modelFetchUserDetail.data?.isConnected == true) {
+          deleteConnection(modelFetchUserDetail.data?.id ?? 0);
+        } else {
+          removeUserFromDetails(widget.modelRequestDataTransfer.getUserId ?? 0);
+        }
+      },
+      child: Text(
+        "Remove Cennection",
+        style: getTextStyleFromFont(
+          AppFont.poppins,
+          Dimens.margin20,
+          AppColors.colorPrimary,
+          FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget buildInterestChip(MutualInterests interest) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color:
+              AppColors.colorSelectedInterestChip, // Use your app-defined color
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "#${interest.interestName ?? ''}",
+            style: getTextStyleFromFont(
+              AppFont.poppins,
+              14,
+              AppColors.colorBlack,
+              FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -615,14 +1035,17 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                   isLoading.value = state is FetchUserDetailsLoading;
                   if (state is FetchUserDetailsFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is FetchUserDetailsResponse) {
                     modelFetchUserDetail = state.modelFetchUserDetail;
                     modelNavigationBackHandling = ModelNavigationBackHandling(
-                      isConnected: state.modelFetchUserDetail.data?.isConnected ?? false,
-                      isFavourite: state.modelFetchUserDetail.data?.isFavourite ?? false,
+                      isConnected:
+                          state.modelFetchUserDetail.data?.isConnected ?? false,
+                      isFavourite:
+                          state.modelFetchUserDetail.data?.isFavourite ?? false,
                       isRemoved: false,
                     );
                   }
@@ -633,13 +1056,15 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                   isLoading.value = state is BlockUserLoading;
                   if (state is BlockUserFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is BlockUserResponse) {
                     modelNavigationBackHandling.isRemoved = true;
                     Navigator.pop(context, modelNavigationBackHandling);
-                    ToastController.showToast(context, state.modelBlockResponse.message ?? '', true);
+                    ToastController.showToast(
+                        context, state.modelBlockResponse.message ?? '', true);
                     // modelFetchUserDetail = state.modelFetchUserDetail;
                   }
                 },
@@ -649,11 +1074,13 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                   isLoading.value = state is ReportUserLoading;
                   if (state is ReportUserFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is ReportUserResponse) {
-                    ToastController.showToast(context, state.modelReport.message ?? '', true);
+                    ToastController.showToast(
+                        context, state.modelReport.message ?? '', true);
                     Navigator.pop(context, modelNavigationBackHandling);
                     // modelFetchUserDetail = state.modelFetchUserDetail;
                   }
@@ -664,11 +1091,13 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                   isLoading.value = state is DeleteConnectionLoading;
                   if (state is DeleteConnectionFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is DeleteConnectionResponse) {
-                    ToastController.showToast(context, state.modelSuccess.message ?? '', true);
+                    ToastController.showToast(
+                        context, state.modelSuccess.message ?? '', true);
                     modelNavigationBackHandling.isConnected = false;
                     Navigator.pop(context, modelNavigationBackHandling);
                     // modelFetchUserDetail = state.modelFetchUserDetail;
@@ -680,23 +1109,30 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                   isLoading.value = state is FavouritesLoading;
                   if (state is FavouritesFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is FavouritesResponse) {
+                    ToastController.showToast(context, "Added to Favourites", true);
+
                     // here navigation is handled by previous screen bloc as it is in context will update later when time will be available
-                    if (widget.modelRequestDataTransfer.isFromDashboard == true) {
-                      modelNavigationBackHandling.isFavourite = true;
-                      Navigator.pushNamed(context, AppRoutes.routesScreenFavourite,
-                              arguments: ModelRequestDataTransfer(toSendUserID: widget.modelRequestDataTransfer.getUserId))
-                          .then(
-                        (value) {
-                          if (value != null && value == true) {
-                            // getRecommendations();
-                          }
-                        },
-                      );
-                    }
+                    // if (widget.modelRequestDataTransfer.isFromDashboard ==
+                    //     true) {
+                    //   modelNavigationBackHandling.isFavourite = true;
+                    //   Navigator.pushNamed(
+                    //           context, AppRoutes.routesScreenFavourite,
+                    //           arguments: ModelRequestDataTransfer(
+                    //               toSendUserID: widget
+                    //                   .modelRequestDataTransfer.getUserId))
+                    //       .then(
+                    //     (value) {
+                    //       if (value != null && value == true) {
+                    //         // getRecommendations();
+                    //       }
+                    //     },
+                    //   );
+                    // }
                   }
                 },
               ),
@@ -705,49 +1141,60 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                   isLoading.value = state is RemoveFromFavouriteLoading;
                   if (state is RemoveFromFavouriteFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is RemoveFromFavouriteResponse) {
                     modelFetchUserDetail.data?.isFavourite = false;
                     modelNavigationBackHandling.isFavourite = false;
-                    ToastController.showToast(context, state.modelSuccess.message ?? '', true);
+                    ToastController.showToast(
+                        context, state.modelSuccess.message ?? '', true);
                   }
                 },
               ),
-              BlocListener<RemoveUserFromDetailsBloc, RemoveUserFromDetailsState>(
+              BlocListener<RemoveUserFromDetailsBloc,
+                  RemoveUserFromDetailsState>(
                 listener: (context, state) {
                   isLoading.value = state is RemoveUserFromDetailsLoading;
                   if (state is RemoveUserFromDetailsFailure) {
                     if (state.errorMessage.generalError!.isNotEmpty) {
-                      ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+                      ToastController.showToast(context,
+                          state.errorMessage.generalError ?? '', false);
                     }
                   }
                   if (state is RemoveUserFromDetailsResponse) {
-                    ToastController.showToast(context, state.modelSuccess.message ?? '', true);
+                    ToastController.showToast(
+                        context, state.modelSuccess.message ?? '', true);
                     modelNavigationBackHandling.isRemoved = true;
-                    Navigator.pop(context,modelNavigationBackHandling);
+                    Navigator.pop(context, modelNavigationBackHandling);
                     // getRecommendations();
                   }
                 },
               ),
             ],
             child: Scaffold(
-                          resizeToAvoidBottomInset: true,
-                          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                          body: Stack(
-            children: [
-              IgnorePointer(ignoring: isLoading.value, child: getBody()),
-              Visibility(visible: isLoading.value, child: const Center(child: CommonLoadingAnimation()))
-            ],
-                          ),
-                        ),
+              resizeToAvoidBottomInset: true,
+              backgroundColor: AppColors.colorRoundedBgContainer,
+              appBar: buildAppBar(),
+
+              body: Stack(
+                children: [
+                  IgnorePointer(ignoring: isLoading.value, child: getBody()),
+                  Visibility(
+                      visible: isLoading.value,
+                      child: const Center(child: CommonLoadingAnimation()))
+                ],
+              ),
+            ),
           );
         });
   }
 
   void fetchDetail() {
-    BlocProvider.of<FetchUserDetailsBloc>(context).add(FetchUserDetails(url: AppUrls.apiFetchUserDetails(widget.modelRequestDataTransfer.getUserId ?? 0)));
+    BlocProvider.of<FetchUserDetailsBloc>(context).add(FetchUserDetails(
+        url: AppUrls.apiFetchUserDetails(
+            widget.modelRequestDataTransfer.getUserId ?? 0)));
   }
 
   void addToFavourite(int toUserId) {
@@ -756,7 +1203,8 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
       AppConfig.paramFavouriteTo: toUserId,
     };
 
-    BlocProvider.of<FavouritesBloc>(context).add(AddToFavourites(url: AppUrls.apiAddToFavourites, body: body));
+    BlocProvider.of<FavouritesBloc>(context)
+        .add(AddToFavourites(url: AppUrls.apiAddToFavourites, body: body));
   }
 
   void blockUser(int toUserId) {
@@ -765,7 +1213,8 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
       AppConfig.paramBlockedTo: toUserId,
     };
 
-    BlocProvider.of<BlockUserBloc>(context).add(BlockUser(url: AppUrls.apiBlockUser, body: body));
+    BlocProvider.of<BlockUserBloc>(context)
+        .add(BlockUser(url: AppUrls.apiBlockUser, body: body));
   }
 
   void reportUser(int toUserId) {
@@ -774,17 +1223,22 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
       AppConfig.paramReportTo: toUserId,
     };
 
-    BlocProvider.of<ReportUserBloc>(context).add(ReportUser(url: AppUrls.apiReportUser, body: body));
+    BlocProvider.of<ReportUserBloc>(context)
+        .add(ReportUser(url: AppUrls.apiReportUser, body: body));
   }
 
   void deleteConnection(int friendId) {
-    BlocProvider.of<DeleteConnectionBloc>(context).add(DeleteConnection(url: AppUrls.apiDeleteConnection(friendId)));
+    BlocProvider.of<DeleteConnectionBloc>(context)
+        .add(DeleteConnection(url: AppUrls.apiDeleteConnection(friendId)));
   }
 
   void removeFromFavourite(int friendId) {
-    BlocProvider.of<RemoveFromFavouriteBloc>(context).add(RemoveFromFavourite(url: AppUrls.apiRemoveFavourite(friendId)));
+    BlocProvider.of<RemoveFromFavouriteBloc>(context)
+        .add(RemoveFromFavourite(url: AppUrls.apiRemoveFavourite(friendId)));
   }
+
   void removeUserFromDetails(int userId) {
-    BlocProvider.of<RemoveUserFromDetailsBloc>(context).add(RemoveUserFromDetails(url: AppUrls.apiRemoveUser(userId)));
+    BlocProvider.of<RemoveUserFromDetailsBloc>(context)
+        .add(RemoveUserFromDetails(url: AppUrls.apiRemoveUser(userId)));
   }
 }
