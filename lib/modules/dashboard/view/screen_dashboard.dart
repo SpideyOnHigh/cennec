@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:cennec/modules/allPosts/view/screen_posts.dart';
+import 'package:cennec/modules/interests/model/model_interests.dart';
+import 'package:cennec/modules/interests/view/screen_recommendation_of_interests.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/utils/common_import.dart';
+import '../../interests/view/screen_signup_interests.dart';
 import '../../search_posts/view/screen_find_connection.dart';
 import '../../search_posts/view/screen_similar_and_interest.dart';
 import 'dashboard_home.dart';
@@ -19,11 +22,11 @@ class ScreenDashboard extends StatefulWidget {
 }
 
 class _ScreenDashboardState extends State<ScreenDashboard> {
-  ValueNotifier<int> navIndex = ValueNotifier(0);
+  ValueNotifier<int> navIndex = ValueNotifier(2);
 
   final List<Widget> _screens = [
-    const ScreenPosts(),
-    // const DashboardHome(),
+    // const ScreenPosts(),
+    ScreenSignupInterests(),
     const DashboardSearch(),
     const ScreenFindConnection(),
     const DashboardMessages(),

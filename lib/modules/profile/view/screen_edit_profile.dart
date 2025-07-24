@@ -1,3 +1,4 @@
+
 import 'package:cennec/modules/auth/model/model_login.dart';
 import 'package:cennec/modules/connections/model/model_fetch_user_detail.dart';
 import 'package:cennec/modules/connections/model/model_recommendations.dart';
@@ -39,6 +40,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/utils/common_import.dart';
 import '../../interests/model/model_interests.dart';
+import '../../interests/view/screen_signup_interests.dart';
 import '../bloc/get_user_profile_pic/get_user_profile_pic_bloc.dart';
 
 class ScreenEditProfile extends StatefulWidget {
@@ -802,6 +804,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
   }
 
   Widget getBody2() {
+    print("imageToShow.value : ${imageToShow.value}");
     return Stack(
       children: [
         // Visibility(
@@ -939,8 +942,8 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                 margin: EdgeInsets.all(Dimens.textSize15),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  image: const DecorationImage(
-                    image: NetworkImage('https://randomuser.me/api/portraits/men/1.jpg'),
+                  image: DecorationImage(
+                    image: NetworkImage('${imageToShow.value}'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -977,7 +980,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
           ),
           InkWell(
               onTap: () async {
-                final val = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditBioScreen()));
+                final val = await Navigator.push(context, MaterialPageRoute(builder: (context) => EditBioScreen(currentBioValue: bioController.text,)));
                 if(val == null) return;
                 bioController.text = val;
                 updateUserProfile();
@@ -1000,7 +1003,12 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                 "Interests",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              _editButton(),
+              InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ScreenSignupInterests(isFromSignup: false,currentUserInterests: modelInterestList.value.map((e) => e.id ?? 0).toList()),));
+                  },
+
+                  child: _editButton()),
             ],
           ),
           const SizedBox(height: 8),

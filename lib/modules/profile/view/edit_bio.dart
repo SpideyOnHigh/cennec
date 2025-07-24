@@ -5,7 +5,8 @@ import 'package:flutter/cupertino.dart';
 import '../../core/utils/common_import.dart';
 
 class EditBioScreen extends StatefulWidget {
-  const EditBioScreen({super.key});
+  final String currentBioValue;
+  const EditBioScreen({super.key, this.currentBioValue = ""});
 
   @override
   State<EditBioScreen> createState() => _EditBioScreenState();
@@ -14,6 +15,11 @@ class EditBioScreen extends StatefulWidget {
 class _EditBioScreenState extends State<EditBioScreen> {
   TextEditingController bioTextEditingController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    bioTextEditingController.text = widget.currentBioValue;
+  }
   Widget _topSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8),
