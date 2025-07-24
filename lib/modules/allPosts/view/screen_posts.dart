@@ -1,5 +1,6 @@
 import 'package:cennec/modules/core/utils/app_get_selected_interest.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../chat/models/MessageRoomRequestData.dart';
 import '../../connections/model/model_send_request.dart';
@@ -8,6 +9,7 @@ import '../../core/utils/app_urls.dart';
 import '../../core/utils/common_import.dart';
 import 'package:http/http.dart' as http;
 
+import '../../interests/bloc/get_my_interests/get_my_interests_bloc.dart';
 import '../../search_posts/view/user_profile_bottomsheet.dart';
 import '../../search_posts/view/user_send_request_bottomsheet.dart';
 import '../bloc/get_posts_bloc.dart';
@@ -37,7 +39,15 @@ class _ScreenPostsState extends State<ScreenPosts> {
     );
     _loadInitialPosts();
     _setupScrollListener();
+    checkNotificationPermission();
   }
+
+  checkNotificationPermission() async {
+    if (await Permission.notification.isDenied) {
+      Permission.notification.request();
+    }
+  }
+
 
   void _setupScrollListener() {
     _scrollController.addListener(() {
@@ -73,6 +83,65 @@ class _ScreenPostsState extends State<ScreenPosts> {
     _loadInitialPosts();
   }
 
+  ValueNotifier<int> notificationCount = ValueNotifier(0);
+
+
+  Widget logo() {
+    return Stack(
+      children: [
+
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, AppRoutes.routesScreenNotifications).then(
+                  (value) {
+                if (value == true) {
+                  getInterests();
+                }
+              },
+            );
+          },
+          icon: Icon(
+            Icons.person_add,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          iconSize: Dimens.margin30,
+        ),
+        if(notificationCount.value.toString() != "0")
+          Positioned(
+            top: 10,
+            left: 28,
+            child: Container(
+              padding: const EdgeInsets.all(4.0),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(30),
+              ),
+
+              // child: Text(
+              //   notificationCount.value.toString(),
+              //   style: TextStyle(
+              //     color: Theme.of(context).primaryColor,
+              //     fontSize: Dimens.margin12,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+            ),
+          ),
+        // Center(
+        //   child: Image.asset(
+        //     APPImages.icCennecBottom, // Update with your logo path
+        //     height: 40,
+        //   ),
+        // ),
+      ],
+    );
+  }
+
+
+  void getInterests() {
+    BlocProvider.of<GetMyInterestsBloc>(context).add(GetMyInterests(url: AppUrls.apiGetMyInterests(getUser().userData?.id ?? 0)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<GetPostsBloc>(
@@ -87,7 +156,7 @@ class _ScreenPostsState extends State<ScreenPosts> {
           ),
           elevation: 0,
           backgroundColor: Colors.transparent,
-          centerTitle: true,
+          centerTitle: false,
           title: Text(
             "All Posts",
             style: getTextStyleFromFont(
@@ -97,6 +166,9 @@ class _ScreenPostsState extends State<ScreenPosts> {
               FontWeight.w600,
             ),
           ),
+          actions: [
+            logo()
+          ],
         ),
         body: BlocBuilder<GetPostsBloc, GetPostsState>(
           builder: (context, state) {

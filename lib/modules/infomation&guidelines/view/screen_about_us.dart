@@ -7,6 +7,7 @@ import 'package:cennec/modules/core/common/widgets/toast_controller.dart';
 import 'package:cennec/modules/core/utils/app_config.dart';
 import 'package:cennec/modules/core/utils/app_urls.dart';
 import 'package:cennec/modules/infomation&guidelines/bloc/user_readed_about_us_bloc.dart';
+import 'package:cennec/modules/infomation&guidelines/view/screen_cms.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import '../../core/utils/common_import.dart';
@@ -29,8 +30,6 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   ValueNotifier<String> content = ValueNotifier('');
 
-
-
   Widget logoSection() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -41,13 +40,10 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
             Container(
               width: 80,
               height: 80,
-
               child: Center(
                 child: Image.asset(
                   APPImages.icLogoWithName,
                   fit: BoxFit.cover,
-                  // height: 50,
-                  // width: 50,
                 ),
               ),
             ),
@@ -188,7 +184,14 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
           // Terms & Conditions
           InkWell(
             onTap: () {
-              // Navigate to Terms & Conditions
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ScreenCmsPage(
+                    pageType: CmsPageType.termsConditions,
+                  ),
+                ),
+              );
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -214,7 +217,14 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
           // Privacy Policy
           InkWell(
             onTap: () {
-              // Navigate to Privacy Policy
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ScreenCmsPage(
+                    pageType: CmsPageType.privacyPolicy,
+                  ),
+                ),
+              );
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -286,23 +296,22 @@ class _ScreenAboutUsState extends State<ScreenAboutUs> {
                 if (state is UserReadedAboutUsResponse) {
                   PreferenceHelper.setBool(PreferenceHelper.hasReadAboutUs, true);
                   Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.routesScreenCommunityGuidelines,
-                        (route) => false,
+                      context,
+                      AppRoutes.routesScreenCommunityGuidelines,
+                          (route) => false,
+                      arguments: false
                   );
                 }
               },
             ),
           ],
           child: Scaffold(
-            // backgroundColor: AppColors.s,
             appBar: CommonAppBar(title: "About Us",),
             body: SafeArea(
               child: Stack(
                 children: [
                   Column(
                     children: [
-                      // customAppBar(),
                       logoSection(),
                       contentSection(),
                       bottomSection(),

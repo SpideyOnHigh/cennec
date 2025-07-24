@@ -958,7 +958,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                     )));
                     // Navigator.push(context, MaterialPageRoute(builder: (context) =>  Navigator.push(context, MaterialPageRoute(builder: (context) => EditBioScreen()));
                   },
-                  child: _editButton()
+                  child: _editButton(colors: Colors.white)
                 ),
               ),
             ],
@@ -974,7 +974,9 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
         children: [
           Expanded(
             child: Text(
-              bioController.text,
+              ( bioController.text.trim().isEmpty)
+                  ? getTranslate(APPStrings.textNoBio)
+                  :  bioController.text,
               style: const TextStyle(fontSize: 15),
             ),
           ),
@@ -1004,9 +1006,12 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ScreenSignupInterests(isFromSignup: false,currentUserInterests: modelInterestList.value.map((e) => e.id ?? 0).toList()),));
-                  },
+                  onTap: () async {
+                    await Navigator.push(context, MaterialPageRoute(builder: (context) => ScreenSignupInterests(isFromSignup: false,currentUserInterests: modelInterestList.value.map((e) => e.id ?? 0).toList()),),);
+                    print("Model Interest: ${modelInterestList.value.length}");
+                    modelInterestList.value.clear();
+                    getUserInterest();
+                    },
 
                   child: _editButton()),
             ],
@@ -1074,9 +1079,9 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
     );
   }
 
-  Widget _editButton({Colors? color}) {
+  Widget _editButton({Color? colors}) {
     return Container(
-      child: const Icon(Icons.edit_outlined, size: 18,),
+      child: Icon(Icons.edit_outlined, size: Dimens.textSize20, color: colors,),
     );
   }
 
@@ -1113,8 +1118,23 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
     );
   }
 
+  // 1. Add loading overlay widget
+  Widget _buildLoadingOverlay() {
+    return Visibility(
+      visible: isApiLoading.value,
+      child: Container(
+        // color: Colors.black.withOpacity(0.3),
+        child: const Center(
+          child: CommonLoadingAnimation(),
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    print("buid: this");
     return MultiValueListenableBuilder(
         valueListenables: [pageIndex, isApiLoading, isLoadingAnimation, isLoadingButton, modelQuestionAnswers, imageList, imageToShow, isProfilePicUpdated, modelInterestList],
         builder: (context, values, child) {
@@ -1129,6 +1149,7 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
                     }
                   }
                   if (state is GetUserProfilePrefResponse) {
+                    print("Inside the data : ${state.modelUserEditProfilePrefs.data?.toJson()}");
                     getQueAns();
                     displayNameController.text = state.modelUserEditProfilePrefs.data?.username ?? '';
                     bioController.text = state.modelUserEditProfilePrefs.data?.bio ?? '';
@@ -1284,10 +1305,20 @@ class _ScreenEditProfileState extends State<ScreenEditProfile> {
               ),
             ],
             child: Scaffold(
-              appBar: CommonAppBar(title:  "Preview Your Profile",),
-                resizeToAvoidBottomInset: true,
-                // backgroundColor: Colors.white,
-                body: IgnorePointer(ignoring: isApiLoading.value, child: getBody())),
+              appBar: CommonAppBar(title: "Preview Your Profile"),
+              resizeToAvoidBottomInset: true,
+              body: Stack(
+                children: [
+                  // Main content
+                  IgnorePointer(
+                      ignoring: isApiLoading.value,
+                      child: getBody()
+                  ),
+                  // Loading overlay
+                  _buildLoadingOverlay(),
+                ],
+              ),
+            ),
           );
         });
   }

@@ -43,5 +43,10 @@ class AppColors {
 
   static const chatBubbleBg = Color(0xFFDBE0D4);
 
+  static const greenCorrectColor = Color(0xFF07d502);
+  static const redCancelColor = Color(0xFFd81616);
+  static const greenTextColor = Color(0xFF00D500);
+
+
 
 }

@@ -38,6 +38,7 @@ class GetUserProfilePrefBloc extends Bloc<GetUserProfilePrefEvent, GetUserProfil
         mApiProvider,
         mClient,
       );
+      print("modelUserEditProfilePrefs : ${modelUserEditProfilePrefs.data?.toJson()}");
       if (modelUserEditProfilePrefs.success == true) {
         emit(GetUserProfilePrefResponse(
           modelUserEditProfilePrefs: modelUserEditProfilePrefs,

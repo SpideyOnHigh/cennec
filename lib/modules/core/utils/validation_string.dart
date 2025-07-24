@@ -15,6 +15,7 @@ class ValidationString {
   static const String textValidateTermsAndCondition = 'text_validate_terms_and_condition';
   static const String textValidateUserName = 'text_validate_username';
   static const String textValidateDisplayName = 'text_validate_displayname';
+  static const String textValidateMobileNumber = 'text_validate_mobile';
   static const String textValidateCnfPwd = 'text_validate_cnf_Pwd';
   static const String textValidateChoosePwd = 'text_validate_choosePwd';
   static const String textValidationNewPwd = 'text_validate_enter_new_pass';

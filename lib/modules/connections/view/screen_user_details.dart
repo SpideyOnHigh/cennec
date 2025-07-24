@@ -684,6 +684,7 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
   }
 
   Widget getBody() {
+    // print("(modelFetchUserDetail.data?.bio?.trim().isEmpty ?? true) : ${(modelFetchUserDetail.data?.bio?.trim().isEmpty ?? true)}");
     return Stack(
       children: [
         IgnorePointer(
@@ -878,6 +879,7 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                 const SizedBox(height: 24),
 
                 // Bio
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Container(
@@ -888,7 +890,7 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      modelFetchUserDetail.data?.bio?.trim().isEmpty == true
+                      (modelFetchUserDetail.data?.bio?.trim().isEmpty ?? true)
                           ? getTranslate(APPStrings.textNoBio)
                           : modelFetchUserDetail.data?.bio ?? '',
                       style: getTextStyleFromFont(AppFont.poppins, 14,
@@ -937,6 +939,7 @@ class _ScreenUserDetailsState extends State<ScreenUserDetails> {
                 const SizedBox(height: 32),
 
                 // Remove connection
+                if(widget.modelRequestDataTransfer.isFromDashboard ?? false)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: SizedBox(

@@ -249,27 +249,27 @@ class _ChangePhotosScreenState extends State<ChangePhotosScreen> {
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: () => showPopUpForProfilePic(update: false, isMainProfile: true),
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.pink,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: const Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   bottom: 0,
+            //   right: 0,
+            //   child: GestureDetector(
+            //     onTap: () => showPopUpForProfilePic(update: false, isMainProfile: true),
+            //     child: Container(
+            //       width: 30,
+            //       height: 30,
+            //       decoration: BoxDecoration(
+            //         color: Colors.pink,
+            //         shape: BoxShape.circle,
+            //         border: Border.all(color: Colors.white, width: 2),
+            //       ),
+            //       child: const Icon(
+            //         Icons.edit,
+            //         color: Colors.white,
+            //         size: 16,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         const SizedBox(height: 15),

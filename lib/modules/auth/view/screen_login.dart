@@ -236,64 +236,62 @@ class _ScreenLoginState extends State<ScreenLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: MultiValueListenableBuilder(
-          valueListenables: [isShowPassword, isLoading, emailError, pwdError],
-          builder: (context, values, child) {
-            return BlocListener<LoginBloc, LoginState>(
-              listener: (context, state) {
-                isLoading.value = state is LoginLoading;
-                if (state is LoginResponse) {
+    return MultiValueListenableBuilder(
+        valueListenables: [isShowPassword, isLoading, emailError, pwdError],
+        builder: (context, values, child) {
+          return BlocListener<LoginBloc, LoginState>(
+            listener: (context, state) {
+              isLoading.value = state is LoginLoading;
+              if (state is LoginResponse) {
+                ToastController.showToast(
+                    context, state.modelLogin.message ?? '', true);
+                if (state.modelLogin.data?.hasInterests == true &&
+                    state.modelLogin.data?.userData?.hasReadAboutUs == true) {
+                  PreferenceHelper.setBool(
+                      PreferenceHelper.hasReadAboutUs, true);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.routesScreenDashboard,
+                    (route) => false,
+                  );
+                } else if (state.modelLogin.data?.userData?.hasReadAboutUs ==
+                    false) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.routesScreenAboutUs,
+                    arguments: false,
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.routesScreenSignupInterests,
+                    (route) => false,
+                  );
+                }
+              }
+              if (state is LoginFailure) {
+                if (state.errorMessage.generalError!.isNotEmpty) {
                   ToastController.showToast(
-                      context, state.modelLogin.message ?? '', true);
-                  if (state.modelLogin.data?.hasInterests == true &&
-                      state.modelLogin.data?.userData?.hasReadAboutUs == true) {
-                    PreferenceHelper.setBool(
-                        PreferenceHelper.hasReadAboutUs, true);
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.routesScreenDashboard,
-                      (route) => false,
-                    );
-                  } else if (state.modelLogin.data?.userData?.hasReadAboutUs ==
-                      false) {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.routesScreenAboutUs,
-                      arguments: false,
-                      (route) => false,
-                    );
-                  } else {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.routesScreenSignupInterests,
-                      (route) => false,
-                    );
-                  }
+                      context, state.errorMessage.generalError ?? '', false);
+                } else {
+                  ToastController.showToast(context,
+                      state.errorMessage.wrongCredentials ?? '', false);
                 }
-                if (state is LoginFailure) {
-                  if (state.errorMessage.generalError!.isNotEmpty) {
-                    ToastController.showToast(
-                        context, state.errorMessage.generalError ?? '', false);
-                  } else {
-                    ToastController.showToast(context,
-                        state.errorMessage.wrongCredentials ?? '', false);
-                  }
-                }
-              },
-              child: BaseRoundedBackgroundWidget(
-                appBarText: "Login",
-                margin: const EdgeInsets.all(0),
-                padding: const EdgeInsets.only(top: 24),
-                child: Scaffold(
-                  resizeToAvoidBottomInset: true,
-                  backgroundColor: Colors.transparent,
-                  body: SingleChildScrollView(child: getBody(context)),
-                ),
+              }
+            },
+            child: BaseRoundedBackgroundWidget(
+              appBarText: "Login",
+              margin: const EdgeInsets.all(0),
+              padding: const EdgeInsets.only(top: 24),
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: Colors.transparent,
+                body: SingleChildScrollView(child: getBody(context)),
               ),
-            );
-          }),
-    );
+            ),
+          );
+        });
   }
 
   void validateFields() {

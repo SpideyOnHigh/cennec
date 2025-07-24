@@ -65,7 +65,7 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    username = json['name'];
+    username = json['username'];
     email = json['email'];
     userStatus = json['user_status'];
     createdAt = json['created_at'];

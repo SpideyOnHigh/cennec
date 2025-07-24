@@ -238,12 +238,12 @@ class _DashboardProfileState extends State<DashboardProfile> {
               left: Dimens.margin20,
               bottom: Dimens.margin20,
               child: Text(
-                user.name ?? 'User Name',
+                user.username ?? 'User Name',
                 style: getTextStyleFromFont(
                   AppFont.poppins,
-                  Dimens.margin22,
-                  Colors.black,
-                  FontWeight.w600,
+                  Dimens.margin24,
+                  Colors.white,
+                  FontWeight.w700,
                 ),
               ),
             )

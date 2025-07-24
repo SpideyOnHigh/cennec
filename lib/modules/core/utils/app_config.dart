@@ -36,6 +36,7 @@ class AppConfig {
   static const String paramName = 'name';
   static const String paramDOB = 'dob';
   static const String paramGender = 'gender';
+  static const String paramMobile = 'contact';
   static const String paramCurrentPwd = 'current_password';
   static const String paramNewPwd = 'new_password';
   static const String paramUserId = 'user_id';

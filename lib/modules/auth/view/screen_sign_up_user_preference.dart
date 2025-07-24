@@ -24,6 +24,7 @@ class ScreenSignUpUserPreference extends StatefulWidget {
 class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference> {
   // controllers
   TextEditingController userNameController = TextEditingController();
+  TextEditingController mobileNumberController = TextEditingController();
   TextEditingController choosePwdController = TextEditingController();
   TextEditingController confirmPwdController = TextEditingController();
   ValueNotifier<bool> showChoosePwd = ValueNotifier(false);
@@ -33,6 +34,7 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
   // errorShowers
   ValueNotifier<String> errorUserName = ValueNotifier('');
   ValueNotifier<String> errorChoosePwd = ValueNotifier('');
+  ValueNotifier<String> errorMobilePwd = ValueNotifier('');
   ValueNotifier<String> errorConfirmPwd = ValueNotifier('');
   ValueNotifier<String> errorDOB = ValueNotifier('');
   ValueNotifier<String> errorGender = ValueNotifier('');
@@ -70,38 +72,85 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
     );
   }
 
-  Widget choosePasswordField(BuildContext context) {
-    return CommonPasswordTextFormField(
-      label: getTranslate(APPStrings.textChoosePassword),
-      controller: choosePwdController,
-      isShowPassword: showChoosePwd.value,
-      onToggleVisibility: () {
-        showChoosePwd.value = !showChoosePwd.value;
-      },
-      inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
-      errorText: errorChoosePwd.value,
-      onChanged: (val) {
-        if (errorChoosePwd.value.isNotEmpty) {
-          errorChoosePwd.value = '';
+  Widget mobileNumberField(BuildContext context) {
+    return CommonTextFormField(
+      controller: mobileNumberController,
+      keyboardType: TextInputType.phone,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(10), // Adjust based on your country
+        FilteringTextInputFormatter.deny(RegExp(r'^\s')), // No leading spaces
+      ],
+      onChanged: (value) {
+        if (errorMobilePwd.value.isNotEmpty) {
+          errorMobilePwd.value = '';
         }
+        // Optional: Real-time validation
+        // if (value.length == 10) {
+        //   // Trigger validation or formatting
+        // }
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return getTranslate(APPStrings.textConfirmPassword);
+        }
+        if (value.length < 10) {
+          return getTranslate(APPStrings.textMobileInvalid);
+        }
+        // Add more validation as needed (e.g., specific country format)
+        if (!RegExp(r'^[6-9]\d{9}$').hasMatch(value)) { // Indian mobile format
+          return getTranslate(APPStrings.textMobileInvalid);
+        }
+        return null;
+      },
+      label: getTranslate(APPStrings.textMobileNumber), // Updated label
+      // prefixIcon: Icon(Icons.phone), // Optional: Phone icon
+      // hintText: getTranslate(APPStrings.textMobileHint), // e.g., "Enter 10-digit mobile number"
+    );
+  }
+
+  Widget choosePasswordField(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: showChoosePwd,
+      builder: (context, isShowPassword, child) {
+        return CommonPasswordTextFormField(
+          label: getTranslate(APPStrings.textChoosePassword),
+          controller: choosePwdController,
+          isShowPassword: isShowPassword,
+          onToggleVisibility: () {
+            showChoosePwd.value = !showChoosePwd.value;
+          },
+          inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
+          errorText: errorChoosePwd.value,
+          onChanged: (val) {
+            if (errorChoosePwd.value.isNotEmpty) {
+              errorChoosePwd.value = '';
+            }
+          },
+        );
       },
     );
   }
 
   Widget confirmPasswordField(BuildContext context) {
-    return CommonPasswordTextFormField(
-      label: getTranslate(APPStrings.textConfirmPassword),
-      controller: confirmPwdController,
-      isShowPassword: showConfirmPwd.value,
-      onToggleVisibility: () {
-        showConfirmPwd.value = !showConfirmPwd.value;
-      },
-      inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
-      errorText: errorConfirmPwd.value,
-      onChanged: (val) {
-        if (errorConfirmPwd.value.isNotEmpty) {
-          errorConfirmPwd.value = '';
-        }
+    return ValueListenableBuilder<bool>(
+      valueListenable: showConfirmPwd,
+      builder: (context, isShowPassword, child) {
+        return CommonPasswordTextFormField(
+          label: getTranslate(APPStrings.textConfirmPassword),
+          controller: confirmPwdController,
+          isShowPassword: isShowPassword,
+          onToggleVisibility: () {
+            showConfirmPwd.value = !showConfirmPwd.value;
+          },
+          inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
+          errorText: errorConfirmPwd.value,
+          onChanged: (val) {
+            if (errorConfirmPwd.value.isNotEmpty) {
+              errorConfirmPwd.value = '';
+            }
+          },
+        );
       },
     );
   }
@@ -148,42 +197,19 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
     );
   }
 
-  /* Widget signUpButton(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      height: Dimens.margin50,
-      child: ElevatedButton(
-        onPressed: () {
-           Navigator.pushNamed(context, AppRoutes.routesScreenAboutUs);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.colorDarkBlue,
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(
-          getTranslate(APPStrings.textSignUp),
-          style: getTextStyleFromFont(
-            AppFont.poppins,
-            Dimens.margin18,
-            Theme.of(context).primaryColor,
-            FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  } */
-
   Widget signUpButton(BuildContext context) {
-    return CommonButton(
-      isLoading: isLoading.value,
-      text: getTranslate(APPStrings.textNext),
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      onTap: () {
-        validate();
-        // Navigator.pushNamed(context, AppRoutes.routesScreenAboutUs, arguments: false);
+    return ValueListenableBuilder<bool>(
+      valueListenable: isLoading,
+      builder: (context, loading, child) {
+        return CommonButton(
+          isLoading: loading,
+          text: getTranslate(APPStrings.textNext),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          onTap: () {
+            validate();
+            // Navigator.pushNamed(context, AppRoutes.routesScreenAboutUs, arguments: false);
+          },
+        );
       },
     );
   }
@@ -209,7 +235,7 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
           Navigator.pushNamedAndRemoveUntil(
             context,
             AppRoutes.routesLogin,
-            (route) => false,
+                (route) => false,
           );
         },
         child: Text(
@@ -231,45 +257,82 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           displayNameField(context),
-          Visibility(
-            visible: errorUserName.value.isNotEmpty,
-            child: BaseTextFieldErrorIndicator(
-              errorText: errorUserName.value,
-            ),
+          ValueListenableBuilder<String>(
+            valueListenable: errorUserName,
+            builder: (context, error, child) {
+              return Visibility(
+                visible: error.isNotEmpty,
+                child: BaseTextFieldErrorIndicator(
+                  errorText: error,
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+          mobileNumberField(context),
+          ValueListenableBuilder<String>(
+            valueListenable: errorMobilePwd,
+            builder: (context, error, child) {
+              return Visibility(
+                visible: error.isNotEmpty,
+                child: BaseTextFieldErrorIndicator(
+                  errorText: error,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 20),
           choosePasswordField(context),
-          Visibility(
-            visible: errorChoosePwd.value.isNotEmpty,
-            child: BaseTextFieldErrorIndicator(
-              errorText: errorChoosePwd.value,
-            ),
+          ValueListenableBuilder<String>(
+            valueListenable: errorChoosePwd,
+            builder: (context, error, child) {
+              return Visibility(
+                visible: error.isNotEmpty,
+                child: BaseTextFieldErrorIndicator(
+                  errorText: error,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 20),
           confirmPasswordField(context),
-          Visibility(
-            visible: errorConfirmPwd.value.isNotEmpty,
-            child: BaseTextFieldErrorIndicator(
-              errorText: errorConfirmPwd.value,
-            ),
+          ValueListenableBuilder<String>(
+            valueListenable: errorConfirmPwd,
+            builder: (context, error, child) {
+              return Visibility(
+                visible: error.isNotEmpty,
+                child: BaseTextFieldErrorIndicator(
+                  errorText: error,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 20),
           datePickerField(context),
-          Visibility(
-            visible: errorDOB.value.isNotEmpty,
-            child: BaseTextFieldErrorIndicator(
-              errorText: errorDOB.value,
-            ),
+          ValueListenableBuilder<String>(
+            valueListenable: errorDOB,
+            builder: (context, error, child) {
+              return Visibility(
+                visible: error.isNotEmpty,
+                child: BaseTextFieldErrorIndicator(
+                  errorText: error,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 20),
           genderPickerField(context),
-          Visibility(
-            visible: errorGender.value.isNotEmpty,
-            child: BaseTextFieldErrorIndicator(
-              errorText: errorGender.value,
-            ),
+          ValueListenableBuilder<String>(
+            valueListenable: errorGender,
+            builder: (context, error, child) {
+              return Visibility(
+                visible: error.isNotEmpty,
+                child: BaseTextFieldErrorIndicator(
+                  errorText: error,
+                ),
+              );
+            },
           ),
           const SizedBox(height: Dimens.margin25),
           signUpButton(context),
@@ -280,62 +343,51 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: MultiValueListenableBuilder(
-            valueListenables: [showConfirmPwd, showChoosePwd, isLoading, errorGender, errorDOB, errorConfirmPwd, errorChoosePwd, errorUserName],
-            builder: (context, values, child) {
-              return BlocListener<SignUpDetailsBloc, SignUpDetailsState>(
-                listener: (context, state) {
-                  isLoading.value = state is SignUpDetailsLoading;
-                      if (state is SignUpDetailsFailure) {
-                        if(state.errorMessage.generalError!.isNotEmpty)
-                        {
-                          ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
-                        }
-                        if(state.errorMessage.generalError != null)
-                        {
-                         errorUserName.value = state.errorMessage.userExists ?? '';
-                        }
-                        if(state.errorMessage.invalidPassword != null)
-                        {
-                         errorConfirmPwd.value = state.errorMessage.invalidPassword ?? '';
-                        }
-                    }
-                  if(state is SignUpDetailsResponse)
-                    {
-                      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.routesScreenAboutUs,(route) => false, arguments: false);
-                    }
-                },
-                child:  Scaffold(
-                    resizeToAvoidBottomInset: true,
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    body:NotificationListener<ScrollNotification>(
-                        onNotification: (ScrollNotification scrollInfo) {
-                          if (scrollInfo is ScrollUpdateNotification) {
-                            FocusScope.of(context).unfocus();
-                          }
-                          return true;
-                        },
-                      child: BaseRoundedBackgroundWidget(
-                        appBarText: getTranslate(APPStrings.textAccountSetUp),
-                        margin: const EdgeInsets.all(0),
-                        padding: const EdgeInsets.only(top: 24),
-                        child: Scaffold(
-                          resizeToAvoidBottomInset: true,
-                          backgroundColor: Colors.transparent,
-                          body: SingleChildScrollView(child: getBody(context)),
-                        ),
-                      ),
-                    ),
-                ),
-              );
-            }));
+    return BlocListener<SignUpDetailsBloc, SignUpDetailsState>(
+      listener: (context, state) {
+        isLoading.value = state is SignUpDetailsLoading;
+        if (state is SignUpDetailsFailure) {
+          if(state.errorMessage.generalError!.isNotEmpty) {
+            ToastController.showToast(context, state.errorMessage.generalError ?? '', false);
+          }
+          if(state.errorMessage.generalError != null) {
+            errorUserName.value = state.errorMessage.userExists ?? '';
+          }
+          if(state.errorMessage.invalidPassword != null) {
+            errorConfirmPwd.value = state.errorMessage.invalidPassword ?? '';
+          }
+        }
+        if(state is SignUpDetailsResponse) {
+          Navigator.pushNamedAndRemoveUntil(context, AppRoutes.routesScreenAboutUs,(route) => false, arguments: false);
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: BaseRoundedBackgroundWidget(
+          appBarText: getTranslate(APPStrings.textAccountSetUp),
+          margin: const EdgeInsets.all(0),
+          padding: const EdgeInsets.only(top: 24),
+          child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: Colors.transparent,
+            body: SingleChildScrollView(
+              child: getBody(context),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   validate() {
     bool isValid = true;
     if (userNameController.text.trim().isEmpty) {
       errorUserName.value = getTranslate(ValidationString.textValidateDisplayName);
+      isValid = false;
+    }
+    if (mobileNumberController.text.trim().isEmpty) {
+      errorMobilePwd.value = getTranslate(ValidationString.textValidateMobileNumber);
       isValid = false;
     }
     if (choosePwdController.text.isEmpty) {
@@ -371,9 +423,29 @@ class _ScreenSighInUserPreferenceState extends State<ScreenSignUpUserPreference>
       AppConfig.paramCnfPassword: confirmPwdController.text,
       AppConfig.paramDOB: dateText,
       AppConfig.paramGender: gender.type,
+      AppConfig.paramMobile: mobileNumberController.text.trim(),
       AppConfig.paramInvCode: widget.modelSignUpDataTransfer.code
     };
 
     BlocProvider.of<SignUpDetailsBloc>(context).add(UploadUserSignUpDetails(body: body, url: AppUrls.apiSignUpDetail));
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers and ValueNotifiers to prevent memory leaks
+    userNameController.dispose();
+    mobileNumberController.dispose();
+    choosePwdController.dispose();
+    confirmPwdController.dispose();
+    showChoosePwd.dispose();
+    showConfirmPwd.dispose();
+    isLoading.dispose();
+    errorUserName.dispose();
+    errorChoosePwd.dispose();
+    errorMobilePwd.dispose();
+    errorConfirmPwd.dispose();
+    errorDOB.dispose();
+    errorGender.dispose();
+    super.dispose();
   }
 }

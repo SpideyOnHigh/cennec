@@ -22,6 +22,7 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
     isSearchEnabled.value = value.trim().isNotEmpty;
   }
 
+
   @override
   void dispose() {
     searchController.dispose();
@@ -31,12 +32,20 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // Or your desired color
+      statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+          ? Brightness.light
+          : Brightness.dark,
+      statusBarBrightness: Theme.of(context).brightness,
+    ));
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
         backgroundColor: AppColors.colorRoundedBgContainer,
+
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(

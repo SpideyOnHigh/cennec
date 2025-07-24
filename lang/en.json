@@ -35,6 +35,9 @@
   "text_change_pwd": "Change Password",
   "text_choose_password": "Choose a password",
   "text_confirm_password": "Confirm New Password",
+  "text_mobile_number": "Mobile number",
+  "text_mobile_invalid": "Mobile number is invalid",
+  "text_mobile_hint": "Mobile Number",
   "text_date_of_birth": "Date of Birth",
   "text_gender": "Gender",
   "text_about_us": "About Us",
@@ -118,6 +121,7 @@
   "text_Connected" : "Connected",
   "text_Loading_connections" : "Loading Connections",
   "text_no_connections" : "No Connections",
+  "text_no_favourite" : "No Favourites",
   "text_no_bio" : "No bio added",
   "text_answers" : "Answers",
   "text_about" : "About",
@@ -151,6 +155,7 @@
   "text_account_set_up": "Account Set Up",
   "text_display_name": "Display Name",
   "text_validate_displayname": "Display name cannot be empty.",
+  "text_validate_mobile": "Mobile number cannot be empty.",
   "text_select_interests_intro": "Select Interests,",
   "text_artists_and_communities": "Artists, and Communities."
 }

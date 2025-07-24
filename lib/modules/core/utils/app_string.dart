@@ -47,6 +47,9 @@ class APPStrings {
   static const String textDisplayName = 'text_display_name';
   static const String textChoosePassword = 'text_choose_password';
   static const String textConfirmPassword = 'text_confirm_password';
+  static const String textMobileNumber = 'text_mobile_number';
+  static const String textMobileInvalid = 'text_mobile_invalid';
+  static const String textMobileHint = 'text_mobile_hint';
   static const String textDateOfBirth = 'text_date_of_birth';
   static const String textGender = 'text_gender';
   static const String textAboutUs= 'text_about_us';
@@ -101,6 +104,7 @@ class APPStrings {
   static const String textShowMe= 'text_show_me';
   static const String textNoInterests = 'text_no_interests';
   static const String textNoConnections = 'text_no_connections';
+  static const String textNoFavourites = 'text_no_favourite';
   static const String textCennectionWithInterests = 'text_cennec_with_interests';
   static const String textAddToInts = 'text_add_to_interests';
   static const String textRemoveFromInts = 'text_remove_from_interests';
