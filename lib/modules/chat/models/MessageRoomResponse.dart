@@ -107,13 +107,15 @@ class MessageModel {
       // For formats like "15/01/2024 14:30:00"
       DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
       String dateTimeString = '$date $time';
-      return formatter.parse(dateTimeString);
+      // Parse as UTC and convert to local
+      return formatter.parse(dateTimeString, true).toLocal();
     } catch (e) {
       try {
         // Try alternative format "2024-01-15 14:30:00"
         DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
         String dateTimeString = '$date $time';
-        return formatter.parse(dateTimeString);
+        // Parse as UTC and convert to local
+        return formatter.parse(dateTimeString, true).toLocal();
       } catch (e) {
         return DateTime.now();
       }

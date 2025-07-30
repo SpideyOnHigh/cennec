@@ -669,23 +669,4 @@ class _ChatScreenState extends State<ScreenChatsModule> {
       return '${years}y ago';
     }
   }
-
-// Alternative function that shows full date/time for very old messages
-  String getSmartRelativeTime(DateTime messageTime) {
-    final now = DateTime.now();
-    final difference = now.difference(messageTime);
-
-    if (difference.inSeconds < 60) {
-      return 'now';
-    } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
-    } else {
-      // For messages older than a week, show actual date
-      return DateFormat('MMM dd, yyyy').format(messageTime);
-    }
-  }
 }

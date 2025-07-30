@@ -28,7 +28,6 @@ class MessageListResponse {
     result['data'] = data.map((e) => e.toJson()).toList();
     return result;
   }
-
 }
 
 class MessageList {
@@ -47,7 +46,10 @@ class MessageList {
     required this.deletedAt,
     required this.latestMessageTime,
     required this.defaultProfilePicture,
-    required this.lastMessage
+    required this.lastMessage,
+    required this.lastMessageStatus,
+    required this.isMe,
+    this.profileImages,
   });
   late final int? id;
   late final String? name;
@@ -64,6 +66,8 @@ class MessageList {
   late final String? latestMessageTime;
   late final String? defaultProfilePicture;
   late final String? lastMessage;
+  late final String? lastMessageStatus;
+  late final bool? isMe;
   late final List<ProfileImages>? profileImages;
 
   MessageList.fromJson(Map<String, dynamic> json){
@@ -82,10 +86,26 @@ class MessageList {
     latestMessageTime = json['latest_message_time'];
     defaultProfilePicture = json['default_profile_picture'];
     lastMessage = json['last_message'];
-    // if (profileImages != null) {
-    //   json['profile_images'] =
-    //       profileImages!.map((v) => v.toJson()).toList();
-    // }
+    lastMessageStatus = json['status'];
+
+    // Convert integer (0/1) to boolean
+    final isMeValue = json['is_me'];
+    if (isMeValue is bool) {
+      isMe = isMeValue;
+    } else if (isMeValue is int) {
+      isMe = isMeValue == 1;
+    } else if (isMeValue is String) {
+      isMe = isMeValue == '1' || isMeValue.toLowerCase() == 'true';
+    } else {
+      isMe = null;
+    }
+
+    // Handle profile images if needed
+    if (json['profile_images'] != null) {
+      profileImages = List.from(json['profile_images'])
+          .map((e) => ProfileImages.fromJson(e))
+          .toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -105,6 +125,15 @@ class MessageList {
     data['latest_message_time'] = latestMessageTime;
     data['default_profile_picture'] = defaultProfilePicture;
     data['last_message'] = lastMessage;
+    data['status'] = lastMessageStatus;
+
+    // Convert boolean back to integer for API consistency
+    data['is_me'] = isMe == true ? 1 : 0;
+
+    if (profileImages != null) {
+      data['profile_images'] = profileImages!.map((v) => v.toJson()).toList();
+    }
+
     return data;
   }
 }

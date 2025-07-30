@@ -273,9 +273,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final user = messageList.value[index];
-                    final messageTime = user.latestMessageTime != null
-                        ? DateTime.tryParse(user.latestMessageTime!) ?? DateTime.now()
-                        : DateTime.now();
+                    final messageTime = user.latestMessageTime;
 
                     return InkWell(
                       onTap: () {
@@ -345,17 +343,19 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                             ),
                             Row(
                               children: [
-                                // Container(
-                                //   width: 8,
-                                //   height: 8,
-                                //   decoration: const BoxDecoration(
-                                //     shape: BoxShape.circle,
-                                //     color: Colors.black,
-                                //   ),
-                                // ),
-                                // const SizedBox(width: 4),
+                                // Show unread indicator for messages from others that haven't been read
+                                if (user.lastMessageStatus == "sent" && !(user.isMe ?? true))
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                const SizedBox(width: 4),
                                 Text(
-                                  getRelativeTime(messageTime),
+                                  getRelativeTime(messageTime!),
                                   style: getTextStyleFromFont(AppFont.poppins, 12, AppColors.colorBlack1, FontWeight.normal),
                                 ),
                               ],
@@ -635,7 +635,9 @@ class _DashboardMessagesState extends State<DashboardMessages> {
   }
 }
 
-String getRelativeTime(DateTime messageTime) {
+String getRelativeTime(String apiTimestamp) {
+  // Parse UTC timestamp from API and convert to local time
+  final messageTime = DateTime.parse(apiTimestamp + 'Z').toLocal();
   final now = DateTime.now();
   final difference = now.difference(messageTime);
 
