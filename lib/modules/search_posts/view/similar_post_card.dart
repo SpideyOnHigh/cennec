@@ -1,3 +1,4 @@
+import 'package:cennec/modules/contacts/view/contact_screen.dart';
 import 'package:cennec/modules/search_posts/model/similar_post_model.dart';
 import 'package:cennec/modules/search_posts/view/user_profile_bottomsheet.dart';
 import 'package:cennec/modules/search_posts/view/user_send_request_bottomsheet.dart';
@@ -34,6 +35,8 @@ class SimilarPostsCard extends StatefulWidget {
 }
 
 class _SimilarPostsCardState extends State<SimilarPostsCard> {
+  bool _showAllChips = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -194,7 +197,6 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
   //   );
   // }
 
-  bool _showAllChips = false;
 
   Widget _buildInterestChips() {
     List<UserInterest> chipsToShow = _showAllChips
@@ -253,6 +255,24 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
   Widget _buildFriendIcon(bool isFriend) {
     return InkWell(
       onTap: (){
+        // showModalBottomSheet(
+        //   context: context,
+        //   backgroundColor: AppColors.colorWhite,
+        //   constraints: BoxConstraints(
+        //     maxHeight:  MediaQuery.of(context).size.height * 0.75,
+        //   ),
+        //   isScrollControlled: true,
+        //   shape: const RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        //   ),
+        //   builder: (_) => BottomSheetConnectRequest(
+        //     modelRequestDataTransfer: ModelRequestDataTransfer(
+        //       isFromDashboard: true,
+        //       getUserId: getUser().userData?.id,
+        //       toSendUserID: widget.similarPostData?.userId,
+        //     ),
+        //   ),
+        // );
         showModalBottomSheet(
           context: context,
           backgroundColor: AppColors.colorWhite,
@@ -263,13 +283,7 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          builder: (_) => BottomSheetConnectRequest(
-            modelRequestDataTransfer: ModelRequestDataTransfer(
-              isFromDashboard: true,
-              getUserId: getUser().userData?.id,
-              toSendUserID: widget.similarPostData?.userId,
-            ),
-          ),
+          builder: (_) => ContactScreen()
         );
       },
       child: Container(

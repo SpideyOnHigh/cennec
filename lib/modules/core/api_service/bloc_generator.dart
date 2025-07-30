@@ -24,6 +24,8 @@ import 'package:cennec/modules/connections/bloc/remove_user/remove_user_bloc.dar
 import 'package:cennec/modules/connections/bloc/remove_user_from_details/remove_user_from_details_bloc.dart';
 import 'package:cennec/modules/connections/bloc/send_request_bloc/send_request_bloc.dart';
 import 'package:cennec/modules/connections/repository/repository_connections.dart';
+import 'package:cennec/modules/contacts/bloc/contact/contact_bloc.dart';
+import 'package:cennec/modules/contacts/repository/contact_repository.dart';
 import 'package:cennec/modules/core/utils/common_import.dart';
 import 'package:cennec/modules/dashboard/bloc/requests_bloc/get_requests_bloc.dart';
 import 'package:cennec/modules/feedback/bloc/get_feedback_que/get_feedback_que_bloc.dart';
@@ -268,6 +270,9 @@ class BlocGenerator {
       BlocProvider<AddUserPostBloc>(
         create: (BuildContext context) => AddUserPostBloc(
             apiProvider: apiProvider, client: client, repositoryAddUserPost: RepositoryAddUserPost()),
+      ),      BlocProvider<ContactBloc>(
+        create: (BuildContext context) => ContactBloc(
+            apiProvider: apiProvider, client: client, repositoryContacts: RepositoryContacts()),
       ),
     ];
   }
