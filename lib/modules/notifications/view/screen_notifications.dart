@@ -489,122 +489,126 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
   }
 
   Widget connectionRequest(NotificationData data) {
-    return Container(
-      // margin: const EdgeInsets.only(bottom: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Profile Image
-              data.userProfileImage != null
-                  ? ClipRRect(
-                borderRadius: BorderRadius.circular(Dimens.margin70),
-                child: Image.network(
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    }
-                    return const Center(
-                      child: CommonLoadingAnimation(),
-                    );
-                  },
-                  data.userProfileImage ?? '',
-                  width: Dimens.margin50,
-                  height: Dimens.margin50,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Profile Image
+            data.userProfileImage != null
+                ? ClipRRect(
+              borderRadius: BorderRadius.circular(Dimens.margin170),
+              child: Image.network(
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return const Center(
+                    child: CommonLoadingAnimation(),
+                  );
+                },
+                data.userProfileImage ?? '',
+                width: Dimens.margin40,
+                height: Dimens.margin40,
+                fit: BoxFit.cover,
+              ),
+            )
+                : ClipRRect(
+              borderRadius: BorderRadius.circular(Dimens.margin170),
+              child: SizedBox(
+                width: Dimens.margin40,
+                height: Dimens.margin40,
+                child: Image.asset(
+                  APPImages.icDummyProfile,
                   fit: BoxFit.cover,
-                ),
-              )
-                  : ClipRRect(
-                borderRadius: BorderRadius.circular(Dimens.margin70),
-                child: SizedBox(
-                  width: Dimens.margin50,
-                  height: Dimens.margin50,
-                  child: Image.asset(
-                    APPImages.icDummyProfile,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(width: Dimens.margin12),
-              // Message Text
-              Expanded(
-                child: Text(
-                  data.message ?? '',
-                  style: getTextStyleFromFont(
-                    AppFont.poppins,
-                    Dimens.margin16,
-                    Theme.of(context).colorScheme.onPrimary,
-                    FontWeight.w500,
-                  ),
-                ),
-              ),
-              const SizedBox(width: Dimens.margin8),
-              // Action Buttons
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Reject Button (X)
-                  InkWell(
-                    onTap: () {
-                      takeAction(data, AppConfig.paramRejected);
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.redCancelColor)
-                        // color: Colors.red,
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        color: AppColors.redCancelColor,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Accept Button (✓)
-                  InkWell(
-                    onTap: () {
-                      takeAction(data, AppConfig.paramAccepted);
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.greenCorrectColor)
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: AppColors.greenCorrectColor,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          // Request Comment
-          if (data.requestComment != null && (data.requestComment ?? '').isNotEmpty)
-            Padding(
-              padding: EdgeInsets.only(top: 8.0, left: Dimens.margin50 + Dimens.margin12),
-              child: Text(
-                data.requestComment ?? '',
-                style: getTextStyleFromFont(
-                  AppFont.poppins,
-                  Dimens.margin14,
-                  Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
-                  FontWeight.w400,
                 ),
               ),
             ),
-        ],
-      ),
+            const SizedBox(width: Dimens.margin12),
+            // Message Text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    data.message ?? '',
+                    style: getTextStyleFromFont(
+                      AppFont.poppins,
+                      Dimens.margin16,
+                      Theme.of(context).colorScheme.onPrimary,
+                      FontWeight.w500,
+                    ),
+                  ),
+                  if (data.requestComment != null && (data.requestComment ?? '').isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 0.0,),
+                      child: Text(
+                        data.requestComment ?? '',
+                        style: getTextStyleFromFont(
+                          AppFont.poppins,
+                          Dimens.margin14,
+                          Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                          FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: Dimens.margin8),
+            // Action Buttons
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Reject Button (X)
+                InkWell(
+                  onTap: () {
+                    takeAction(data, AppConfig.paramRejected);
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.redCancelColor)
+                      // color: Colors.red,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: AppColors.redCancelColor,
+                      size: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Accept Button (✓)
+                InkWell(
+                  onTap: () {
+                    takeAction(data, AppConfig.paramAccepted);
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.greenCorrectColor)
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: AppColors.greenCorrectColor,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        // Request Comment
+      ],
     );
   }
 
@@ -631,13 +635,13 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
                     );
                   },
                   data.userProfileImage ?? '',
-                  width: Dimens.margin50,
-                  height: Dimens.margin50,
+                  width: Dimens.margin40,
+                  height: Dimens.margin40,
                   fit: BoxFit.cover,
                   errorBuilder: (context,_ , __){
                     return Container(
-                      width: Dimens.margin50,
-                      height: Dimens.margin50,
+                      width: Dimens.margin40,
+                      height: Dimens.margin40,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(Dimens.margin70),
@@ -650,8 +654,8 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
                   : ClipRRect(
                 borderRadius: BorderRadius.circular(Dimens.margin70),
                 child: SizedBox(
-                  width: Dimens.margin50,
-                  height: Dimens.margin50,
+                  width: Dimens.margin40,
+                  height: Dimens.margin40,
                   child: Image.asset(
                     APPImages.icDummyProfile,
                     fit: BoxFit.cover,
@@ -661,14 +665,32 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
               const SizedBox(width: Dimens.margin12),
               // Message Text
               Expanded(
-                child: Text(
-                  data.message ?? '',
-                  style: getTextStyleFromFont(
-                    AppFont.poppins,
-                    Dimens.margin16,
-                    Theme.of(context).colorScheme.onPrimary,
-                    FontWeight.w500,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data.message ?? '',
+                      style: getTextStyleFromFont(
+                        AppFont.poppins,
+                        Dimens.margin16,
+                        Theme.of(context).colorScheme.onPrimary,
+                        FontWeight.w500,
+                      ),
+                    ),
+                    if (data.requestComment != null && (data.requestComment ?? '').isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(top: 0.0,),
+                        child: Text(
+                          data.requestComment ?? '',
+                          style: getTextStyleFromFont(
+                            AppFont.poppins,
+                            Dimens.margin14,
+                            Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                            FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(width: Dimens.margin8),
@@ -693,19 +715,6 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
             ],
           ),
           // Request Comment
-          if (data.requestComment != null && (data.requestComment ?? '').isNotEmpty)
-            Padding(
-              padding: EdgeInsets.only(top: 8.0, left: Dimens.margin50 + Dimens.margin12),
-              child: Text(
-                data.requestComment ?? '',
-                style: getTextStyleFromFont(
-                  AppFont.poppins,
-                  Dimens.margin14,
-                  Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
-                  FontWeight.w400,
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -720,7 +729,6 @@ class _ScreenNotificationsState extends State<ScreenNotifications> {
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: Divider(
-
             color: Theme.of(context).dividerColor.withOpacity(0.3),
             thickness: 1,
             height: 1,

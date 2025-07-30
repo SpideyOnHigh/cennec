@@ -291,7 +291,7 @@ class _BottomSheetConnectRequestState extends State<BottomSheetConnectRequest> {
     Map<String, dynamic> body = {
       AppConfig.paramFromUserId: getUser().userData?.id ?? 0,
       "to_user_id": widget.modelRequestDataTransfer.toSendUserID ?? 0,
-      "message": messageController.text.trim(),
+      "request_comment": messageController.text.trim(),
     };
 
     BlocProvider.of<SendRequestBloc>(context).add(
@@ -335,7 +335,6 @@ class _BottomSheetConnectRequestState extends State<BottomSheetConnectRequest> {
                   MyPrint.printOnConsole("Send request response : ${state.modelSendRequestResponse.toJson()}");
                     ToastController.showToast(context, state.modelSendRequestResponse.message ?? 'Request sent successfully!', true);
                     showModalBottomSheet(
-
                       context: context,
                       isScrollControlled: true,
                       constraints: BoxConstraints(
@@ -343,6 +342,7 @@ class _BottomSheetConnectRequestState extends State<BottomSheetConnectRequest> {
                       ),
                       backgroundColor: AppColors.colorWhite,
                       builder: (_) => BottomSheetConnectionSent(
+
                         currentUserImage: getUser().userData?.defaultProfilePic ?? '',
                         targetUserImage: modelFetchUserDetail.data?.defaultProfilePic ?? '',
                         targetUserName: modelFetchUserDetail.data?.username ?? '',

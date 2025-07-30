@@ -111,11 +111,11 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
           floatingActionButton: buildFAB(),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-          bottomNavigationBar: BottomAppBar(
+          bottomNavigationBar:BottomAppBar(
             shape: const CircularNotchedRectangle(),
             notchMargin: Dimens.margin8,
-            elevation: 12,
-            color: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 0, // Let Material handle the shadow
+            color: Colors.white, // Let Material color show through
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SizedBox(
@@ -131,7 +131,6 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
                         buildIcon(1, APPImages.iconCennections),
                       ],
                     ),
-
                     // Right side
                     Row(
                       children: [

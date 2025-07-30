@@ -158,7 +158,7 @@ class _ScreenPostsState extends State<ScreenPosts> {
           backgroundColor: Colors.transparent,
           centerTitle: false,
           title: Text(
-            "All Posts",
+            "Feeds",
             style: getTextStyleFromFont(
               AppFont.poppins,
               Dimens.margin26,

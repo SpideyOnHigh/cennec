@@ -1,3 +1,4 @@
+import 'package:cennec/modules/core/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:cennec/modules/core/utils/app_colors.dart';
@@ -103,7 +104,9 @@ class _BottomSheetConnectionSentState extends State<BottomSheetConnectionSent> {
                           text: "Back to my Search",
                           height: 52,
                           backgroundColor: AppColors.colorPrimary,
-                          onTap: () => Navigator.pop(context),
+                          onTap: () {
+                            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.routesScreenDashboard ,(route) => false);
+                          },
                         ),
                       ),
                       SizedBox(height: height * 0.04), // Bottom spacing
