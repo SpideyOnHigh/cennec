@@ -102,7 +102,6 @@ class _DashboardMessagesState extends State<DashboardMessages> {
     );
   }
 
-
   Widget buildTabSwitcher() {
     return Container(
       height: 52,
@@ -160,7 +159,6 @@ class _DashboardMessagesState extends State<DashboardMessages> {
     );
   }
 
-
   final List<Interest> interests = [
     Interest(name: 'Interior design'),
     Interest(name: 'Economics'),
@@ -184,51 +182,53 @@ class _DashboardMessagesState extends State<DashboardMessages> {
             itemCount: messageList.value.length,
             itemBuilder: (context, index) {
               return InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.routesScreenChats,
+                onTap: () async {
+                  await  Navigator.pushNamed(context, AppRoutes.routesScreenChats,
                       arguments: MessageRoomRequestData(
                           fromUserId: messageList.value[index].id!,
                           page: 1,
                           name: messageList.value[index].username!,
                           imageUrl: messageList.value[index].defaultProfilePicture ?? ''));
+                  getMyConnections(pageNumber: connectionPageNumber);
+                  getMessageList();
                 },
                 child: Stack(
                   children: [
                     messageList.value[index].defaultProfilePicture != null
                         ? ClipRRect(
-                            borderRadius: BorderRadius.circular(Dimens.margin70),
-                            child: Image.network(
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) {
-                                  return child; // Image is fully loaded
-                                }
-                                return const Center(
-                                  child: CommonLoadingAnimation(), // Show the loading animation
-                                );
-                              },
-                              messageList.value[index].defaultProfilePicture ?? '',
-                              width: Dimens.margin70,
-                              fit: BoxFit.cover,
-                            ),
-                          )
+                      borderRadius: BorderRadius.circular(Dimens.margin70),
+                      child: Image.network(
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child; // Image is fully loaded
+                          }
+                          return const Center(
+                            child: CommonLoadingAnimation(), // Show the loading animation
+                          );
+                        },
+                        messageList.value[index].defaultProfilePicture ?? '',
+                        width: Dimens.margin70,
+                        fit: BoxFit.cover,
+                      ),
+                    )
                         : ClipRRect(
-                            borderRadius: BorderRadius.circular(Dimens.margin70),
-                            child: SizedBox(
-                              width: Dimens.margin70,
-                              // height: Dimens.margin300,
-                              child: Image.asset(
-                                APPImages.icDummyProfile,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
+                      borderRadius: BorderRadius.circular(Dimens.margin70),
+                      child: SizedBox(
+                        width: Dimens.margin70,
+                        // height: Dimens.margin300,
+                        child: Image.asset(
+                          APPImages.icDummyProfile,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         width: 70,
                         decoration: BoxDecoration(
-                            // image: const DecorationImage(image: AssetImage(APPImages.icDummyProfile), fit: BoxFit.cover),
-                            // color: Theme.of(context).primaryColor,
+                          // image: const DecorationImage(image: AssetImage(APPImages.icDummyProfile), fit: BoxFit.cover),
+                          // color: Theme.of(context).primaryColor,
                             borderRadius: BorderRadius.circular(Dimens.margin70)),
                       ),
                     ),
@@ -244,133 +244,156 @@ class _DashboardMessagesState extends State<DashboardMessages> {
 
   ValueNotifier<List<MessageList>> messageList = ValueNotifier([]);
 
+  // Helper method to get filtered message list for connections tab
+  List<MessageList> getFilteredMessageList() {
+    if (navIndex.value == 0) {
+      // For connections tab, exclude users who are in favorites
+      final favoriteUserIds = myFavourites.value.map((fav) => fav.id).toSet();
+      return messageList.value.where((message) =>
+      !favoriteUserIds.contains(message.id)
+      ).toList();
+    } else {
+      // For favorites tab, show only users who are in favorites
+      final favoriteUserIds = myFavourites.value.map((fav) => fav.id).toSet();
+      return messageList.value.where((message) =>
+          favoriteUserIds.contains(message.id)
+      ).toList();
+    }
+  }
+
   Widget connectionsGrid() {
     return IndexedStack(
       index: navIndex.value,
       children: [
         // === CONNECTIONS TAB ===
-        Visibility(
-          visible: messageList.value.isNotEmpty,
-          replacement: Center(
-            child: Text(
-              getTranslate(isLoading.value ? APPStrings.textLoadingConnection : APPStrings.textNoConnections),
-              style: getTextStyleFromFont(
-                AppFont.poppins,
-                Dimens.margin18,
-                Theme.of(context).hintColor,
-                FontWeight.w500,
+        Builder(
+          builder: (context) {
+            final filteredMessages = getFilteredMessageList();
+            return Visibility(
+              visible: filteredMessages.isNotEmpty,
+              replacement: Center(
+                child: Text(
+                  getTranslate(isLoading.value ? APPStrings.textLoadingConnection : APPStrings.textNoConnections),
+                  style: getTextStyleFromFont(
+                    AppFont.poppins,
+                    Dimens.margin18,
+                    Theme.of(context).hintColor,
+                    FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
-          ),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: messageList.value.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final user = messageList.value[index];
-                    final messageTime = user.latestMessageTime;
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: filteredMessages.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final user = filteredMessages[index];
+                        final messageTime = user.latestMessageTime;
 
-                    return InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.routesScreenChats,
-                          arguments: MessageRoomRequestData(
-                            fromUserId: user.id!,
-                            page: 1,
-                            name: user.username ?? '',
-                            imageUrl: user.defaultProfilePicture ?? '',
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.colorWhite,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade300,
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 24,
-                              backgroundColor: AppColors.colorGreyExtraLight,
-                              backgroundImage: user.defaultProfilePicture != null
-                                  ? NetworkImage(user.defaultProfilePicture!)
-                                  : null,
-                              child: user.defaultProfilePicture == null
-                                  ? Text(
-                                user.username?.substring(0, 1).toUpperCase() ?? "?",
-                                style: getTextStyleFromFont(AppFont.poppins, 18, AppColors.colorWhite, FontWeight.bold),
-                              )
-                                  : null,
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    user.username ?? '',
-                                    style: getTextStyleFromFont(AppFont.poppins, 16, AppColors.colorBlack, FontWeight.w600),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  // Uncomment when backend sends message preview
-                                  Text(
-                                    user.lastMessage ?? '',
-                                    style: getTextStyleFromFont(
-                                        AppFont.poppins,
-                                        14,
-                                        AppColors.colorHyperLink80,
-                                        FontWeight.normal
-                                    ),
-                                    maxLines: 1, // Limits text to a single line
-                                    overflow: TextOverflow.ellipsis, // Adds ... when text overflows
-                                  ),
-                                ],
+                        return InkWell(
+                          onTap: () async {
+                            await Navigator.pushNamed(
+                              context,
+                              AppRoutes.routesScreenChats,
+                              arguments: MessageRoomRequestData(
+                                fromUserId: user.id!,
+                                page: 1,
+                                name: user.username ?? '',
+                                imageUrl: user.defaultProfilePicture ?? '',
                               ),
-                            ),
-                            Row(
-                              children: [
-                                // Show unread indicator for messages from others that haven't been read
-                                if (user.lastMessageStatus == "sent" && !(user.isMe ?? true))
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  getRelativeTime(messageTime!),
-                                  style: getTextStyleFromFont(AppFont.poppins, 12, AppColors.colorBlack1, FontWeight.normal),
+                            );
+                            getMyConnections(pageNumber: connectionPageNumber);
+                            getMessageList();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.colorWhite,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.shade300,
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 24,
+                                  backgroundColor: AppColors.colorGreyExtraLight,
+                                  backgroundImage: user.defaultProfilePicture != null
+                                      ? NetworkImage(user.defaultProfilePicture!)
+                                      : null,
+                                  child: user.defaultProfilePicture == null
+                                      ? Text(
+                                    user.username?.substring(0, 1).toUpperCase() ?? "?",
+                                    style: getTextStyleFromFont(AppFont.poppins, 18, AppColors.colorWhite, FontWeight.bold),
+                                  )
+                                      : null,
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        user.username ?? '',
+                                        style: getTextStyleFromFont(AppFont.poppins, 16, AppColors.colorBlack, FontWeight.w600),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        user.lastMessage ?? '',
+                                        style: getTextStyleFromFont(
+                                            AppFont.poppins,
+                                            14,
+                                            AppColors.colorHyperLink80,
+                                            FontWeight.normal
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    if (user.lastMessageStatus == "sent" && !(user.isMe ?? true))
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      getRelativeTime(messageTime!),
+                                      style: getTextStyleFromFont(AppFont.poppins, 12, AppColors.colorBlack1, FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-        ),        // === FAVORITES TAB ===
+              ),
+            );
+          },
+        ),
+        // === FAVORITES TAB ===
         Visibility(
           visible: myFavourites.value.isNotEmpty,
           replacement: Center(
@@ -396,15 +419,17 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                   itemBuilder: (context, index) {
                     final fav = myFavourites.value[index];
                     return InkWell(
-                      onTap: () {
+                      onTap: () async {
                         if (fav.isConnected == true) {
-                          Navigator.pushNamed(context, AppRoutes.routesScreenChats,
+                          await Navigator.pushNamed(context, AppRoutes.routesScreenChats,
                               arguments: MessageRoomRequestData(
                                 fromUserId: fav.id!,
                                 page: 1,
                                 name: fav.name!,
                                 imageUrl: fav.defaultProfilePic ?? '',
                               ));
+                          getMyConnections(pageNumber: connectionPageNumber);
+                          getMessageList();
                         } else {
                           Navigator.pushNamed(context, AppRoutes.routesScreenUserDetails,
                               arguments: ModelRequestDataTransfer(
@@ -452,7 +477,6 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                                     style: getTextStyleFromFont(AppFont.poppins, 16, AppColors.colorBlack, FontWeight.w600),
                                   ),
                                   const SizedBox(height: 4),
-
                                 ],
                               ),
                             ),
@@ -485,6 +509,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
       ],
     );
   }
+
   Widget getBody(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
@@ -492,12 +517,7 @@ class _DashboardMessagesState extends State<DashboardMessages> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // const SizedBox(height: Dimens.margin10),
-          // logo(),
-          // const SizedBox(height: Dimens.margin20),
-          // myMessages(context),
           const SizedBox(height: Dimens.margin20),
-          // messagesGridview(),
           Text("Messages", style:  getTextStyleFromFont(
             AppFont.poppins,
             Dimens.margin28,
@@ -520,15 +540,15 @@ class _DashboardMessagesState extends State<DashboardMessages> {
     return SafeArea(
         child: MultiValueListenableBuilder(
             valueListenables: [
-          paginationLoading,
-          showLoadMoreForConnection,
-          showLoadMoreForFavourite,
-          isLoading,
-          myConnections,
-          navIndex,
-          myFavourites,
-          messageList
-        ],
+              paginationLoading,
+              showLoadMoreForConnection,
+              showLoadMoreForFavourite,
+              isLoading,
+              myConnections,
+              navIndex,
+              myFavourites,
+              messageList
+            ],
             builder: (context, values, child) {
               return MultiBlocListener(
                 listeners: [
@@ -559,7 +579,6 @@ class _DashboardMessagesState extends State<DashboardMessages> {
                           showLoadMoreForConnection.value = false;
                         }
                         myConnections.value.addAll((state.modelMyConnections.data ?? []).toList());
-
                       }
                     },
                   ),
