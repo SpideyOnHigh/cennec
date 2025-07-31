@@ -196,6 +196,7 @@ class RepositoryContacts {
                   : null,
               avatar: avatarBytes,
               status: ContactStatus.notConnected,
+              isInvited: false, // Default to false, will be updated from API
             ));
           }
         }
@@ -207,7 +208,7 @@ class RepositoryContacts {
     }
   }
 
-  /// Update contact status - This is a local operation
+  /// Update contact status based on API response - This is a local operation
   ///
   /// Args:
   ///   contacts (List<ContactModel>): List of contacts to update
@@ -219,15 +220,22 @@ class RepositoryContacts {
       List<ContactModel> contacts,
       ContactFilterResponse statusResponse,
       ) async {
-    Map<String, ContactStatus> statusMap = {};
+    // Create a map for quick lookup
+    Map<String, bool> existsMap = {};
 
+    // Process the API response - note the structure: [{"contact":"7874519680","exists":false}]
     for (ContactStatusInfo info in statusResponse.contacts) {
-      statusMap[info.phoneNumber] = info.status;
+      existsMap[info.phoneNumber] = info.exists;
     }
 
+    // Update contacts based on API response
     return contacts.map((contact) {
-      ContactStatus newStatus = statusMap[contact.phoneNumber] ?? ContactStatus.notConnected;
-      return contact.copyWith(status: newStatus);
+      final exists = existsMap[contact.phoneNumber] ?? false;
+
+      return contact.copyWith(
+        isInvited: exists,
+        status: exists ? ContactStatus.invited : ContactStatus.notConnected,
+      );
     }).toList();
   }
 

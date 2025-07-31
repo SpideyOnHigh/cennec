@@ -18,7 +18,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> {
   List<ContactModel> _allContacts = [];
 
   // URL endpoint - this should come from your config
-  static const String _checkStatusEndpoint = "/contact-number-filter";
+  static const String _checkStatusEndpoint = "contact-number-filter";
   static const String _inviteEndpoint = "/invite-contact";
   static const String _connectEndpoint = "/connect-contact";
   static const String _getContactsEndpoint = "/contacts";

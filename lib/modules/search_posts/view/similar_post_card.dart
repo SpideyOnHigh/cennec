@@ -283,7 +283,29 @@ class _SimilarPostsCardState extends State<SimilarPostsCard> {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          builder: (_) => ContactScreen()
+          builder: (_) => ContactScreen(
+            onContinueTap: (){
+              Navigator.pop(context);
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: AppColors.colorWhite,
+                constraints: BoxConstraints(
+                  maxHeight:  MediaQuery.of(context).size.height * 0.75,
+                ),
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                builder: (_) => BottomSheetConnectRequest(
+                  modelRequestDataTransfer: ModelRequestDataTransfer(
+                    isFromDashboard: true,
+                    getUserId: getUser().userData?.id,
+                    toSendUserID: widget.similarPostData?.userId,
+                  ),
+                ),
+              );
+            },
+          )
         );
       },
       child: Container(

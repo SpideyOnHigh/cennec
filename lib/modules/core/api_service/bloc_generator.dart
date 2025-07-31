@@ -272,6 +272,7 @@ class BlocGenerator {
             apiProvider: apiProvider, client: client, repositoryAddUserPost: RepositoryAddUserPost()),
       ),      BlocProvider<ContactBloc>(
         create: (BuildContext context) => ContactBloc(
+
             apiProvider: apiProvider, client: client, repositoryContacts: RepositoryContacts()),
       ),
     ];
