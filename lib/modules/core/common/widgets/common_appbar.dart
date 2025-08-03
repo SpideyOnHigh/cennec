@@ -1,17 +1,36 @@
 import '../../utils/common_import.dart';
+import 'package:flutter/services.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBack;
+  final List<Widget>? action;
+  final Color? statusBarColor;
+  final Brightness? statusBarIconBrightness;
 
   const CommonAppBar({
     super.key,
     required this.title,
     this.onBack,
+    this.action,
+    this.statusBarColor,
+    this.statusBarIconBrightness,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Configure system chrome for status bar
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: statusBarColor ?? Colors.transparent,
+      statusBarIconBrightness: statusBarIconBrightness ??
+          (Theme.of(context).brightness == Brightness.dark
+              ? Brightness.light
+              : Brightness.dark),
+      statusBarBrightness: statusBarIconBrightness == Brightness.light
+          ? Brightness.dark
+          : Brightness.light,
+    ));
+
     return SafeArea(
       child: Container(
         height: preferredSize.height,
@@ -37,6 +56,14 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
+            if (action != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: action!,
+                ),
+              ),
           ],
         ),
       ),

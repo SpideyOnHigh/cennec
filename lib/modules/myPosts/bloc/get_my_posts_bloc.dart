@@ -88,7 +88,7 @@ class GetMyPostsBloc extends Bloc<GetMyPostsEvent, GetMyPostsState> {
       final requestBody = {
         "order_by": event.orderBy ?? "created_at",
         "sort": event.sort ?? "desc",
-        "skip": event.skip ?? 1,
+        "skip": event.skip ?? 0,
         "take": event.take ?? 5,
       };
 

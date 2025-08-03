@@ -1,3 +1,4 @@
+import 'package:cennec/modules/core/utils/my_print.dart';
 import 'package:flutter/services.dart';
 import '../../core/common/widgets/common_appbar.dart';
 import '../../core/common/widgets/dialog/common_loading_animation.dart';
@@ -47,7 +48,7 @@ class _ScreenMyPostsState extends State<ScreenMyPosts> {
       url: AppUrls.apiGetAllUserPosts, // You'll need to add this URL constant
       orderBy: _currentOrderBy,
       sort: _currentSort,
-      skip: 1,
+      skip: 0,
       take: 5,
     ));
   }
@@ -74,53 +75,76 @@ class _ScreenMyPostsState extends State<ScreenMyPosts> {
       create: (context) => _getMyPostsBloc,
       child: Scaffold(
         backgroundColor: AppColors.colorRoundedBgContainer,
-        appBar: AppBar(
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          centerTitle: false,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          title: Text(
-            "My Posts",
-            style: getTextStyleFromFont(
-              AppFont.poppins,
-              Dimens.margin26,
-              Theme.of(context).colorScheme.onPrimary,
-              FontWeight.w600,
-            ),
-          ),
-          actions: [
-            PopupMenuButton<String>(
-              onSelected: _changeSortOrder,
-              icon: Icon(
-                Icons.sort,
-                color: Theme.of(context).colorScheme.onPrimary,
+        appBar: CommonAppBar(title: "My Posts",
+        action: [
+          PopupMenuButton<String>(
+                color: Colors.white,
+                onSelected: _changeSortOrder,
+                icon: Icon(
+                  Icons.sort,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'created_at',
+                    child: Text('Sort by Date'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'interest_match_count',
+                    child: Text('Sort by Interest Match'),
+                  ),
+                ],
               ),
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
-                  value: 'created_at',
-                  child: Text('Sort by Date'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'interest_match_count',
-                  child: Text('Sort by Interest Match'),
-                ),
-              ],
-            ),
-          ],
+        ],
         ),
+        // appBar: AppBar(
+        //   systemOverlayStyle: const SystemUiOverlayStyle(
+        //     statusBarColor: Colors.transparent,
+        //     statusBarIconBrightness: Brightness.dark,
+        //     statusBarBrightness: Brightness.light,
+        //   ),
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        //   centerTitle: false,
+        //   leading: IconButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     icon: Icon(
+        //       Icons.arrow_back_ios,
+        //       color: Theme.of(context).colorScheme.onPrimary,
+        //     ),
+        //   ),
+        //   title: Text(
+        //     "My Posts",
+        //     style: getTextStyleFromFont(
+        //       AppFont.poppins,
+        //       Dimens.margin26,
+        //       Theme.of(context).colorScheme.onPrimary,
+        //       FontWeight.w600,
+        //     ),
+        //   ),
+        //   actions: [
+        //     PopupMenuButton<String>(
+        //       color: Colors.white,
+        //       onSelected: _changeSortOrder,
+        //       icon: Icon(
+        //         Icons.sort,
+        //         color: Theme.of(context).colorScheme.onPrimary,
+        //       ),
+        //       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        //         const PopupMenuItem<String>(
+        //           value: 'created_at',
+        //           child: Text('Sort by Date'),
+        //         ),
+        //         const PopupMenuItem<String>(
+        //           value: 'interest_match_count',
+        //           child: Text('Sort by Interest Match'),
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
         body: BlocListener<GetMyPostsBloc, GetMyPostsState>(
           listener: (context, state) {
             if (state is GetMyPostsDeleteSuccess) {
@@ -279,6 +303,7 @@ class _ScreenMyPostsState extends State<ScreenMyPosts> {
   }
 
   Widget _buildMyPostCard(MyPostData post, [bool isDeleting = false]) {
+    MyPrint.printOnConsole(" post.userName: ${post.toJson()} ${ post.id}");
     return Opacity(
       opacity: isDeleting ? 0.5 : 1.0,
       child: Card(

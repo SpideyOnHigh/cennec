@@ -189,7 +189,7 @@ class _MyConnectionsState extends State<MyConnections> {
                   AppFont.poppins,
                   Dimens.margin26,
                   Theme.of(context).colorScheme.onBackground,
-                  FontWeight.w700,
+                  FontWeight.w600,
                 ),
               ),
               GestureDetector(
