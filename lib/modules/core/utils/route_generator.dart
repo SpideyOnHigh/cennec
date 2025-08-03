@@ -29,6 +29,7 @@ import 'package:cennec/modules/preferences/view/screen_preferences.dart';
 import 'package:cennec/modules/profile/view/screen_edit_profile.dart';
 import 'package:cennec/modules/settings/view/screen_settings.dart';
 import 'package:cennec/modules/splash/view/screen_splash.dart';
+import '../../myPosts/view/screen_my_posts.dart';
 import '../../search_posts/view/screen_find_connection.dart';
 import '../../search_posts/view/screen_find_connections_details.dart';
 import '../../search_posts/view/screen_similar_and_interest.dart';
@@ -184,6 +185,8 @@ class RouteGenerator {
 
       case AppRoutes.routeAllPosts:
         return MaterialPageRoute(builder: (_) => const ScreenPosts(), settings: const RouteSettings(name: AppRoutes.routeAllPosts));
+      case AppRoutes.routeMyPosts:
+        return MaterialPageRoute(builder: (_) => const ScreenMyPosts(), settings: const RouteSettings(name: AppRoutes.routeMyPosts));
 
 
       default:

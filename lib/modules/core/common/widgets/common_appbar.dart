@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-
-import '../../api_service/common_service.dart';
-import '../../utils/app_dimens.dart';
-import '../../utils/app_font.dart';
+import '../../utils/common_import.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -20,16 +16,19 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         height: preferredSize.height,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-        child: Row(
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            GestureDetector(
-              onTap: onBack ?? () => Navigator.pop(context),
-              child: const Icon(Icons.arrow_back),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: GestureDetector(
+                onTap: onBack ?? () => Navigator.pop(context),
+                child: const Icon(Icons.arrow_back),
+              ),
             ),
-            Expanded(
+            Center(
               child: Text(
                 title,
-                textAlign: TextAlign.center,
                 style: getTextStyleFromFont(
                   AppFont.poppins,
                   Dimens.margin20,
@@ -38,7 +37,6 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
-            // const SizedBox(width: 40), // To balance alignment
           ],
         ),
       ),

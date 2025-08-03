@@ -276,6 +276,9 @@ class _DashboardProfileState extends State<DashboardProfile> {
                       if (value == true) setState(() {});
                     });
                   }),
+                  _buildTile("My Posts", APPImages.icConnectionPref, () {
+                    Navigator.pushNamed(context, AppRoutes.routeMyPosts);
+                  }),
                   _buildTile("Connection Preferences", APPImages.icConnectionPref, () {
                     Navigator.pushNamed(context, AppRoutes.routesScreenPreferences);
                   }),
