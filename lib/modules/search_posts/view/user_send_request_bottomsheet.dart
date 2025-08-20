@@ -368,28 +368,30 @@ class _BottomSheetConnectRequestState extends State<BottomSheetConnectRequest> {
                         color: AppColors.colorWhite,
                         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildHeader(context),
-                          const SizedBox(height: 20),
-                          _buildAvatars(),
-                          const SizedBox(height: 16),
-                          _buildMutualInterests(),
-                          const SizedBox(height: 16),
-                          _buildMessageBox(context),
-                          const SizedBox(height: 40),
-                          CommonButton(
-                            text: "Send Request",
-                            height: 48,
-                            backgroundColor: AppColors.colorPrimary,
-                            onTap: () async {
-                              sendConnectionRequest();
-
-                            },
-                            // onTap: sendConnectionRequest,
-                          ),
-                        ],
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildHeader(context),
+                            const SizedBox(height: 20),
+                            _buildAvatars(),
+                            const SizedBox(height: 16),
+                            _buildMutualInterests(),
+                            const SizedBox(height: 16),
+                            _buildMessageBox(context),
+                            const SizedBox(height: 40),
+                            CommonButton(
+                              text: "Send Request",
+                              height: 48,
+                              backgroundColor: AppColors.colorPrimary,
+                              onTap: () async {
+                                sendConnectionRequest();
+                        
+                              },
+                              // onTap: sendConnectionRequest,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -561,7 +563,16 @@ class _BottomSheetConnectRequestState extends State<BottomSheetConnectRequest> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: TextField(
+            onSubmitted: (a){
+              FocusScope.of(context).requestFocus(FocusNode());
+
+            },
+            onEditingComplete: (){
+              FocusScope.of(context).requestFocus(FocusNode());
+
+            },
             maxLines: 4,
+            keyboardType: TextInputType.name,
             controller: messageController,
             style: getTextStyleFromFont(
               AppFont.poppins,

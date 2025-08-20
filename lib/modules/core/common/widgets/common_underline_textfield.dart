@@ -11,7 +11,7 @@ class CommonUnderlineTextField extends StatelessWidget {
   final bool enabled;
   final double fontSize;
   final FontWeight fontWeight;
-  final int maxLines;
+  final int maxLines, minLines;
   final TextAlign textAlign;
   final Color? textColor;
   final Color? hintColor;
@@ -30,6 +30,7 @@ class CommonUnderlineTextField extends StatelessWidget {
     this.textAlign = TextAlign.center,
     this.textColor,
     this.hintColor,
+    this.minLines = 1,
     this.inputFormatters,
   }) : super(key: key);
 
@@ -49,6 +50,7 @@ class CommonUnderlineTextField extends StatelessWidget {
       enabled: enabled,
       focusNode: focusNode,
       maxLines: maxLines,
+      minLines: minLines,
       textAlign: textAlign,
       inputFormatters: inputFormatters,
       style: TextStyle(

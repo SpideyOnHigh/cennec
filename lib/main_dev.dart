@@ -11,8 +11,8 @@ void main() async {
   FlavorConfig(
     variables: {
       "env": "dev",
-      "base": "https://cennecapp.yeseulju.tech/",
-      "front_end_base": "https://abcdev.staging9.com/"
+      "base": "http://52.90.31.143/",
+      "front_end_base": "http://52.90.31.143/"
     },
   );
   runApp(const MyApp());

@@ -59,6 +59,7 @@ class _ScreenMyPostsState extends State<ScreenMyPosts> {
       orderBy: _currentOrderBy,
       sort: _currentSort,
       take: 5,
+
     ));
   }
 

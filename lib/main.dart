@@ -18,7 +18,7 @@ void main() async {
     variables: {
       "env": "staging",
       // "base": "https://cennec.staging9.com/",
-      "base": "https://cennecapp.yeseulju.tech/",
+      "base": "http://52.90.31.143/",
     },
   );
   runApp(const MyApp());
