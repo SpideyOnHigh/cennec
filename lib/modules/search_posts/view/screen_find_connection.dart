@@ -1,6 +1,8 @@
 import 'package:cennec/modules/search_posts/view/screen_find_connections_details.dart';
 import 'package:cennec/modules/search_posts/view/screen_similar_and_interest.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../core/common/widgets/button.dart';
 import '../../core/common/widgets/common_underline_textfield.dart';
@@ -73,9 +75,8 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
-          ? Brightness.light
-          : Brightness.dark,
+      statusBarIconBrightness:
+          Theme.of(context).brightness == Brightness.dark ? Brightness.light : Brightness.dark,
       statusBarBrightness: Theme.of(context).brightness,
     ));
 
@@ -95,21 +96,21 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
                 Text(
                   "Find a cennection to join your next adventure",
                   textAlign: TextAlign.center,
-                  style: getTextStyleFromFont(AppFont.poppins, 22, Colors.black, FontWeight.w700),
+                  style: getTextStyleFromFont(AppFont.poppins, 20, Colors.black, FontWeight.w700),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
 
                 // Subtitle
                 Text(
                   "Type your activity, interest, or event to find like-minded companions.",
                   textAlign: TextAlign.center,
-                  style: getTextStyleFromFont(AppFont.poppins, 18, Colors.black54, FontWeight.w400),
+                  style: getTextStyleFromFont(AppFont.poppins, 16, Colors.black54, FontWeight.w400),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
 
                 // White card container
                 Container(
-                  padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
@@ -128,9 +129,8 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
                         hintText: "Go hiking this Friday",
                         inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'^\s'))],
                         onChanged: _checkInput,
-                        fontSize: 22,
+                        fontSize: 20,
                         maxLines: 3,
-
                       ),
                       const SizedBox(height: 16),
                       ValueListenableBuilder<bool>(
@@ -138,7 +138,7 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
                         builder: (_, isEnabled, __) {
                           return CommonButton(
                             text: "Search",
-                            height: 48,
+                            height: 46,
                             backgroundColor: isEnabled ? AppColors.colorDarkBlue : Colors.grey.shade300,
                             textColor: isEnabled ? Colors.white : Colors.grey.shade600,
                             borderRadius: BorderRadius.circular(12),
@@ -150,7 +150,7 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
 
                 // Suggestions section
                 Align(
@@ -161,53 +161,51 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
                   ),
                 ),
                 const SizedBox(height: 15),
-
+                getStaggerdView(),
                 // Suggestions list
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: suggestions.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () => _onSuggestionTap(suggestions[index]),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                suggestions[index],
-                                style: getTextStyleFromFont(
-                                    AppFont.poppins,
-                                    14,
-                                    Colors.black87,
-                                    FontWeight.w400
-                                ),
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 14,
-                              color: Colors.grey.shade600,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                // GridView.builder(
+                //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                //       crossAxisCount: 3, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 2),
+                //   shrinkWrap: true,
+                //   physics: const NeverScrollableScrollPhysics(),
+                //   itemCount: suggestions.length,
+                //   // separatorBuilder: (context, index) => const SizedBox(height: 10),
+                //   itemBuilder: (context, index) {
+                //     return GestureDetector(
+                //       onTap: () => _onSuggestionTap(suggestions[index]),
+                //       child: Container(
+                //         padding: const EdgeInsets.all(12),
+                //         decoration: BoxDecoration(
+                //           color: Colors.white,
+                //           borderRadius: BorderRadius.circular(8),
+                //           boxShadow: [
+                //             BoxShadow(
+                //               color: Colors.black.withOpacity(0.05),
+                //               blurRadius: 4,
+                //               offset: const Offset(0, 2),
+                //             ),
+                //           ],
+                //         ),
+                //         child: Row(
+                //           children: [
+                //             Expanded(
+                //               child: Text(
+                //                 suggestions[index],
+                //                 style: getTextStyleFromFont(
+                //                     AppFont.poppins, 14, Colors.black87, FontWeight.w400),
+                //               ),
+                //             ),
+                //             Icon(
+                //               Icons.arrow_forward_ios,
+                //               size: 14,
+                //               color: Colors.grey.shade600,
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     );
+                //   },
+                // ),
                 const SizedBox(height: 30),
               ],
             ),
@@ -215,5 +213,46 @@ class _ScreenFindConnectionState extends State<ScreenFindConnection> {
         ),
       ),
     );
+  }
+
+  Widget getStaggerdView() {
+    return StaggeredGrid.count(
+        crossAxisCount: 2,
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        children: suggestions.map((e) {
+          return GestureDetector(
+            onTap: () => _onSuggestionTap(e),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      e,
+                      style: getTextStyleFromFont(AppFont.poppins, 14, Colors.black87, FontWeight.w400),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14,
+                    color: Colors.grey.shade600,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList());
   }
 }
